@@ -1,45 +1,82 @@
 import LandingPageFooter from "components/LandingPageFooter";
 import LandingPageHeader from "components/LandingPageHeader";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { PhoneIcon } from "@heroicons/react/20/solid";
+import { HomeModernIcon, PhoneIcon } from "@heroicons/react/20/solid";
+import storage from "../../../fireabse";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const Register = () => {
-    const [base64Image, setBase64Image] = useState(""); // State to hold base64 image data
+  const [image, setImage] = useState(null);
+  const [url, setUrl] = useState("");
+  const [loader, setLoader] = useState(false);
+  const [imgMetaData, setImgMetaData] = useState("")
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setBase64Image(e.target.result); // Set the base64 image data
-      };
-      reader.readAsDataURL(file);
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) {
+      setLoader(true);
+      setImage(e.target.files[0]);
+      handleUpload(e.target.files[0]);
     }
   };
 
-  const LoginForm = useFormik({
+  const handleUpload = (image) => {
+    if (!image) {
+      console.error("Please select an image.");
+      return;
+    }
+
+    const storageRef = ref(storage, `images/${image.name}`);
+
+    uploadBytes(storageRef, image)
+      .then((snapshot) => {
+        console.log("File uploaded successfully!", snapshot);
+        setImgMetaData(snapshot?.metadata?.fullPath)
+        // Get the download URL for the file
+        getDownloadURL(snapshot.ref)
+          .then((downloadURL) => {
+            console.log("File download URL:", downloadURL);
+            setUrl(downloadURL);
+            setLoader(false); // Set the download URL in the component state
+          })
+          .catch((error) => {
+            console.error("Error getting download URL:", error);
+            setLoader(false);
+          });
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+        setLoader(false);
+      });
+  };
+
+  const SignUpForm = useFormik({
     initialValues: {
       username: "",
       email: "",
       password: "",
       role: "",
       phone: "",
-      rating: 4
+      profilePicture: "",
     },
     onSubmit: async (values) => {
+      var json = {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        role: values.role,
+        phone: values.phone,
+        profilePicture: url,
+      };
+      console.log("json", json);
       try {
-        // Add the base64 image data to the form values
-        const updatedValues = {
-          ...values,
-          profilePicture: base64Image,
-        };
-
-        await axios.post("http://localhost:3000/auth/register", updatedValues).then((res) =>{
+        await axios
+          .post("http://localhost:3000/auth/register", json)
+          .then((res) => {
             console.log(res.data);
-        })
+          });
       } catch (error) {
         console.error("Error submitting form:", error);
       }
@@ -51,26 +88,34 @@ const Register = () => {
         <div className="flex flex-col  items-center justify-center w-full">
           <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div class="w-full h-screen flex font-manrope">
-            <div class="relative overflow-hidden flex w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 i justify-around items-center ">
+            <div class="relative overflow-hidden flex w-1/2 bg-gradient-to-tr from-purple-300 to-orange-500 i justify-around items-center ">
               <div>
-                <h1 class="text-white font-bold text-4xl font-sans">BidLand</h1>
-                <p class="text-white mt-1">
+                <div className="flex flex-row gap-x-1 items-center justify-start">
+                  <HomeModernIcon className="h-8 w-8 text-white-A700" />
+                  <span
+                    className="text-white-A700 text-xl mt-2.5 font-semibold"
+                    size="txtMarkoOneRegular20"
+                  >
+                    BidLand
+                  </span>
+                </div>
+                <p class="text-white mt-1 text-white-A700">
                   The most popular property selling platform
                 </p>
                 <button
                   type="submit"
-                  class="block w-28  bg-white-A700 text-indigo-800 mt-4 py-2 rounded-2xl font-bold mb-2"
+                  class="block w-36  bg-indigo-600 hover:bg-indigo-700  text-white-A700 mt-4 py-3 rounded-2xl font-semibold mb-2"
                 >
                   Read More
                 </button>
               </div>
               <div class="absolute -bottom-32 -left-40 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
               <div class="absolute -bottom-40 -left-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
-              <div class="absolute -top-40 -right-0 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
-              <div class="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
+              <div class="absolute -top-40 -right-0 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8 "></div>
+              <div class="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8 "></div>
             </div>
             <div class="flex w-1/2 justify-center py-10  items-center bg-white font-manrope">
-              <form class=" w-1/2" onSubmit={LoginForm.handleSubmit}>
+              <form class=" w-1/2" onSubmit={SignUpForm.handleSubmit}>
                 <h1 class="text-gray-800 text-center font-bold text-2xl mb-1">
                   Welcome To BidLand
                 </h1>
@@ -97,8 +142,8 @@ const Register = () => {
                     type="text"
                     name="username"
                     id="username"
-                    value={LoginForm.username}
-                    onChange={LoginForm.handleChange}
+                    value={SignUpForm.username}
+                    onChange={SignUpForm.handleChange}
                     placeholder="Username"
                     required
                   />
@@ -123,8 +168,8 @@ const Register = () => {
                     type="email"
                     name="email"
                     id="email"
-                    value={LoginForm.email}
-                    onChange={LoginForm.handleChange}
+                    value={SignUpForm.email}
+                    onChange={SignUpForm.handleChange}
                     placeholder="Email Address"
                     required
                   />
@@ -147,8 +192,8 @@ const Register = () => {
                     type="password"
                     name="password"
                     id="password"
-                    value={LoginForm.password}
-                    onChange={LoginForm.handleChange}
+                    value={SignUpForm.password}
+                    onChange={SignUpForm.handleChange}
                     placeholder="Password"
                     required
                   />
@@ -160,8 +205,8 @@ const Register = () => {
                     type="text"
                     name="phone"
                     id="phone"
-                    value={LoginForm.phone}
-                    onChange={LoginForm.handleChange}
+                    value={SignUpForm.phone}
+                    onChange={SignUpForm.handleChange}
                     placeholder="Phnoe Number"
                     required
                   />
@@ -170,8 +215,8 @@ const Register = () => {
                   <select
                     id="role"
                     name="role"
-                    value={LoginForm.role}
-                    onChange={LoginForm.handleChange}
+                    value={SignUpForm.role}
+                    onChange={SignUpForm.handleChange}
                     class="bg-gray-50 border border-gray-300 text-gray-600 font-medium text-sm  py-4 px-4 rounded-2xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
                     <option value="">Choose a role</option>
@@ -181,36 +226,68 @@ const Register = () => {
                 </div>
                 <div class="flex items-center">
                   <div class="flex items-center justify-center w-full">
-                    <label
-                      for="dropzone-file"
-                      class="flex flex-col items-center justify-center w-full h-20 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                    >
-                      <div class="flex flex-col items-center justify-center">
+                    {loader ? (
+                      <div role="status">
                         <svg
-                          class="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400"
                           aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
+                          class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                          viewBox="0 0 100 101"
                           fill="none"
-                          viewBox="0 0 20 16"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                            fill="currentColor"
+                          />
+                          <path
+                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                            fill="currentFill"
                           />
                         </svg>
-                       
-                       <p class="text-sm text-gray-500 dark:text-gray-400">
-                          <span class="font-semibold">Click to upload</span> or
-                          drag and drop
-                        </p>
+                        <span class="sr-only">Loading...</span>
                       </div>
-                      <input id="dropzone-file" type="file" class="hidden"  onChange={handleFileChange}/>
-                    </label>
-                    {/* <button className="bg-blue-600 px-4 py-" onClick={handleUpload}>Upload</button> */}
+                    ) : (
+                      <label
+                        for="dropzone-file"
+                        class="flex flex-col items-center justify-center w-full h-20 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                      >
+                        <div class="flex flex-col items-center justify-center">
+                          <svg
+                            class="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 20 16"
+                          >
+                            <path
+                              stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                            />
+                          </svg>
+
+                         {url ? <span className="bg-purple-100 text-sm rounded-full px-2 text-purple-800">{imgMetaData}
+                         </span>: <p class="text-sm text-gray-500 dark:text-gray-400">
+                            <span class="font-semibold">Click to upload</span>{" "}
+                            or drag and drop
+                          </p>}
+                        </div>
+                        <input
+                          id="dropzone-file"
+                          type="file"
+                          class="hidden"
+                          onChange={handleImageChange}
+                        />
+                      </label>
+                    )}
                   </div>
+                  {/* <div>
+                    <input type="file" onChange={handleImageChange} />
+                    <p  className="bg-blue-400 p-3 " onClick={handleUpload}>Upload</p>
+                    {url && <img   src={url} alt="Uploaded" />}
+                  </div> */}
                 </div>
                 <div className="flex items-center justify-between py-3">
                   <span class="text-sm mr-3">

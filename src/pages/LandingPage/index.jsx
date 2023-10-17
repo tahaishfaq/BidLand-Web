@@ -48,7 +48,7 @@ const LandingPagePage = () => {
                     ad production and delivery.
                   </Text>
                 </div>
-                <div className="bg-white-A700 flex flex-col items-start justify-start p-6 sm:px-5 rounded-[16px] w-full">
+                {/* <div className="bg-white-A700 flex flex-col items-start justify-start p-6 sm:px-5 rounded-[16px] w-full">
                   <div className="flex flex-col gap-[38px] items-center justify-start w-full">
                     <div className="flex sm:flex-col flex-row gap-4 items-center justify-center w-full">
                       <Button className="bg-gray-900 cursor-pointer flex-1 font-bold py-3 rounded-[10px] text-center text-lg text-white-A700 w-full">
@@ -108,7 +108,7 @@ const LandingPagePage = () => {
                       </Button>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="flex md:flex-1 flex-col items-center justify-start w-[47%] md:w-full">
                 <Img
@@ -222,7 +222,7 @@ const LandingPagePage = () => {
             </div>
           </div>
         </div>
-        <div className="bg-gray-50 flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] py-[50px] w-full">
+        {/* <div className="bg-gray-50 flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] py-[50px] w-full">
           <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-start justify-start max-w-[1200px] mx-auto w-full">
             <List
               className="md:flex-1 sm:flex-col flex-row md:gap-10 gap-[100px] grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 w-[73%] md:w-full"
@@ -321,7 +321,7 @@ const LandingPagePage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
           <div className="flex flex-col md:gap-10 gap-[60px] md:h-auto items-start justify-start max-w-[1200px] mx-auto w-full">
             <div className="flex flex-col gap-6 items-start justify-start w-full">
@@ -348,7 +348,7 @@ const LandingPagePage = () => {
                   </div>
                 </Button>
               </div>
-              <div className="flex sm:flex-col flex-row gap-2.5 items-start justify-start w-full">
+              {/* <div className="flex sm:flex-col flex-row gap-2.5 items-start justify-start w-full">
                 <Button className="bg-transparent cursor-pointer font-bold min-w-[159px] text-center text-gray-900 text-lg">
                   Resident Property
                 </Button>
@@ -361,23 +361,16 @@ const LandingPagePage = () => {
                 <Button className="bg-transparent cursor-pointer font-bold min-w-[180px] text-center text-gray-400 text-lg">
                   Agriculture Property
                 </Button>
-              </div>
+              </div> */}
             </div>
-            <div className="flex flex-col items-start justify-start w-full">
-              <div className="md:gap-5 gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-center min-h-[auto] w-full">
-                {landingPageCardPropList.map((props, index) => (
-                  <React.Fragment key={`LandingPageCard${index}`}>
-                    <LandingPageCard
-                      className="flex flex-1 flex-col h-full items-start justify-start w-full"
-                      {...props}
-                    />
-                  </React.Fragment>
-                ))}
+            <div className="flex flex-row items-start justify-start w-full">
+                <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-3 justify-center min-h-[auto] w-full">
+                  <LandingPageCard className="flex flex- md:h-auto items-start justify-start w-full" />
+                </div>
               </div>
-            </div>
           </div>
         </div>
-        <div className="bg-gray-51 flex flex-col font-manrope items-center justify-center p-[120px] md:px-10 sm:px-5 w-full">
+        {/* <div className="bg-gray-51 flex flex-col font-manrope items-center justify-center p-[120px] md:px-10 sm:px-5 w-full">
           <div className="flex flex-col md:gap-10 gap-[150px] items-center justify-center max-w-[1200px] mx-auto w-full">
             <div className="flex md:flex-col flex-row md:gap-10 gap-[85px] items-center justify-start w-full">
               <div className="flex flex-1 flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
@@ -484,8 +477,8 @@ const LandingPagePage = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col font-manrope gap-6 items-start justify-start w-full">
+        </div> */}
+        {/* <div className="flex flex-col font-manrope gap-6 items-start justify-start w-full">
           <div className="flex flex-col items-center justify-center md:px-10 sm:px-5 px-[215px] w-full">
             <Slider
               autoPlay
@@ -576,7 +569,7 @@ const LandingPagePage = () => {
               />
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="bg-gray-900 flex flex-col font-manrope items-center justify-center p-[120px] md:px-10 sm:px-5 w-full">
           <div className="flex flex-col md:gap-10 gap-[120px] items-center justify-start max-w-[1200px] mx-auto w-full">
             <div className="flex flex-col md:gap-10 gap-[60px] items-start justify-start w-full">

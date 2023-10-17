@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { HomeModernIcon } from "@heroicons/react/20/solid";
 const Login = () => {
     const [user, setUser] = useState(null)
     const navigate = useNavigate();
@@ -21,10 +22,14 @@ const Login = () => {
           try {
             axios.post(`http://localhost:3000/auth/login` , JSON).then((res) =>{
                 console.log(res.data);
-                localStorage.setItem("token", res?.data?.token)
+                localStorage.setItem("JWT", res?.data?.token)
                 localStorage.setItem("expire", res?.data?.expiresIn)
+                localStorage.setItem("userData",  res?.data?.user?.profilePicture)
                 setUser(res?.data?.user)
-                navigate("/")
+                setTimeout(() => {
+                  
+                  navigate("/")
+                }, 1000);
             })
           } catch (error) {
             console.log(error);
@@ -37,25 +42,31 @@ const Login = () => {
         <div className="flex flex-col  items-center justify-center w-full">
           <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div class="w-full h-screen flex font-manrope">
-            <div class="relative overflow-hidden flex w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 i justify-around items-center ">
+            <div class="relative overflow-hidden flex w-1/2 bg-gradient-to-tr from-orange-600 to-purple-300 i justify-around items-center ">
               <div>
-                <h1 class="text-white font-bold text-4xl font-sans">
-                 BidLand
-                </h1>
-                <p class="text-white mt-1">
+              <div className="flex flex-row gap-x-1 items-center justify-start">
+                <HomeModernIcon className="h-8 w-8 text-white-A700"/>
+                <span
+                  className="text-white-A700 text-xl mt-2.5 font-semibold"
+                  size="txtMarkoOneRegular20"
+                >
+                  BidLand
+                </span>
+              </div>
+                <p class="text-white mt-1 text-white-A700">
                   The most popular property selling platform
                 </p>
                 <button
                   type="submit"
-                  class="block w-28  bg-white-A700 text-indigo-800 mt-4 py-2 rounded-2xl font-bold mb-2"
+                  class="block w-36  bg-indigo-600 hover:bg-indigo-700  text-white-A700 mt-4 py-3 rounded-2xl font-semibold mb-2"
                 >
                   Read More
                 </button>
               </div>
               <div class="absolute -bottom-32 -left-40 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
               <div class="absolute -bottom-40 -left-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
-              <div class="absolute -top-40 -right-0 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
-              <div class="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8"></div>
+              <div class="absolute -top-40 -right-0 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8 "></div>
+              <div class="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8 "></div>
             </div>
             <div class="flex w-1/2 justify-center py-10  items-center bg-white font-manrope">
               <form class=" w-1/2" onSubmit={LoginForm.handleSubmit}>

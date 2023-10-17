@@ -446,7 +446,7 @@ const PropertyDetailsPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
+          {/* <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
             <div className="flex flex-col gap-10 items-center justify-center max-w-[1200px] mx-auto w-full">
               <div className="flex sm:flex-col flex-row gap-5 items-center justify-start w-full">
                 <Text
@@ -484,7 +484,7 @@ const PropertyDetailsPage = () => {
                 ))}
               </List>
             </div>
-          </div>
+          </div> */}
         </div>
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>

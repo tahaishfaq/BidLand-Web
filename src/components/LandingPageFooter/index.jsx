@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Img, Text } from "components";
+import { HomeModernIcon } from "@heroicons/react/20/solid";
 
 const LandingPageFooter = (props) => {
   return (
@@ -9,17 +10,13 @@ const LandingPageFooter = (props) => {
         <div className="flex flex-col md:gap-10 gap-[120px] items-start justify-start w-full">
           <div className="flex md:flex-col flex-row md:gap-5 items-center justify-start w-full">
             <div className="flex flex-col gap-[43px] items-start justify-start w-[341px]">
-              <div className="flex flex-row gap-[11px] h-10 md:h-auto items-center justify-start w-[341px]">
-                <Img
-                  className="h-10 w-10"
-                  src="images/img_home.svg"
-                  alt="home_One"
-                />
+              <div className="flex flex-row gap-x-1 items-center justify-start">
+                <HomeModernIcon className="h-8 w-8 text-orange-A700"/>
                 <Text
-                  className="text-orange-A700 text-xl w-auto"
+                  className="text-orange-A700 text-xl mt-2.5"
                   size="txtMarkoOneRegular20"
                 >
-                  Relasto
+                  BidLand
                 </Text>
               </div>
               <div className="flex flex-col gap-7 h-[194px] md:h-auto items-start justify-start w-full">

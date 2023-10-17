@@ -93,7 +93,7 @@ const ListingPage = () => {
     <>
       <div className="bg-gray-51 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col md:gap-10 gap-y-10 items-center justify-center w-full">
-          <LandingPageHeader className="bg-white-A700-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
+          <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
          
             {/* Mobile filter dialog */}
            
@@ -102,7 +102,7 @@ const ListingPage = () => {
                 aria-labelledby="filter-heading"
               >
                 <h2 id="filter-heading" className="text-4xl font-bold mb-10">
-                  Find Property
+                  Find The Property
                 </h2>
 
                 <div className="flex items-center justify-between border-t border-gray-200 py-6">
