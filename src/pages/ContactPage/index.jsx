@@ -110,8 +110,8 @@ const ContactPagePage = () => {
                         size="txtManropeSemiBold18Gray600"
                       >
                         <>
-                          1421 San Pedro St, Los Angeles, <br />
-                          CA 90015
+                          Comsats University Islamabad, <br />
+                          Lahore Pakistan.
                         </>
                       </Text>
                     </div>
@@ -126,7 +126,7 @@ const ContactPagePage = () => {
                           className="flex-1 text-gray-600 text-lg w-auto"
                           size="txtManropeSemiBold18Gray600"
                         >
-                          (123) 456-7890
+                          +92-3123456789
                         </Text>
                       </div>
                       <div className="flex flex-row gap-3 items-center justify-start w-full">
@@ -139,7 +139,7 @@ const ContactPagePage = () => {
                           className="flex-1 text-gray-600 text-lg w-auto"
                           size="txtManropeSemiBold18Gray600"
                         >
-                          info@mail.com
+                          admin@mail.com
                         </Text>
                       </div>
                     </div>

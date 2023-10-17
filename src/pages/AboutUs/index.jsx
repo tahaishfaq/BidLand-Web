@@ -67,7 +67,7 @@ const AboutUsPage = () => {
             </div>
           </div>
         </div>
-        <div className="bg-gray-50 flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] py-[50px] w-full">
+        {/* <div className="bg-gray-50 flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] py-[50px] w-full">
           <div className="flex md:flex-col flex-row md:gap-10 items-start justify-between max-w-[1200px] mx-auto w-full">
             <List
               className="md:flex-1 sm:flex-col flex-row md:gap-10 gap-[100px] grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 w-[73%] md:w-full"
@@ -166,7 +166,7 @@ const AboutUsPage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="flex flex-col font-manrope items-center justify-center max-w-[1440px] pl-[120px] pr-[173px] md:px-10 sm:px-5 w-full">
           <div className="flex md:flex-col flex-row md:gap-10 gap-[84px] items-center justify-start max-w-[1147px] mx-auto w-full">
             <div className="flex flex-1 flex-col gap-14 items-start justify-start w-full">
@@ -324,7 +324,7 @@ const AboutUsPage = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
+        {/* <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
           <div className="flex flex-col md:gap-10 gap-[60px] items-center justify-start max-w-[1200px] mx-auto w-full">
             <Text
               className="text-4xl sm:text-[32px] md:text-[34px] text-center text-gray-900 tracking-[-0.72px] w-full"
@@ -589,8 +589,8 @@ const AboutUsPage = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="bg-gray-900 flex flex-col font-manrope items-center justify-center p-[120px] md:px-10 sm:px-5 w-full">
+        </div> */}
+        {/* <div className="bg-gray-900 flex flex-col font-manrope items-center justify-center p-[120px] md:px-10 sm:px-5 w-full">
           <div className="flex flex-col md:gap-10 gap-[120px] items-center justify-start max-w-[1200px] mx-auto w-full">
             <div className="flex flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
               <div className="flex sm:flex-col flex-row gap-5 items-center justify-start w-full">
@@ -739,7 +739,7 @@ const AboutUsPage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>

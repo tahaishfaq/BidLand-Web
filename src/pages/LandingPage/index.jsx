@@ -322,7 +322,7 @@ const LandingPagePage = () => {
             </div>
           </div>
         </div> */}
-        <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
+        <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full bg-yellow-50 py-10">
           <div className="flex flex-col md:gap-10 gap-[60px] md:h-auto items-start justify-start max-w-[1200px] mx-auto w-full">
             <div className="flex flex-col gap-6 items-start justify-start w-full">
               <div className="flex sm:flex-col flex-row md:gap-10 items-center justify-between w-full">
@@ -570,7 +570,7 @@ const LandingPagePage = () => {
             </div>
           </div>
         </div> */}
-        <div className="bg-gray-900 flex flex-col font-manrope items-center justify-center p-[120px] md:px-10 sm:px-5 w-full">
+        {/* <div className="bg-gray-900 flex flex-col font-manrope items-center justify-center p-[120px] md:px-10 sm:px-5 w-full">
           <div className="flex flex-col md:gap-10 gap-[120px] items-center justify-start max-w-[1200px] mx-auto w-full">
             <div className="flex flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
               <div className="flex sm:flex-col flex-row gap-5 items-center justify-start w-full">
@@ -719,7 +719,7 @@ const LandingPagePage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>
