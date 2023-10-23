@@ -14,7 +14,7 @@ const buttonmediumOptionsList = [
   { label: "Option3", value: "option3" },
 ];
 
-const AgentProfilePage = () => {
+const Profile = () => {
   const landingPageCardPropList = [
     {},
     { image: "images/img_image_1.png" },
@@ -28,42 +28,42 @@ const AgentProfilePage = () => {
     window.location.href = "www.abc.com";
   }
   const { id } = useParams();
-  const [seller, setSeller] = useState(null);
-  const [sellerProperties, setSellerProperties] = useState([]);
+  const [user, setUser] = useState(null);
+//   const [sellerProperties, setSellerProperties] = useState([]);
   const navigate = useNavigate()
   useEffect(() => {
-    const handleSellersList = () => {
+    const handleUserProfile = () => {
       try {
-        axios.get(`http://localhost:3000/auth/seller/${id}`).then((res) => {
-          console.log(res?.data?.seller);
-          setSeller(res?.data?.seller);
+        axios.get(`http://localhost:3000/auth/user/${id}`).then((res) => {
+          console.log(res?.data?.user);
+          setUser(res?.data?.user);
         });
       } catch (error) {
         console.log(error);
       }
     };
-    handleSellersList();
+    handleUserProfile();
   }, []);
 
-  useEffect(() => {
-    const handleSellerProperties = () => {
-      try {
-        axios
-          .get(`http://localhost:3000/property/${id}/properties`)
-          .then((res) => {
-            console.log(res?.data?.properties);
-            setSellerProperties(res?.data?.properties);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    handleSellerProperties();
-  }, [seller]);
+//   useEffect(() => {
+//     const handleSellerProperties = () => {
+//       try {
+//         axios
+//           .get(`http://localhost:3000/property/${id}/properties`)
+//           .then((res) => {
+//             console.log(res?.data?.properties);
+//             setSellerProperties(res?.data?.properties);
+//           });
+//       } catch (error) {
+//         console.log(error);
+//       }
+//     };
+//     handleSellerProperties();
+//   }, [seller]);
 
-  const handlePropertyDetails = (id) =>{
-    navigate(`/propertydetails/${id}`)
-  }
+//   const handlePropertyDetails = (id) =>{
+//     navigate(`/propertydetails/${id}`)
+//   }
 
   return (
     <>
@@ -81,10 +81,10 @@ const AgentProfilePage = () => {
             <div className="flex flex-1 flex-col gap-[58px] items-center justify-start mt-[-46px] mx-auto w-full z-[1]">
               <div className="flex md:flex-col flex-row gap-[30px] items-end justify-start md:px-10 sm:px-5 px-[140px] w-full">
                 <img
-                  className="h-[170px] md:h-auto object-cover rounded-full w-[170px]"
+                  className="h-[170px] md:h-auto object-cover rounded-full w-[170px] bg-gray-100"
                   src={
-                    seller?.profilePicture
-                      ? seller?.profilePicture
+                    user?.profilePicture
+                      ? user?.profilePicture
                       : "https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"
                   }
                   alt="rectangle5599"
@@ -96,7 +96,7 @@ const AgentProfilePage = () => {
                         className="text-2xl md:text-[22px] text-gray-900 sm:text-xl tracking-[-0.48px] w-full"
                         size="txtManropeBold24Gray900"
                       >
-                        {seller?.username}
+                        {user?.username}
                       </Text>
                       <div className="flex flex-row gap-3.5 items-center justify-start w-full">
                         <div className="flex flex-row items-center justify-evenly w-1/4">
@@ -121,7 +121,7 @@ const AgentProfilePage = () => {
                           className="flex-1 text-gray-900 text-lg w-auto"
                           size="txtManropeSemiBold18"
                         >
-                          {seller?.phone}
+                          {user?.phone}
                         </Text>
                       </div>
                       <div className="flex flex-row gap-3 items-center justify-start w-full">
@@ -143,17 +143,17 @@ const AgentProfilePage = () => {
                           className="text-gray-900 text-lg w-auto"
                           size="txtManropeSemiBold18"
                         >
-                          {seller?.email}
+                          {user?.email}
                         </Text>
                       </div>
                     </div>
                   </div>
-                  <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
-                    Contact
-                  </Button>
+                  <button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
+                    Edit Profile
+                  </button>
                 </div>
               </div>
-              <div className="flex flex-col items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
+              {/* <div className="flex flex-col items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
                 <div className="flex flex-col gap-12 justify-center w-full">
                  <h2 className="mt-4 text-2xl font-semibold ml-3">My Lising</h2>
                   <div className="flex flex-col items-center justify-center w-full">
@@ -252,11 +252,11 @@ const AgentProfilePage = () => {
                   </div>
                  
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
-        <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
+        {/* <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
           <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-center justify-center max-w-[1200px] mx-auto p-[42px] md:px-5 rounded-[10px] w-full">
             <div className="flex flex-col items-center justify-center w-full">
               <div className="flex md:flex-col flex-row md:gap-10 gap-[65px] items-start justify-center w-full">
@@ -486,8 +486,8 @@ const AgentProfilePage = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
+        </div> */}
+        {/* <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
           <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start max-w-[1200px] mx-auto md:px-5 py-[30px] rounded-[10px] w-full">
             <div className="flex flex-col items-start justify-start w-full">
               <div className="flex flex-col gap-10 items-start justify-start w-full">
@@ -764,11 +764,11 @@ const AgentProfilePage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>
   );
 };
 
-export default AgentProfilePage;
+export default Profile;

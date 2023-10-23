@@ -315,7 +315,7 @@ const PropertyDetailsPage = () => {
                       <div className="flex flex-row gap-6 items-center justify-start w-full hover:bg-gray-100 rounded-lg cursor-pointer">
                         <Img
                           className="h-40 object-cover object-center rounded-full w-40"
-                          src={sellerInfo?.profilePicture}
+                          src={sellerInfo?.profilePicture ? sellerInfo?.profilePicture : "https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"}
                           alt="rectangle5599"
                         />
                         <div className="flex flex-col gap-[3px] items-start justify-start w-auto">

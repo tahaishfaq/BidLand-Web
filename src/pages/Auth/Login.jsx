@@ -1,58 +1,73 @@
 import LandingPageFooter from "components/LandingPageFooter";
 import LandingPageHeader from "components/LandingPageHeader";
 import React, { useState } from "react";
-import { useFormik } from 'formik';
+import { useFormik } from "formik";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { HomeModernIcon } from "@heroicons/react/20/solid";
+import Spinner from "components/Spinner/Spinner";
 const Login = () => {
-    const [user, setUser] = useState(null)
-    const navigate = useNavigate();
-    const LoginForm = useFormik({
-        initialValues: {
-          email: '',
-          password: '',
-        },
-        onSubmit: values => {
-          var JSON = {
-            email: values.email,
-          password: values.password,
-          }
-          try {
-            axios.post(`http://localhost:3000/auth/login` , JSON).then((res) =>{
-                console.log(res.data);
-                localStorage.setItem("JWT", res?.data?.token)
-                localStorage.setItem("expire", res?.data?.expiresIn)
-                localStorage.setItem("userData",  res?.data?.user?.profilePicture)
-                setUser(res?.data?.user)
-                setTimeout(() => {
-                  
-                  navigate("/")
-                }, 1000);
-            })
-          } catch (error) {
-            console.log(error);
-          }
-        },
-      });
+  const [user, setUser] = useState(null);
+  const [loader, setLoader] = useState(false);
+  const navigate = useNavigate();
+  const LoginForm = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    onSubmit: (values) => {
+      setLoader(true);
+      var JSON = {
+        email: values.email,
+        password: values.password,
+      };
+      try {
+        axios.post(`http://localhost:3000/auth/login`, JSON).then((res) => {
+          console.log(res.data);
+          localStorage.setItem("JWT", res?.data?.token);
+          localStorage.setItem("expire", res?.data?.expiresIn);
+          localStorage.setItem("userId", res?.data?.user?.userId);
+          localStorage.setItem("userData", res?.data?.user?.profilePicture);
+          localStorage.setItem("userRole", res?.data?.user?.role);
+          setUser(res?.data?.user);
+          setTimeout(() => {
+            if (res?.data?.user?.role == "seller") {
+              setLoader(false);
+              navigate("/sellerdashboard");
+            } else {
+              setLoader(false);
+              navigate("/");
+            }
+          }, 1000);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
+
+  const handleForgetPass = () => {
+    navigate("/forgetpassword");
+  };
   return (
     <>
+      {loader && <Spinner />}
       <div className="bg-gray-51 flex flex-col font-markoone  items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col  items-center justify-center w-full">
           <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div class="w-full h-screen flex font-manrope">
             <div class="relative overflow-hidden flex w-1/2 bg-gradient-to-tr from-orange-600 to-purple-300 i justify-around items-center ">
               <div>
-              <div className="flex flex-row gap-x-1 items-center justify-start">
-                <HomeModernIcon className="h-8 w-8 text-white-A700"/>
-                <span
-                  className="text-white-A700 text-xl mt-2.5 font-semibold"
-                  size="txtMarkoOneRegular20"
-                >
-                  BidLand
-                </span>
-              </div>
+                <div className="flex flex-row gap-x-1 items-center justify-start">
+                  <HomeModernIcon className="h-8 w-8 text-white-A700" />
+                  <span
+                    className="text-white-A700 text-xl mt-2.5 font-semibold"
+                    size="txtMarkoOneRegular20"
+                  >
+                    BidLand
+                  </span>
+                </div>
                 <p class="text-white mt-1 text-white-A700">
                   The most popular property selling platform
                 </p>
@@ -74,7 +89,7 @@ const Login = () => {
                   Welcome Back
                 </h1>
                 <p class="text-sm text-center font-normal text-gray-600 mb-7">
-                 Login Your Account
+                  Login Your Account
                 </p>
                 <div class="flex items-center justify-center border-2 py-2 px-3 rounded-2xl mb-4">
                   <svg
@@ -127,18 +142,33 @@ const Login = () => {
                   />
                 </div>
                 <div className="flex items-center justify-between py-3">
-                <span class="text-sm ml-2 hover:text-blue-500 cursor-pointer">
-                  Forgot Password ?
-                </span>
-                <span class="text-sm mr-3">
-                    Don't have an account? <Link className="hover:text-blue-500 cursor-pointer hover:underline" to="/register">Create</Link>
-                </span>
+                  <span
+                    class="text-sm ml-2 hover:text-blue-500 cursor-pointer"
+                    onClick={() => handleForgetPass()}
+                  >
+                    Forgot Password ?
+                  </span>
+                  <span class="text-sm mr-3">
+                    Don't have an account?{" "}
+                    <Link
+                      className="hover:text-blue-500 cursor-pointer hover:underline"
+                      to="/register"
+                    >
+                      Create
+                    </Link>
+                  </span>
                 </div>
                 <button
                   type="submit"
                   class="block w-full bg-indigo-600 hover:bg-indigo-700 mt-4 py-4  text-white-A700 rounded-2xl tracking-wide font-semibold mb-2"
                 >
                   Login
+                </button>
+                <button
+                  onClick={() => navigate("/register")}
+                  class="block w-full bg-indigo-600 hover:bg-indigo-700 mt-4 py-4  text-white-A700 rounded-2xl tracking-wide font-semibold mb-2"
+                >
+                  Create New Account
                 </button>
               </form>
             </div>
