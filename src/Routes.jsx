@@ -9,6 +9,8 @@ import ForgetPassword from "pages/Auth/ForgetPassword";
 import ResetPassword from "pages/Auth/ResetPassword";
 import Profile from "pages/Auth/Profile";
 import SellerDashboard from "pages/Seller Dashboard/SellerDashboard";
+import EditProfile from "pages/Auth/EditProfile";
+import BiddingListing from "pages/Bidding/BiddingListing";
 const License = React.lazy(() => import("pages/License"));
 const PrivacyPolicy = React.lazy(() => import("pages/PrivacyPolicy"));
 const FAQ = React.lazy(() => import("pages/FAQ"));
@@ -38,10 +40,12 @@ const ProjectRoutes = () => {
           <Route path="*" element={<NotFound />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/listing" element={<Listing />} />
+          <Route path="/biddinglisting" element={<BiddingListing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/sellerdashboard" element={<SellerDashboard />} />
+          <Route path="/sellerdashboard/*" element={<SellerDashboard />} />
           <Route path="/userprofile/:id" element={<Profile />} />
+          <Route path="/editprofile/:id" element={<EditProfile />} />
           <Route path="/forgetpassword" element={<ForgetPassword />} />
           <Route path="/resetpassword/:token" element={<ResetPassword />} />
           <Route path="/listingmapview" element={<ListingMapView />} />

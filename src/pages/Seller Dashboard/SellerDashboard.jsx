@@ -1,202 +1,185 @@
+/*
+  This example requires some changes to your config:
+  
+  ```
+  // tailwind.config.js
+  module.exports = {
+    // ...
+    plugins: [
+      // ...
+      require('@tailwindcss/forms'),
+    ],
+  }
+  ```
+*/
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Link, NavLink, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
 import {
-  ArrowDownCircleIcon,
-  ArrowPathIcon,
-  ArrowUpCircleIcon,
   Bars3Icon,
-  EllipsisHorizontalIcon,
+  BellIcon,
+  CalendarIcon,
+  ChartPieIcon,
+  Cog6ToothIcon,
+  DocumentDuplicateIcon,
+  FolderIcon,
+  HomeIcon,
+  UsersIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import {
+  ArrowRightOnRectangleIcon,
+  ChevronDownIcon,
   HomeModernIcon,
-  PlusSmallIcon,
+  MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import { BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Link, useNavigate } from "react-router-dom";
+import ViewAllUsers from "./ViewAllUsers";
+import Properties from "./Properties";
 
 const navigation = [
-  { name: "Dashboard", href: "#" , Icon: HomeModernIcon },
-  { name: "Invoices", href: "#" },
-  { name: "Clients", href: "#" },
-  { name: "Expenses", href: "#" },
+  { name: "Dashboard", href: "dasboard", icon: HomeIcon, current: true },
+  { name: "Users", href: "get-all-users", icon: UsersIcon, current: false },
+  { name: "Properties", href: "get-properties", icon: HomeModernIcon, current: false },
+
 ];
-const secondaryNavigation = [
-  { name: "Last 7 days", href: "#", current: true },
-  { name: "Last 30 days", href: "#", current: false },
-  { name: "All-time", href: "#", current: false },
+const teams = [
+  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
+  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
+  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
 ];
-const stats = [
-  {
-    name: "Revenue",
-    value: "$405,091.00",
-    change: "+4.75%",
-    changeType: "positive",
-  },
-  {
-    name: "Overdue invoices",
-    value: "$12,787.00",
-    change: "+54.02%",
-    changeType: "negative",
-  },
-  {
-    name: "Outstanding invoices",
-    value: "$245,988.00",
-    change: "-1.39%",
-    changeType: "positive",
-  },
-  {
-    name: "Expenses",
-    value: "$30,156.00",
-    change: "+10.18%",
-    changeType: "negative",
-  },
-];
-const statuses = {
-  Paid: "text-green-700 bg-green-50 ring-green-600/20",
-  Withdraw: "text-gray-600 bg-gray-50 ring-gray-500/10",
-  Overdue: "text-red-700 bg-red-50 ring-red-600/10",
-};
-const days = [
-  {
-    date: "Today",
-    dateTime: "2023-03-22",
-    transactions: [
-      {
-        id: 1,
-        invoiceNumber: "00012",
-        href: "#",
-        amount: "$7,600.00 USD",
-        tax: "$500.00",
-        status: "Paid",
-        client: "Reform",
-        description: "Website redesign",
-        icon: ArrowUpCircleIcon,
-      },
-      {
-        id: 2,
-        invoiceNumber: "00011",
-        href: "#",
-        amount: "$10,000.00 USD",
-        status: "Withdraw",
-        client: "Tom Cook",
-        description: "Salary",
-        icon: ArrowDownCircleIcon,
-      },
-      {
-        id: 3,
-        invoiceNumber: "00009",
-        href: "#",
-        amount: "$2,000.00 USD",
-        tax: "$130.00",
-        status: "Overdue",
-        client: "Tuple",
-        description: "Logo design",
-        icon: ArrowPathIcon,
-      },
-    ],
-  },
-  {
-    date: "Yesterday",
-    dateTime: "2023-03-21",
-    transactions: [
-      {
-        id: 4,
-        invoiceNumber: "00010",
-        href: "#",
-        amount: "$14,000.00 USD",
-        tax: "$900.00",
-        status: "Paid",
-        client: "SavvyCal",
-        description: "Website redesign",
-        icon: ArrowUpCircleIcon,
-      },
-    ],
-  },
-];
-const clients = [
-  {
-    id: 1,
-    name: "Tuple",
-    imageUrl: "https://tailwindui.com/img/logos/48x48/tuple.svg",
-    lastInvoice: {
-      date: "December 13, 2022",
-      dateTime: "2022-12-13",
-      amount: "$2,000.00",
-      status: "Overdue",
-    },
-  },
-  {
-    id: 2,
-    name: "SavvyCal",
-    imageUrl: "https://tailwindui.com/img/logos/48x48/savvycal.svg",
-    lastInvoice: {
-      date: "January 22, 2023",
-      dateTime: "2023-01-22",
-      amount: "$14,000.00",
-      status: "Paid",
-    },
-  },
-  {
-    id: 3,
-    name: "Reform",
-    imageUrl: "https://tailwindui.com/img/logos/48x48/reform.svg",
-    lastInvoice: {
-      date: "January 23, 2023",
-      dateTime: "2023-01-23",
-      amount: "$7,600.00",
-      status: "Paid",
-    },
-  },
+const userNavigation = [
+  { name: "Your profile", href: "#" },
+  { name: "Sign out", href: "#" },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function SellerDashboard() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
+export default function Example() {
   const navigate = useNavigate()
   var token = localStorage.getItem("JWT");
   var userPic = localStorage.getItem("userData");
   var userId = localStorage.getItem("userId");
-  console.log(token);
-  console.log(userPic);
-  console.log(userId);
+  var userName = localStorage.getItem("userName");
 
   return (
     <>
-      <header className="absolute inset-x-0 top-0 z-50 flex h-16 ">
-        <div
-          
-        >
-          <div className="fixed inset-y-0 left-0 z-50 w-full   bg-white  pb-6 sm:max-w-sm sm:px-6 sm:ring-1 sm:ring-gray-900/10">
-            <div className="pr-20 flex h-16 items-center gap-x-6 shadow-md">
-              <Link to="/sellerdashboard">
-                <div className="ml-8">
-                  <button className="-m-1.5 block p-1.5">
-                    <span className="sr-only">Your Company</span>
-                    <div className="flex flex-row gap-x-1 items-center justify-start">
-                      <HomeModernIcon className="h-8 w-8 text-orange-A700" />
-                      <p className="text-orange-A700 text-xl mt-2.5">BidLand</p>
-                    </div>
-                  </button>
-                </div>
-              </Link>
-              <div className="flex flex-1 items-center justify-end gap-x-8">
-              <Menu as="div" className="relative ml-3 font-manrope">
-                  <div>
-                    <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">Open user menu</span>
-                      <img
-                        className="h-10 w-10 rounded-full"
-                        src={
-                          userPic
-                            ? userPic
-                            : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        }
-                        alt=""
+      {/*
+        This example requires updating your template:
+
+        ```
+        <html class="h-full bg-white">
+        <body class="h-full">
+        ```
+      */}
+      <div>
+        {/* Static sidebar for desktop */}
+        <div className="fixed inset-y-0 z-50 flex w-72 flex-col">
+          {/* Sidebar component, swap this element with another sidebar if you like */}
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white-A700 px-6 pb-4 border-r shadow-md">
+            <div className="flex h-16 shrink-0 items-center gap-x-1.5">
+              <HomeModernIcon className="h-8 w-8 text-orange-A700" />
+              <span className="text-orange-A700 text-xl mt-2.5">BidLand</span>
+            </div>
+            <nav className="flex flex-1 flex-col">
+              <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                <li>
+                  <ul role="list" className="-mx-2.5 space-y-1">
+                    {navigation.map((item) => (
+                      <li key={item.name}>
+                        <NavLink 
+                          to={item.href}
+                          className={`group flex gap-x-3 text-gray-700 rounded-md p-2 hover:text-indigo-600 hover:bg-[#F4F7FF]  text-sm leading-6 font-semibold ${
+                            location.pathname.includes(`${item.href}`)? 'border-l-4 border-indigo-600' : ''
+                          }`}
+                        >
+                         <item.icon
+                            className={`h-6 w-6 text-gray-400 group-hover:text-indigo-600 shrink-0 ${
+                             location.pathname.includes(`${item.href}`)? 'text-indigo-600' : ''
+                               }`}
+                               aria-hidden="true"/>
+           
+                          {item.name}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+               
+                <li className="mt-auto">
+                  <a
+                  //  onClick={() => logOut()}
+                    className="group -mx-2 cursor-pointer flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
+                  >
+                    <ArrowRightOnRectangleIcon
+                      className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
+                      aria-hidden="true"
+                    />
+                    Log out
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        <div className="pl-72">
+          <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 shadow-md">
+            <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+              <form className="relative flex flex-1" action="#" method="GET">
+                <label htmlFor="search-field" className="sr-only">
+                  Search
+                </label>
+                <MagnifyingGlassIcon
+                  className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+                <input
+                  id="search-field"
+                  className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+                  placeholder="Search..."
+                  type="search"
+                  name="search"
+                />
+              </form>
+              <div className="flex items-center gap-x-4 lg:gap-x-6">
+                <button
+                  type="button"
+                  className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
+                >
+                  <span className="sr-only">View notifications</span>
+                  <BellIcon className="h-6 w-6" aria-hidden="true" />
+                </button>
+
+                {/* Separator */}
+                <div
+                  className="block h-6 w-px bg-gray-900/10"
+                  aria-hidden="true"
+                />
+
+                {/* Profile dropdown */}
+                <Menu as="div" className="relative">
+                  <Menu.Button className="-m-1.5 flex items-center p-1.5">
+                    <span className="sr-only">Open user menu</span>
+                    <img
+                      className="h-8 w-8 rounded-full bg-gray-50"
+                      src={userPic ? userPic : "https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"}
+                      alt=""
+                    />
+                    <span className="flex items-center">
+                      <span
+                        className="ml-4 text-sm font-semibold leading-6 text-gray-900"
+                        aria-hidden="true"
+                      >
+                        {userName}
+                      </span>
+                      <ChevronDownIcon
+                        className="ml-2 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
                       />
-                    </Menu.Button>
-                  </div>
+                    </span>
+                  </Menu.Button>
                   <Transition
                     as={Fragment}
                     enter="transition ease-out duration-100"
@@ -211,7 +194,7 @@ export default function SellerDashboard() {
                         {({ active }) => (
                           <button
                             onClick={() => {
-                              navigate(`/userprofile/${userId}`);
+                              // navigate(`/userprofile/${userId}`);
                             }}
                             className={classNames(
                               active ? "bg-gray-100" : "",
@@ -247,21 +230,24 @@ export default function SellerDashboard() {
                 </Menu>
               </div>
             </div>
-            <div className="space-y-2 flex flex-col w-72 h-screen border-r border-gray-100 shadow-md">
-              {navigation.map((item) => (
-                <>
-                <span
-                  key={item.name}
-                  className=" block rounded-lg px-10 py-2 mt-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                  {item.name}
-                </span>
-                  </>
-              ))}
-            </div>
           </div>
+
+          <main className="py-10 ">
+            <div className="px-4 sm:px-6  lg:px-3">
+              <Routes>
+              <Route path="/get-all-users" element={<ViewAllUsers />} />
+              <Route path="/get-properties" element={<Properties />} />
+                {/* <Route path="/navbar" element={<ClientsNavBar />}>
+                  <Route index element={<Clients />} />
+                  <Route path="add-new-client" element={<AddNewClient />} />
+                  <Route path="client" element={<AddNewClient />}/>
+                  <Route path=":id" element={<UpdateClientProfile />} />
+                </Route> */}
+              </Routes>
+            </div>
+          </main>
         </div>
-      </header>
+      </div>
     </>
   );
 }

@@ -7,6 +7,7 @@ import LandingPageHeader from "components/LandingPageHeader";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { PhoneIcon, StarIcon } from "@heroicons/react/20/solid";
+import { Link } from "react-router-dom";
 
 const buttonmediumOptionsList = [
   { label: "Option1", value: "option1" },
@@ -148,9 +149,11 @@ const Profile = () => {
                       </div>
                     </div>
                   </div>
+                  <Link to={`/editprofile/${user?._id}`}>
                   <button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
                     Edit Profile
                   </button>
+                  </Link>
                 </div>
               </div>
               {/* <div className="flex flex-col items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">

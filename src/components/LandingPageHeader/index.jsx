@@ -72,7 +72,7 @@ const LandingPageHeader = (props) => {
                 </Link>
               </div>
               <div className="flex flex-row gap-1.5 items-start justify-start ">
-                <Link to="/bidding">
+                <Link to="/biddinglisting">
                   <Text
                     className="text-base text-gray-900 w-auto"
                     size="txtManropeSemiBold16"
