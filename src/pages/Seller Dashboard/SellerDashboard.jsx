@@ -35,9 +35,10 @@ import {
 } from "@heroicons/react/20/solid";
 import ViewAllUsers from "./ViewAllUsers";
 import Properties from "./Properties";
+import PropertiesEdit from './PropertiesEdit';
 
 const navigation = [
-  { name: "Dashboard", href: "dasboard", icon: HomeIcon, current: true },
+  { name: "Dashboard", href: "home", icon: HomeIcon, current: true },
   { name: "Users", href: "get-all-users", icon: UsersIcon, current: false },
   { name: "Properties", href: "get-properties", icon: HomeModernIcon, current: false },
 
@@ -237,6 +238,7 @@ export default function Example() {
               <Routes>
               <Route path="/get-all-users" element={<ViewAllUsers />} />
               <Route path="/get-properties" element={<Properties />} />
+              <Route path="/edit-properties/:id" element={<PropertiesEdit />} />
                 {/* <Route path="/navbar" element={<ClientsNavBar />}>
                   <Route index element={<Clients />} />
                   <Route path="add-new-client" element={<AddNewClient />} />

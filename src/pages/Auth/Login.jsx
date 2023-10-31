@@ -35,7 +35,7 @@ const Login = () => {
           setTimeout(() => {
             if (res?.data?.user?.role == "seller") {
               setLoader(false);
-              navigate("/sellerdashboard");
+              navigate("/sellerdashboard/home");
             } else {
               setLoader(false);
               navigate("/");
@@ -54,27 +54,27 @@ const Login = () => {
   return (
     <>
       {loader && <Spinner />}
-      <div className="bg-gray-51 flex flex-col font-markoone  items-start justify-start mx-auto w-auto sm:w-full md:w-full">
+      <div className="bg-white flex flex-col font-markoone  items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col  items-center justify-center w-full">
-          <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
+          <LandingPageHeader className="bg-orange-50  flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div class="w-full h-screen flex font-manrope">
             <div class="relative overflow-hidden flex w-1/2 bg-gradient-to-tr from-orange-600 to-purple-300 i justify-around items-center ">
               <div>
                 <div className="flex flex-row gap-x-1 items-center justify-start">
-                  <HomeModernIcon className="h-8 w-8 text-white-A700" />
+                  <HomeModernIcon className="h-8 w-8 text-white" />
                   <span
-                    className="text-white-A700 text-xl mt-2.5 font-semibold"
+                    className="text-white text-xl mt-2.5 font-semibold"
                     size="txtMarkoOneRegular20"
                   >
                     BidLand
                   </span>
                 </div>
-                <p class="text-white mt-1 text-white-A700">
+                <p class="text-white mt-1 text-white">
                   The most popular property selling platform
                 </p>
                 <button
                   type="submit"
-                  class="block w-36  bg-indigo-600 hover:bg-indigo-700  text-white-A700 mt-4 py-3 rounded-2xl font-semibold mb-2"
+                  class="block w-36  bg-indigo-600 hover:bg-indigo-700  text-white mt-4 py-3 rounded-2xl font-semibold mb-2"
                 >
                   Read More
                 </button>
@@ -161,13 +161,13 @@ const Login = () => {
                 </div>
                 <button
                   type="submit"
-                  class="block w-full bg-indigo-600 hover:bg-indigo-700 mt-4 py-4  text-white-A700 rounded-2xl tracking-wide font-semibold mb-2"
+                  class="block w-full bg-indigo-600 hover:bg-indigo-700 mt-4 py-4  text-white rounded-2xl tracking-wide font-semibold mb-2"
                 >
                   Login
                 </button>
                 <button
                   onClick={() => navigate("/register")}
-                  class="block w-full bg-indigo-600 hover:bg-indigo-700 mt-4 py-4  text-white-A700 rounded-2xl tracking-wide font-semibold mb-2"
+                  class="block w-full bg-indigo-600 hover:bg-indigo-700 mt-4 py-4  text-white rounded-2xl tracking-wide font-semibold mb-2"
                 >
                   Create New Account
                 </button>
@@ -175,7 +175,7 @@ const Login = () => {
             </div>
           </div>
         </div>
-        <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
+        <LandingPageFooter className="bg-orange-50  flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>
   );

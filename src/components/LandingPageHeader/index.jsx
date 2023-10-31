@@ -15,6 +15,7 @@ const LandingPageHeader = (props) => {
   var token = localStorage.getItem("JWT");
   var userPic = localStorage.getItem("userData");
   var userId = localStorage.getItem("userId");
+  var userRole = localStorage.getItem("userRole");
   console.log(token);
   console.log(userPic);
   console.log(userId);
@@ -46,7 +47,7 @@ const LandingPageHeader = (props) => {
               <div></div>
             </div>
           </div>
-          <div className="flex sm:flex-1 sm:flex-col flex-row sm:hidden items-center justify-between w-[492px] sm:w-full">
+          <div className="flex sm:flex-1 sm:flex-col flex-row sm:hidden items-center justify-between">
             <List
               className="flex gap-x-10 "
               orientation="horizontal"
@@ -109,8 +110,8 @@ const LandingPageHeader = (props) => {
            
             {!token ? (
               <Link to="/login">
-                <Button className="bg-gray-800 hover:bg-gray-900 cursor-pointer font-manrope font-semibold py-3 px-8 rounded-[10px] text-base text-center text-white-A700 ">
-                  Log in
+                <Button className="bg-gray-800 hover:bg-gray-900 text-white cursor-pointer font-manrope font-semibold py-3 px-8 rounded-[10px]">
+                  Account
                 </Button>
               </Link>
             ) : (
@@ -140,7 +141,22 @@ const LandingPageHeader = (props) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 z-10 mt-3 w-48 origin-top-right rounded-md bg-white-A700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute right-0 z-10 mt-3 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                   {userRole == "seller" ?   <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            onClick={() => {
+                              navigate(`/sellerdashboard/home`);
+                            }}
+                            className={classNames(
+                              active ? "bg-gray-100" : "",
+                              "flex px-4 py-2 w-full text-sm text-gray-700"
+                            )}
+                          >
+                            Dashboard
+                          </button>
+                        )}
+                      </Menu.Item>:
                       <Menu.Item>
                         {({ active }) => (
                           <button
@@ -155,7 +171,7 @@ const LandingPageHeader = (props) => {
                             Your Profile
                           </button>
                         )}
-                      </Menu.Item>
+                      </Menu.Item>}
 
                       <Menu.Item>
                         {({ active }) => (

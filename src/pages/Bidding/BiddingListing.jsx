@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import {
   Button,
@@ -23,7 +23,11 @@ import {
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { useNavigate } from "react-router-dom";
+import Timer from "./Timer";
 
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { useFormik } from "formik";
 const sortOptions = [
   { name: "Most Popular", href: "#" },
   { name: "Best Rating", href: "#" },
@@ -73,15 +77,39 @@ function classNames(...classes) {
 }
 
 const BiddingListing = () => {
+  var userId = localStorage.getItem("userId");
+  var userRole = localStorage.getItem("userRole");
+  var token = localStorage.getItem("JWT");
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
   const [listing, setListing] = useState(null);
+  const [bidEndTime, setBidEndTime] = useState("");
   const [open, setOpen] = useState(false);
+  const [biddingId, setBiddingId] = useState("");
+
+  const cancelButtonRef = useRef(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const handleLisitng = () => {
       try {
-        axios.get("http://localhost:3000/property/get-bidding-properties").then((res) => {
-          setListing(res?.data);
-          console.log(res?.data);
-        });
+        axios
+          .get("http://localhost:3000/property/get-bidding-properties")
+          .then((res) => {
+            setListing(res?.data);
+            console.log(res?.data);
+            var dateOnly;
+            res?.data?.map((time) => {
+              const dateTimeString = time?.biddingEndTime;
+              dateOnly = dateTimeString.substring(0, 10); // Extract the date as a string
+              const dateAsString = String(dateOnly);
+              console.log("dateAsString", dateOnly);
+              setBidEndTime(dateOnly);
+            });
+
+            console.log(res?.data);
+          });
       } catch (error) {
         console.log(error);
       }
@@ -89,11 +117,40 @@ const BiddingListing = () => {
     handleLisitng();
   }, []);
 
+  const handlePropertyDetails = (id) => {
+    navigate(`/propertydetails/${id}`);
+  };
+
+  const PlaceBid = useFormik({
+    initialValues: {
+      biddingPrice: "",
+    },
+    onSubmit: (values) => {
+      const JSON = {
+        biddingPrice: values.biddingPrice,
+      };
+      try {
+        axios
+          .post(
+            `http://localhost:3000/bidding/${biddingId}/placeBid`,
+            JSON,
+            config
+          )
+          .then((res) => {
+            console.log(res?.data);
+            navigate(`/propertydetails/${biddingId}`);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
+
   return (
     <>
-      <div className="bg-gray-51 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
+      <div className="bg-white flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col md:gap-10 gap-y-10 items-center justify-center w-full">
-          <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
+          <LandingPageHeader className="bg-orange-50  flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
 
           {/* Mobile filter dialog */}
 
@@ -242,97 +299,148 @@ const BiddingListing = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-row items-start justify-start w-full">
-                <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-2 justify-center min-h-[auto] w-full">
-                  {listing?.map((property) => (
-                    <div className="bg-gray-51 border border-red-101 border-solid flex items-start justify-start rounded-lg w-full">
-                      <div className="flex flex-col gap-[27px] items-start justify-start w-full">
-                        <div className="flex flex-col">
-                          <Img
-                            className="h-96 w-full object-center object-cover rounded-t-lg"
-                            src={property?.images[0]}
-                            alt="eye"
-                          />
-                          <div className="flex w-full items-center justify-between pr-2 pl-2">
-                            <h2 className="text-xl font-semibold px-4 pt-4 font-manrope">
-                              {property?.name}
-                            </h2>
-                            <h2 className="text-xl font-semibold px-4 pt-4 font-manrope">
-                              {"$" + property?.fixedPrice}
-                            </h2>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-[21px] items-start justify-start w-full px-4">
-                          <div className="flex flex-row gap-10 items-center justify-between w-full px-4">
-                            <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
-                              <Img
-                                className="h-5 w-5"
-                                src="images/img_bookmark.svg"
-                                alt="bookmark"
-                              />
-                              <Text
-                                className="flex-1 text-base text-gray-700 w-auto"
-                                size="txtManropeSemiBold16Gray700"
-                              >
-                                {property?.specifications[0]}
-                              </Text>
-                            </div>
-                            <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
-                              <Img
-                                className="h-5 w-5"
-                                src="images/img_ticket.svg"
-                                alt="ticket"
-                              />
-                              <Text
-                                className="text-base text-gray-700 w-auto"
-                                size="txtManropeSemiBold16Gray700"
-                              >
-                                {property?.specifications[1]}
-                              </Text>
+              {userRole == "user" && (
+                <div className="flex flex-row items-start justify-start w-full">
+                  <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-2 justify-center min-h-[auto] w-full">
+                    {listing?.map((property) => (
+                      <div className="bg-white border border-red-101 border-solid flex items-start justify-start rounded-lg w-full">
+                        <div className="flex flex-col gap-[27px] items-start justify-start w-full">
+                          <div className="flex flex-col">
+                            <Img
+                              className="h-96 w-full object-center object-cover rounded-t-lg"
+                              src={property?.images[0]}
+                              alt="eye"
+                            />
+                            <div className="flex w-full items-center justify-between pr-2 pl-2">
+                              <h2 className="text-xl font-semibold px-4 pt-4 font-manrope">
+                                {property?.name}
+                              </h2>
+                              <h2 className="text-xl font-semibold px-4 pt-4 font-manrope">
+                                {"$" + property?.fixedPrice}
+                              </h2>
                             </div>
                           </div>
-                          <div className="flex flex-row gap-10 items-center justify-between w-full px-4">
-                            <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
-                              <Img
-                                className="h-5 w-5"
-                                src="images/img_icon.svg"
-                                alt="icon"
-                              />
-                              <Text
-                                className="flex-1 text-base text-gray-700 w-auto"
-                                size="txtManropeSemiBold16Gray700"
-                              >
-                                {property?.specifications[2]}
-                              </Text>
+                          <div className="flex flex-col gap-[21px] items-start justify-start w-full px-4">
+                            <div className="flex flex-row gap-10 items-center justify-between w-full px-4">
+                              <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                                <Img
+                                  className="h-5 w-5"
+                                  src="images/img_bookmark.svg"
+                                  alt="bookmark"
+                                />
+                                <Text
+                                  className="flex-1 text-base text-gray-700 w-auto"
+                                  size="txtManropeSemiBold16Gray700"
+                                >
+                                  {property?.specifications[0]}
+                                </Text>
+                              </div>
+                              <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                                <Img
+                                  className="h-5 w-5"
+                                  src="images/img_ticket.svg"
+                                  alt="ticket"
+                                />
+                                <Text
+                                  className="text-base text-gray-700 w-auto"
+                                  size="txtManropeSemiBold16Gray700"
+                                >
+                                  {property?.specifications[1]}
+                                </Text>
+                              </div>
                             </div>
-                            <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
-                              <Img
-                                className="h-5 w-5"
-                                src="images/img_settings.svg"
-                                alt="settings"
-                              />
-                              <Text
-                                className="text-base text-gray-700 w-auto"
-                                size="txtManropeSemiBold16Gray700"
-                              >
-                                {property?.specifications[3]}
-                              </Text>
+                            <div className="flex flex-row gap-10 items-center justify-between w-full px-4">
+                              <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                                <Img
+                                  className="h-5 w-5"
+                                  src="images/img_icon.svg"
+                                  alt="icon"
+                                />
+                                <Text
+                                  className="flex-1 text-base text-gray-700 w-auto"
+                                  size="txtManropeSemiBold16Gray700"
+                                >
+                                  {property?.specifications[2]}
+                                </Text>
+                              </div>
+                              <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                                <Img
+                                  className="h-5 w-5"
+                                  src="images/img_settings.svg"
+                                  alt="settings"
+                                />
+                                <Text
+                                  className="text-base text-gray-700 w-auto"
+                                  size="txtManropeSemiBold16Gray700"
+                                >
+                                  {property?.specifications[3]}
+                                </Text>
+                              </div>
                             </div>
+                            <Timer time={bidEndTime} />
                           </div>
-                        </div>
-                        <div className="flex flex-row items-center justify-start w-full">
-                          <button
-                            className="bg-gray-900 cursor-pointer flex-1 font-manrope font-semibold py-[13px] rounded-[10px] text-base text-center text-white-A700 w-full"
-                            onClick={() => handlePropertyDetails(property?._id)}
-                          >
-                            Details
-                          </button>
+
+                          <div className="flex flex-row gap-x-2  items-center justify-start w-full">
+                            <button
+                              className="bg-gray-900 cursor-pointer flex-1 font-manrope font-semibold py-5 rounded-[10px] text-base text-center text-white w-full"
+                              onClick={() =>
+                                handlePropertyDetails(property?._id)
+                              }
+                            >
+                              Details
+                            </button>
+                            <button
+                              className="bg-gray-900 cursor-pointer flex-1 font-manrope font-semibold py-5 rounded-[10px] text-base text-center text-white w-full"
+                              onClick={() => {
+                                document
+                                  .getElementById("my_modal_1")
+                                  .showModal();
+                                setBiddingId(property?._id);
+                              }}
+                            >
+                              Apply Bid
+                            </button>
+
+                            <dialog id="my_modal_1" className="modal">
+                              <div className="modal-box">
+                                <h3 className="font-bold text-lg">
+                                  Place Your Bid
+                                </h3>
+                                <form
+                                  onSubmit={PlaceBid.handleSubmit}
+                                  method="dialog"
+                                >
+                                  <input
+                                    type="text"
+                                    id="biddingPrice"
+                                    name="biddingPrice"
+                                    value={PlaceBid.values.biddingPrice}
+                                    onChange={PlaceBid.handleChange}
+                                    placeholder="Enter your Bidding Price"
+                                    className="input input-bordered w-full rounded-md mt-3"
+                                  />
+
+                                  <div className="modal-action">
+                                    <button
+                                      className="btn bg-blue-600 text-white tracking-wide"
+                                      type="submit"
+                                    >
+                                      Submit
+                                    </button>
+                                    <form method="dialog">
+                                      <button className="btn">Close</button>
+                                    </form>
+                                  </div>
+                                </form>
+                              </div>
+                            </dialog>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
               {/* <div className="flex flex-1 flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
                 <div className="flex sm:flex-col flex-row gap-5 items-center justify-between w-full">
                   <div className="flex flex-row gap-[5px] items-start justify-start w-auto">
@@ -371,7 +479,7 @@ const BiddingListing = () => {
             </div>
           </div>
         </div>
-        <LandingPageFooter className="bg-white-A700-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
+        <LandingPageFooter className="bg-orange-50  flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>
   );

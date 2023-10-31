@@ -68,9 +68,9 @@ const Profile = () => {
 
   return (
     <>
-      <div className="bg-gray-51 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-center mx-auto w-auto sm:w-full md:w-full">
+      <div className="bg-white flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-center mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col items-start justify-start w-full">
-          <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
+          <LandingPageHeader className="bg-orange-50  flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div className="flex flex-col font-manrope md:px-5 relative w-full">
             <div className="flex flex-1 flex-col items-center justify-start mx-auto w-full">
               <img
@@ -150,7 +150,7 @@ const Profile = () => {
                     </div>
                   </div>
                   <Link to={`/editprofile/${user?._id}`}>
-                  <button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
+                  <button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-3 rounded-[10px] text-base text-center text-white">
                     Edit Profile
                   </button>
                   </Link>
@@ -163,7 +163,7 @@ const Profile = () => {
                     <div className="md:gap-5 gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-center min-h-[auto] w-full">
                       {sellerProperties.length > 0 ?
                       sellerProperties?.map((property) => (
-                        <div className="bg-gray-51 border border-red-101 border-solid flex items-start justify-start rounded-lg w-full">
+                        <div className="bg-white border border-red-101 border-solid flex items-start justify-start rounded-lg w-full">
                           <div className="flex flex-col gap-[27px] items-start justify-start w-full">
                             <div className="flex flex-col">
                               <Img
@@ -240,7 +240,7 @@ const Profile = () => {
                             </div>
                             <div className="flex flex-row items-center justify-start w-full">
                               <button
-                                className="bg-gray-900 cursor-pointer flex-1 font-manrope font-semibold py-[13px] rounded-[10px] text-base text-center text-white-A700 w-full"
+                                className="bg-gray-900 cursor-pointer flex-1 font-manrope font-semibold py-[13px] rounded-[10px] text-base text-center text-white w-full"
                                 onClick={() =>
                                   handlePropertyDetails(property?._id)
                                 }
@@ -260,7 +260,7 @@ const Profile = () => {
           </div>
         </div>
         {/* <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
-          <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-center justify-center max-w-[1200px] mx-auto p-[42px] md:px-5 rounded-[10px] w-full">
+          <div className="bg-orange-50  border border-bluegray-100 border-solid flex flex-col items-center justify-center max-w-[1200px] mx-auto p-[42px] md:px-5 rounded-[10px] w-full">
             <div className="flex flex-col items-center justify-center w-full">
               <div className="flex md:flex-col flex-row md:gap-10 gap-[65px] items-start justify-center w-full">
                 <div className="flex flex-1 flex-col gap-[57px] items-start justify-start w-full">
@@ -358,7 +358,7 @@ const Profile = () => {
                       </>
                     </Text>
                   </div>
-                  <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[525px] sm:min-w-full py-[13px] rounded-[10px] text-base text-center text-white-A700">
+                  <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[525px] sm:min-w-full py-[13px] rounded-[10px] text-base text-center text-white">
                     Contact
                   </Button>
                 </div>
@@ -491,7 +491,7 @@ const Profile = () => {
           </div>
         </div> */}
         {/* <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
-          <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start max-w-[1200px] mx-auto md:px-5 py-[30px] rounded-[10px] w-full">
+          <div className="bg-orange-50  border border-bluegray-100 border-solid flex flex-col items-start justify-start max-w-[1200px] mx-auto md:px-5 py-[30px] rounded-[10px] w-full">
             <div className="flex flex-col items-start justify-start w-full">
               <div className="flex flex-col gap-10 items-start justify-start w-full">
                 <div className="flex flex-col gap-[22px] items-center justify-start w-full">
@@ -512,7 +512,7 @@ const Profile = () => {
                         />
                       }
                     >
-                      <div className="font-bold text-left text-lg text-white-A700">
+                      <div className="font-bold text-left text-lg text-white">
                         Write a Reveiw
                       </div>
                     </Button>
@@ -524,7 +524,7 @@ const Profile = () => {
                     className="flex flex-col gap-[25px] items-center w-full"
                     orientation="vertical"
                   >
-                    <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-1 flex-col items-start justify-start sm:px-5 px-[30px] py-[39px] rounded-[20px] w-full">
+                    <div className="bg-orange-50  border border-bluegray-100 border-solid flex flex-1 flex-col items-start justify-start sm:px-5 px-[30px] py-[39px] rounded-[20px] w-full">
                       <div className="flex flex-col gap-10 items-start justify-start w-full">
                         <Text
                           className="leading-[165.00%] max-w-[1090px] md:max-w-full text-2xl md:text-[22px] text-gray-600 sm:text-xl"
@@ -598,7 +598,7 @@ const Profile = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-1 flex-col items-start justify-start sm:px-5 px-[30px] py-[39px] rounded-[20px] w-full">
+                    <div className="bg-orange-50  border border-bluegray-100 border-solid flex flex-1 flex-col items-start justify-start sm:px-5 px-[30px] py-[39px] rounded-[20px] w-full">
                       <div className="flex flex-col gap-10 items-start justify-start w-full">
                         <Text
                           className="leading-[165.00%] max-w-[1090px] md:max-w-full text-2xl md:text-[22px] text-gray-600 sm:text-xl"
@@ -672,7 +672,7 @@ const Profile = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-1 flex-col items-start justify-start sm:px-5 px-[30px] py-[39px] rounded-[20px] w-full">
+                    <div className="bg-orange-50  border border-bluegray-100 border-solid flex flex-1 flex-col items-start justify-start sm:px-5 px-[30px] py-[39px] rounded-[20px] w-full">
                       <div className="flex flex-col gap-10 items-start justify-start w-full">
                         <Text
                           className="leading-[165.00%] max-w-[1090px] md:max-w-full text-2xl md:text-[22px] text-gray-600 sm:text-xl"
@@ -768,7 +768,7 @@ const Profile = () => {
             </div>
           </div>
         </div> */}
-        <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
+        <LandingPageFooter className="bg-orange-50  flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>
   );

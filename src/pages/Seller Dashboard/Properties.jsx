@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import storage from "../../../fireabse";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
 
 const Properties = () => {
     
@@ -19,6 +20,7 @@ const Properties = () => {
   const [loader, setLoader] = useState(false);
   const [imgMetaData, setImgMetaData] = useState("");
   const [specification, setSpecification] = useState([]);
+  const navigate = useNavigate()
 
   const handleSpecification = (speci) => {
     const speciArray = []
@@ -74,7 +76,7 @@ const Properties = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [properties]);
+  }, [show]);
 
   const AddProperty = useFormik({
     initialValues: {},
@@ -83,7 +85,6 @@ const Properties = () => {
         name: values.name,
         description: values.description,
         fixedPrice: values.fixedPrice,
-        isBidding: values.isBidding,
         images: url,
         specifications: [values.bedrooms, values.bathrooms, values.square, values.other],
       };
@@ -109,6 +110,33 @@ const Properties = () => {
           .then((res) => {
             console.log(res.data);
             setProperties(res?.data?.properties)
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+  }
+
+
+  const handleStartBidding = async (id) =>{
+    try {
+        await axios
+          .put(`http://localhost:3000/bidding/${id}/startBidding`, config)
+          .then((res) => {
+            console.log(res.data);
+            // setProperties(res?.data?.properties)
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+  }
+
+  const handleStopBidding = async (id) =>{
+    try {
+        await axios
+          .put(`http://localhost:3000/bidding/${id}/stopBidding`, config)
+          .then((res) => {
+            console.log(res.data);
+            // setProperties(res?.data?.properties)
           });
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -175,6 +203,12 @@ const Properties = () => {
                       </th>
                       <th
                         scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Bidding
+                      </th>
+                      <th
+                        scope="col"
                         className="relative py-3.5 pl-3 pr-4 sm:pr-0"
                       >
                         <span className="">Actions</span>
@@ -204,11 +238,16 @@ const Properties = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                          {property?.description}
+                        <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500 ">
+                         <p className="truncate w-60">
+                             {property?.description}
+                            </p>
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                          {property?.location?.address}
+                        <p className="truncate w-40">
+                        {property?.location?.address}
+                            </p>
+                          
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
@@ -218,12 +257,21 @@ const Properties = () => {
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           5.0 rating
                         </td>
+                        <td className="whitespace-nowrap px-3 py-5 text-center text-sm text-gray-500">
+                        {property?.isBidding == true ? "Yes" : "No"}
+                        </td>
                         <td className="flex items-center gap-x-2 justify-center whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                          <button className="text-white-A700 px-4 py-2 rounded-lg bg-blue-600">
+                          <button className="text-white-A700 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500" onClick={()=> navigate(`/sellerdashboard/edit-properties/${property?._id}`) }>
                             Edit
                           </button>
-                          <button className="text-white-A700 px-3 py-2 rounded-lg bg-red-600" onClick={()=>handleDeleteProperty(property._id)}> 
+                          <button className="text-white-A700 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500" onClick={()=>handleDeleteProperty(property?._id)}> 
                             Delete
+                          </button>
+                          <button className="text-white-A700 px-3 py-2 rounded-lg bg-green-600 hover:bg-green-500" onClick={()=>handleStartBidding(property?._id)}> 
+                            Start Bidding
+                          </button>
+                          <button className="text-white-A700 px-3 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-500" onClick={()=>handleStopBidding(property?._id)}>
+                            Stop Bidding
                           </button>
                         </td>
                       </tr>
@@ -260,7 +308,7 @@ const Properties = () => {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6 px-4">
                   <div className="col-span-full flex items-center gap-x-8">
                     <img
-                      src={url}
+                      src={url ? url : "https://w7.pngwing.com/pngs/527/625/png-transparent-scalable-graphics-computer-icons-upload-uploading-cdr-angle-text-thumbnail.png"}
                       alt=""
                       className="h-24 w-24 flex-none rounded-lg bg-gray-800 object-cover"
                     />
@@ -383,7 +431,7 @@ const Properties = () => {
                       />
                     </div>
                   </div>
-                  <div class="flex items-center">
+                  {/* <div class="flex items-center">
                     <input
                       id="isBidding"
                       type="checkbox"
@@ -397,7 +445,7 @@ const Properties = () => {
                     >
                       List for Bidding
                     </label>
-                  </div>
+                  </div> */}
 
                   <div className="col-span-full">
                     <label

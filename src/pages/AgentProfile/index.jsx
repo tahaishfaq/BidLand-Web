@@ -67,9 +67,9 @@ const AgentProfilePage = () => {
 
   return (
     <>
-      <div className="bg-gray-51 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-center mx-auto w-auto sm:w-full md:w-full">
+      <div className="bg-white flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-center mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col items-start justify-start w-full">
-          <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
+          <LandingPageHeader className="bg-orange-50 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div className="flex flex-col font-manrope md:px-5 relative w-full">
             <div className="flex flex-1 flex-col items-center justify-start mx-auto w-full">
               <img
@@ -148,14 +148,14 @@ const AgentProfilePage = () => {
                       </div>
                     </div>
                   </div>
-                  <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
+                  <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-3 rounded-[10px] text-base text-center text-white">
                     Contact
                   </Button>
                 </div>
               </div>
               <div className="flex flex-col items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
                 <div className="flex flex-col gap-12 justify-center w-full">
-                 <h2 className="mt-4 text-2xl font-semibold ml-3">My Lising</h2>
+                 <h2 className="mt-4 text-2xl font-semibold ml-3">My Listing</h2>
                   <div className="flex flex-col items-center justify-center w-full">
                     <div className="md:gap-5 gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-center min-h-[auto] w-full">
                       {sellerProperties.length > 0 ?
@@ -237,7 +237,7 @@ const AgentProfilePage = () => {
                             </div>
                             <div className="flex flex-row items-center justify-start w-full">
                               <button
-                                className="bg-gray-900 cursor-pointer flex-1 font-manrope font-semibold py-[13px] rounded-[10px] text-base text-center text-white-A700 w-full"
+                                className="bg-gray-900 cursor-pointer flex-1 font-manrope font-semibold py-5 rounded-[10px] text-base text-center text-white w-full"
                                 onClick={() =>
                                   handlePropertyDetails(property?._id)
                                 }
@@ -765,7 +765,7 @@ const AgentProfilePage = () => {
             </div>
           </div>
         </div>
-        <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
+        <LandingPageFooter className="bg-orange-50  flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>
   );

@@ -35,18 +35,18 @@ const AgentListPage = () => {
   };
   return (
     <>
-      <div className="bg-gray-51 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
+      <div className="bg-white flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col gap-14 items-start justify-start w-full">
-          <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
+          <LandingPageHeader className="bg-orange-50  flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
             <div className="flex flex-col gap-6 items-center justify-center max-w-[1200px] mx-auto w-full">
               <Text
                 className="text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px] w-full"
                 size="txtManropeExtraBold36"
               >
-                Search Sellers
+                Sellers Profile
               </Text>
-              <div className="flex md:flex-col flex-row gap-4 items-center justify-start w-full">
+              {/* <div className="flex md:flex-col flex-row gap-4 items-center justify-start w-full">
                 <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-1 flex-col items-start justify-start px-4 py-3.5 rounded-[10px] w-full">
                   <Input
                     name="frame1000001612"
@@ -92,7 +92,7 @@ const AgentListPage = () => {
                     Search
                   </div>
                 </Button>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="flex flex-col font-manrope md:gap-10 gap-[60px] items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
@@ -146,7 +146,7 @@ const AgentListPage = () => {
             </div>
           </div>
         </div>
-        <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
+        <LandingPageFooter className="bg-orange-50  flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>
   );
