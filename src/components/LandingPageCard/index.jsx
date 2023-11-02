@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Button, Img, Text } from "components";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { HeartIcon } from "@heroicons/react/24/outline";
 
 const LandingPageCard = (props) => {
   const navigate = useNavigate();
   const [listing, setListing] = useState(null);
+  const [wishlist, setWishlist] = useState(JSON.parse(localStorage.getItem("wishlist")));
 
   useEffect(() => {
     const handleLisitng = () => {
@@ -25,15 +27,27 @@ const LandingPageCard = (props) => {
   const handlePropertyDetails = (id) => {
     navigate(`/propertydetails/${id}`);
   };
+  
+
+  useEffect(() => {
+    // Save the wishlist to localStorage whenever it changes
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  const handleWishList = (product) => {
+    if (!wishlist.some((item) => item._id === product._id)) {
+      setWishlist([...wishlist, product]);
+    }
+  };
   return (
     <>
       {listing?.map((property) => (
         <div className="border border-solid flex items-start justify-start rounded-lg w-full">
           <div className="flex flex-col gap-[27px] items-start justify-start w-full">
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               <img
-                className="h-96 w-full object-center object-cover rounded-t-lg"
-                src={property?.images[0] }
+                className="h-96 w-full object-center object-cover rounded-t-lg "
+                src={property?.images[0]}
                 alt="eye"
               />
               <div className="flex w-full items-center justify-between pr-2 pl-2">
@@ -44,7 +58,16 @@ const LandingPageCard = (props) => {
                   {"$" + property?.fixedPrice}
                 </h2>
               </div>
+              <div
+                className="absolute bg-gray-100 items-center rounded-full p-2 top-4 right-4"
+                onClick={() => handleWishList(property)}
+              >
+                <span>
+                  <HeartIcon className="w-8 h-8 text-gray-600 cursor-pointer hover:text-gray-800" />
+                </span>
+              </div>
             </div>
+
             <div className="flex flex-col gap-[21px] items-start justify-start w-full px-4">
               <div className="flex flex-row gap-10 items-center justify-between w-full px-4">
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">

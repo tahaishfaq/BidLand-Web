@@ -11,6 +11,7 @@ import Profile from "pages/Auth/Profile";
 import SellerDashboard from "pages/Seller Dashboard/SellerDashboard";
 import EditProfile from "pages/Auth/EditProfile";
 import BiddingListing from "pages/Bidding/BiddingListing";
+import Wishlist from "pages/WishList/Wishlist";
 const License = React.lazy(() => import("pages/License"));
 const PrivacyPolicy = React.lazy(() => import("pages/PrivacyPolicy"));
 const FAQ = React.lazy(() => import("pages/FAQ"));
@@ -40,6 +41,7 @@ const ProjectRoutes = () => {
           <Route path="*" element={<NotFound />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/listing" element={<Listing />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/biddinglisting" element={<BiddingListing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

@@ -29,6 +29,7 @@ import {
 } from "@heroicons/react/24/outline";
 import {
   ArrowRightOnRectangleIcon,
+  ArrowTrendingUpIcon,
   ChevronDownIcon,
   HomeModernIcon,
   MagnifyingGlassIcon,
@@ -36,11 +37,14 @@ import {
 import ViewAllUsers from "./ViewAllUsers";
 import Properties from "./Properties";
 import PropertiesEdit from './PropertiesEdit';
+import EditProfile from "./EditProfile";
+import Bids from "./Bids";
 
 const navigation = [
   { name: "Dashboard", href: "home", icon: HomeIcon, current: true },
   { name: "Users", href: "get-all-users", icon: UsersIcon, current: false },
   { name: "Properties", href: "get-properties", icon: HomeModernIcon, current: false },
+  { name: "Bids", href: "bids", icon: ArrowTrendingUpIcon, current: false },
 
 ];
 const teams = [
@@ -195,7 +199,7 @@ export default function Example() {
                         {({ active }) => (
                           <button
                             onClick={() => {
-                              // navigate(`/userprofile/${userId}`);
+                              navigate(`edit-profile/${userId}`);
                             }}
                             className={classNames(
                               active ? "bg-gray-100" : "",
@@ -239,6 +243,8 @@ export default function Example() {
               <Route path="/get-all-users" element={<ViewAllUsers />} />
               <Route path="/get-properties" element={<Properties />} />
               <Route path="/edit-properties/:id" element={<PropertiesEdit />} />
+              <Route path="/edit-profile/:id" element={<EditProfile />} />
+              <Route path="/bids" element={<Bids/>} />
                 {/* <Route path="/navbar" element={<ClientsNavBar />}>
                   <Route index element={<Clients />} />
                   <Route path="add-new-client" element={<AddNewClient />} />

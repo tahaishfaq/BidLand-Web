@@ -4,7 +4,7 @@ import { Button, Img, List, Text } from "components";
 import { Link, useNavigate } from "react-router-dom";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, HeartIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { HomeModernIcon } from "@heroicons/react/20/solid";
 
 function classNames(...classes) {
@@ -106,8 +106,12 @@ const LandingPageHeader = (props) => {
                 </div>
                   </List>
           </div>
-          <div className="flex flex-row gap-x-4  md:h-auto sm:hidden items-center justify-center">
-           
+          <div className="flex flex-row gap-x-5  md:h-auto sm:hidden items-center justify-center">
+            <span>
+              <Link to="/wishlist">
+              <HeartIcon className="w-8 h-8 text-gray-400 cursor-pointer hover:text-gray-600"/>
+              </Link>
+            </span>
             {!token ? (
               <Link to="/login">
                 <Button className="bg-gray-800 hover:bg-gray-900 text-white cursor-pointer font-manrope font-semibold py-3 px-8 rounded-[10px]">

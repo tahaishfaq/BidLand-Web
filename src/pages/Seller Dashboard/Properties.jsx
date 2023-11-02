@@ -22,11 +22,7 @@ const Properties = () => {
   const [specification, setSpecification] = useState([]);
   const navigate = useNavigate()
 
-  const handleSpecification = (speci) => {
-    const speciArray = []
-    speciArray.push(speci)
-    console.log(speciArray);
-  };
+
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
       setLoader(true);
@@ -261,16 +257,16 @@ const Properties = () => {
                         {property?.isBidding == true ? "Yes" : "No"}
                         </td>
                         <td className="flex items-center gap-x-2 justify-center whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                          <button className="text-white-A700 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500" onClick={()=> navigate(`/sellerdashboard/edit-properties/${property?._id}`) }>
+                          <button className="text-white px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500" onClick={()=> navigate(`/sellerdashboard/edit-properties/${property?._id}`) }>
                             Edit
                           </button>
-                          <button className="text-white-A700 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500" onClick={()=>handleDeleteProperty(property?._id)}> 
+                          <button className="text-white px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500" onClick={()=>handleDeleteProperty(property?._id)}> 
                             Delete
                           </button>
-                          <button className="text-white-A700 px-3 py-2 rounded-lg bg-green-600 hover:bg-green-500" onClick={()=>handleStartBidding(property?._id)}> 
+                          <button className="text-white px-3 py-2 rounded-lg bg-green-600 hover:bg-green-500" onClick={()=>handleStartBidding(property?._id)}> 
                             Start Bidding
                           </button>
-                          <button className="text-white-A700 px-3 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-500" onClick={()=>handleStopBidding(property?._id)}>
+                          <button className="text-white px-3 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-500" onClick={()=>handleStopBidding(property?._id)}>
                             Stop Bidding
                           </button>
                         </td>
@@ -292,10 +288,11 @@ const Properties = () => {
                     className="w-7 h-7 cursor-pointer"
                     onClick={() => setShow(true)}
                   />
-                  <h2 className="text-base font-semibold leading-7 text-white">
-                    Add Property
+                  <h2 className="text-base font-semibold leading-7">
+                    Back
                   </h2>
                 </div>
+                <h2 className="mt-5  ml-6 text-base font-semibold leading-7">Add Property</h2>
                 <p className="mt-1  ml-6 text-sm leading-6 text-gray-400">
                   You can add property to the platform here.
                 </p>
@@ -305,7 +302,7 @@ const Properties = () => {
                 className="md:col-span-2"
                 onSubmit={AddProperty.handleSubmit}
               >
-                <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6 px-4">
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:max-w-xl sm:grid-cols-6 px-4">
                   <div className="col-span-full flex items-center gap-x-8">
                     <img
                       src={url ? url : "https://w7.pngwing.com/pngs/527/625/png-transparent-scalable-graphics-computer-icons-upload-uploading-cdr-angle-text-thumbnail.png"}
@@ -335,11 +332,11 @@ const Properties = () => {
                     ) : (
                       <label
                         for="dropzone-file"
-                        class="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-100 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                        class="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-100 "
                       >
                         <div class="flex flex-col items-center justify-center">
                           <svg
-                            class="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400"
+                            class="w-8 h-8 mb-2 text-gray-500 "
                             aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -377,7 +374,7 @@ const Properties = () => {
                   <div className="col-span-full">
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium leading-6 text-white"
+                      className="block text-sm font-medium leading-6 "
                     >
                       Property Name*
                     </label>
@@ -388,7 +385,7 @@ const Properties = () => {
                         value={AddProperty.values.name}
                         onChange={AddProperty.handleChange}
                         type="text"
-                        className="block w-full rounded-md border-0 bg-gray-100 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-gray-100 py-1.5  shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                       />
                     </div>
                   </div>
@@ -396,7 +393,7 @@ const Properties = () => {
                   <div className="col-span-full">
                     <label
                       htmlFor="description"
-                      className="block text-sm font-medium leading-6 text-white"
+                      className="block text-sm font-medium leading-6 "
                     >
                       Property Description*
                     </label>
@@ -408,7 +405,7 @@ const Properties = () => {
                         value={AddProperty.values?.description}
                         onChange={AddProperty.handleChange}
                         autoComplete="email"
-                        className="block w-full rounded-md border-0 bg-gray-100 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-gray-100 py-1.5  shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                       />
                     </div>
                   </div>
@@ -416,7 +413,7 @@ const Properties = () => {
                   <div className="col-span-full">
                     <label
                       htmlFor="fixedPrice"
-                      className="block text-sm font-medium leading-6 text-white"
+                      className="block text-sm font-medium leading-6 "
                     >
                       Price*
                     </label>
@@ -427,7 +424,7 @@ const Properties = () => {
                         type="text"
                         value={AddProperty.values?.fixedPrice}
                         onChange={AddProperty.handleChange}
-                        className="block w-full rounded-md border-0 bg-gray-100 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 bg-gray-100 py-1.5  shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                       />
                     </div>
                   </div>
@@ -450,7 +447,7 @@ const Properties = () => {
                   <div className="col-span-full">
                     <label
                       htmlFor="specification"
-                      className="block text-sm font-medium leading-6 text-white"
+                      className="block text-sm font-medium leading-6 "
                     >
                       Specification*
                     </label>
@@ -460,7 +457,7 @@ const Properties = () => {
                         name="bedrooms"
                         value={AddProperty.values.bedrooms}
                         onChange={AddProperty.handleChange}
-                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                       >
                         <option value="">Choose Beedrooms</option>
                         <option value="2 Bedrooms">2 Bedrooms</option>
@@ -471,7 +468,7 @@ const Properties = () => {
                         name="bathrooms"
                         value={AddProperty.values.bathrooms}
                         onChange={AddProperty.handleChange}
-                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                       >
                         <option value="">Choose Bathrooms</option>
                         <option value="2 Bathrooms">2 Bathrooms</option>
@@ -484,7 +481,7 @@ const Properties = () => {
                         name="square"
                         value={AddProperty.values.square}
                         onChange={AddProperty.handleChange}
-                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                       >
                         <option value="">Choose Area(sqft)</option>
                         <option value="1500 sqft">1500 sqft</option>
@@ -495,7 +492,7 @@ const Properties = () => {
                         name="other"
                         value={AddProperty.values.other}
                         onChange={AddProperty.handleChange}
-                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                       >
                         <option value="">Choose Other</option>
                         <option value="Swimming Pool">Swimming Pool</option>
@@ -510,7 +507,7 @@ const Properties = () => {
                 <div className="mt-8 flex px-4">
                   <button
                     type="submit"
-                    className="rounded-md bg-blue-500 text-white-A700 px-4 py-2 text-sm font-semibold tracking-wide shadow-sm hover:bg-blue-400 "
+                    className="rounded-md bg-blue-500 text-white px-4 py-2 text-sm font-semibold tracking-wide shadow-sm hover:bg-blue-400 "
                   >
                     Add Property
                   </button>

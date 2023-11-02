@@ -28,7 +28,18 @@ import {
 } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
-
+const people = [
+  {
+    name: 'Lindsay Walton',
+    title: 'Front-end Developer',
+    department: 'Optimization',
+    email: 'lindsay.walton@example.com',
+    role: 'Member',
+    image:
+      'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+  },
+  // More people...
+]
 const navigation = {
   categories: [
     {
@@ -327,6 +338,7 @@ const PropertyDetailsPage = () => {
   const [sellerInfo, setSellerInfo] = useState(null);
   const [propertyImages, setPropertyImages] = useState([]);
   const [propertyCoordinates, setPropertyCoordiantes] = useState(null);
+  const [propertyBids, setPropertyBids] = useState(null)
   useEffect(() => {
     const handleLisitng = async () => {
       try {
@@ -338,6 +350,7 @@ const PropertyDetailsPage = () => {
             setPropertyCoordiantes(
               res?.data?.property?.location?.coordinates
             );
+            setPropertyBids(res?.data?.property?.bids)
             console.log(res?.data?.property?.location?.coordinates);
             console.log(res?.data?.property);
           });
@@ -994,6 +1007,84 @@ const PropertyDetailsPage = () => {
               </Link>
             </div>
           </div>
+        </div>
+
+        <div className="w-full px-44">
+        <div className="px-4 sm:px-6 lg:px-8">
+      <div className="sm:flex sm:items-center">
+        <div className="sm:flex-auto">
+          <h1 className="text-xl font-semibold leading-6 text-gray-900">Property Bids</h1>
+          <p className="mt-2 text-sm text-gray-700">
+            A list of all the users who bids for this property.
+          </p>
+        </div>
+        
+      </div>
+      <div className="mt-8 flow-root">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full py-2 align-middle px-4 rounded-md">
+            <table className="min-w-full divide-y divide-gray-300 border">
+              <thead>
+                <tr>
+                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                    Name
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    Bidding Amount
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    Status
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    Role
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    Date
+                  </th>
+                  
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 ">
+                {propertyBids?.map((bid) => (
+                  <tr key={bid._id}>
+                    <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
+                      <div className="flex items-center">
+                        <div className="h-11 w-11 flex-shrink-0">
+                          <img className="h-11 w-11 rounded-full" src={bid?.user?.profilePicture} alt="" />
+                        </div>
+                        <div className="ml-4">
+                          <div className="font-medium text-gray-900">{bid?.user?.username}</div>
+                          <div className="mt-1 text-gray-500">{bid?.user?.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                      <div className="text-gray-900">{bid?.biddingPrice}</div>
+                      {/* <div className="mt-1 text-gray-500">{person.department}</div> */}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                      <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                        Active
+                      </span>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                      <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                        {bid?.user?.role}
+                      </span>
+                    </td> 
+                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                      <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                        {bid?.timestamp?.split('T')[0]}
+                      </span>
+                    </td> 
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
         </div>
         <LandingPageFooter className="bg-orange-50 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>

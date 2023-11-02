@@ -1,3 +1,4 @@
+import React from 'react'
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
@@ -21,153 +22,146 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
 const EditProfile = () => {
-  const [user, setUser] = useState(null);
-  const [userPic, setUserPic] = useState("");
-  const { id } = useParams();
-  const [image, setImage] = useState(null);
-  const [url, setUrl] = useState("");
-  const [loader, setLoader] = useState(false);
-  const [imgMetaData, setImgMetaData] = useState("");
-  const navigate = useNavigate();
-
-  const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setLoader(true);
-      setImage(e.target.files[0]);
-      handleUpload(e.target.files[0]);
-    }
-  };
-
-  const handleUpload = (image) => {
-    if (!image) {
-      console.error("Please select an image.");
-      return;
-    }
-
-    const storageRef = ref(storage, `images/${image.name}`);
-
-    uploadBytes(storageRef, image)
-      .then((snapshot) => {
-        console.log("File uploaded successfully!", snapshot);
-        setImgMetaData(snapshot?.metadata?.fullPath);
-        // Get the download URL for the file
-        getDownloadURL(snapshot.ref)
-          .then((downloadURL) => {
-            console.log("File download URL:", downloadURL);
-            setUrl(downloadURL);
-            setLoader(false); // Set the download URL in the component state
-          })
-          .catch((error) => {
-            console.error("Error getting download URL:", error);
-            setLoader(false);
+    const [user, setUser] = useState(null);
+    const [userPic, setUserPic] = useState("");
+    const { id } = useParams();
+    const [image, setImage] = useState(null);
+    const [url, setUrl] = useState("");
+    const [loader, setLoader] = useState(false);
+    const [imgMetaData, setImgMetaData] = useState("");
+    const navigate = useNavigate();
+  
+    const handleImageChange = (e) => {
+      if (e.target.files[0]) {
+        setLoader(true);
+        setImage(e.target.files[0]);
+        handleUpload(e.target.files[0]);
+      }
+    };
+  
+    const handleUpload = (image) => {
+      if (!image) {
+        console.error("Please select an image.");
+        return;
+      }
+  
+      const storageRef = ref(storage, `images/${image.name}`);
+  
+      uploadBytes(storageRef, image)
+        .then((snapshot) => {
+          console.log("File uploaded successfully!", snapshot);
+          setImgMetaData(snapshot?.metadata?.fullPath);
+          // Get the download URL for the file
+          getDownloadURL(snapshot.ref)
+            .then((downloadURL) => {
+              console.log("File download URL:", downloadURL);
+              setUrl(downloadURL);
+              setLoader(false); // Set the download URL in the component state
+            })
+            .catch((error) => {
+              console.error("Error getting download URL:", error);
+              setLoader(false);
+            });
+        })
+        .catch((error) => {
+          console.error("Error uploading file:", error);
+          setLoader(false);
+        });
+    };
+  
+    useEffect(() => {
+      const handleUserProfile = () => {
+        try {
+          axios.get(`http://localhost:3000/auth/user/${id}`).then((res) => {
+            console.log(res?.data?.user);
+            setUser(res?.data?.user);
+            setUserPic(res?.data?.user?.profilePicture);
+            ProfileForm.setValues({
+              username: res?.data?.user?.username,
+              email: res?.data?.user?.email,
+              phone: res?.data?.user?.phone,
+            });
           });
-      })
-      .catch((error) => {
-        console.error("Error uploading file:", error);
-        setLoader(false);
-      });
-  };
-
-  useEffect(() => {
-    const handleUserProfile = () => {
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      handleUserProfile();
+    }, []);
+  
+    const ProfileForm = useFormik({
+      initialValues: {
+        username: "",
+        email: "",
+        password: "",
+        phone: "",
+        profilePicture: "",
+      },
+      onSubmit: async (values) => {
+        var json = {
+          username: values.username,
+          email: values.email,
+          phone: values.phone,
+          profilePicture: url ? url : userPic,
+        };
+        console.log("json", json);
+        try {
+          await axios
+            .put(`http://localhost:3000/auth/user/${id}`, json)
+            .then((res) => {
+              localStorage.setItem("userData", res?.data?.profilePicture);
+              console.log(res.data);
+            });
+        } catch (error) {
+          console.error("Error submitting form:", error);
+        }
+      },
+      enableReinitialize: true,
+    });
+  
+    const UpdatePassword = useFormik({
+      initialValues: {
+        currentPassword: "",
+        newPassword: "",
+      },
+      onSubmit: async (values) => {
+        var json = {
+          currentPassword: values.currentPassword,
+          newPassword: values.newPassword,
+        };
+        try {
+          await axios
+            .put(`http://localhost:3000/auth/update-password/${id}`, json)
+            .then((res) => {
+              console.log(res.data);
+            });
+        } catch (error) {
+          console.error("Error submitting form:", error);
+        }
+      },
+      enableReinitialize: true,
+    });
+  
+    const handleDeleteAccount = (id) => {
+      console.log(id);
       try {
-        axios.get(`http://localhost:3000/auth/user/${id}`).then((res) => {
-          console.log(res?.data?.user);
-          setUser(res?.data?.user);
-          setUserPic(res?.data?.user?.profilePicture);
-          ProfileForm.setValues({
-            username: res?.data?.user?.username,
-            email: res?.data?.user?.email,
-            phone: res?.data?.user?.phone,
-          });
+        axios.delete(`http://localhost:3000/auth/delete/${id}`).then((res) => {
+          console.log(res);
+          navigate("/");
+          localStorage.removeItem("JWT");
+          localStorage.removeItem("userData");
+          localStorage.removeItem("userPic");
+          localStorage.removeItem("userId");
+          location.reload();
         });
       } catch (error) {
         console.log(error);
       }
     };
-    handleUserProfile();
-  }, []);
-
-  const ProfileForm = useFormik({
-    initialValues: {
-      username: "",
-      email: "",
-      password: "",
-      phone: "",
-      profilePicture: "",
-    },
-    onSubmit: async (values) => {
-      var json = {
-        username: values.username,
-        email: values.email,
-        password: values.password,
-        phone: values.phone,
-        profilePicture: url ? url : userPic,
-      };
-      console.log("json", json);
-      try {
-        await axios
-          .put(`http://localhost:3000/auth/user/${id}`, json)
-          .then((res) => {
-            localStorage.setItem("userData", res?.data?.profilePicture);
-            console.log(res.data);
-          });
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    },
-    enableReinitialize: true,
-  });
-
-  const UpdatePassword = useFormik({
-    initialValues: {
-      currentPassword: "",
-      newPassword: "",
-    },
-    onSubmit: async (values) => {
-      var json = {
-        currentPassword: values.currentPassword,
-        newPassword: values.newPassword,
-      };
-      try {
-        await axios
-          .put(`http://localhost:3000/auth/update-password/${id}`, json)
-          .then((res) => {
-            console.log(res.data);
-          });
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    },
-    enableReinitialize: true,
-  });
-
-  const handleDeleteAccount = (id) => {
-    console.log(id);
-    try {
-      axios.delete(`http://localhost:3000/auth/delete/${id}`).then((res) => {
-        console.log(res);
-        navigate("/");
-        localStorage.removeItem("JWT");
-        localStorage.removeItem("userData");
-        localStorage.removeItem("userPic");
-        localStorage.removeItem("userId");
-        location.reload();
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
-    <>
-      <div className="bg-white flex flex-col font-markoone  items-start justify-start mx-auto w-auto sm:w-full md:w-full">
-        <div className="flex flex-col  items-center justify-center w-full">
-          <LandingPageHeader className="bg-orange-50 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
-          <div className="divide-y divide-gray-300 font-manrope">
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+    <div className="divide-y divide-gray-300 font-manrope">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 pb-6 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 ">
                   Personal Information
@@ -407,10 +401,7 @@ const EditProfile = () => {
               </div>
             </div>
           </div>
-        </div>
-        <LandingPageFooter className="bg-orange-50 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
-      </div>
-    </>
-  );
-};
-export default EditProfile;
+  )
+}
+
+export default EditProfile

@@ -61,9 +61,7 @@ const ViewAllUsers = () => {
                   >
                     Role
                   </th>
-                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                    <span className="">Actions</span>
-                  </th>
+                  
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -96,14 +94,7 @@ const ViewAllUsers = () => {
                         {person?.role}
                       </span>
                     </td>
-                    <td className="flex items-center justify-center whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                      <button
-                        className="text-white-A700 px-4 py-2 rounded-lg bg-blue-600"
-                      >
-                        Edit
-                      </button>
-                      
-                    </td>
+                    
                   </tr>
                 ))}
               </tbody>
