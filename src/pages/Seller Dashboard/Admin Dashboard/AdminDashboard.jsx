@@ -1,17 +1,4 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
+import React from 'react'
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { Link, NavLink, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
@@ -34,39 +21,45 @@ import {
   HomeModernIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import ViewAllUsers from "./ViewAllUsers";
-import Properties from "./Properties";
-import PropertiesEdit from "./PropertiesEdit";
-import EditProfile from "./EditProfile";
+import ViewAllUsers from "../ViewAllUsers";
+import Properties from "../Properties";
+import PropertiesEdit from '../PropertiesEdit';
+import EditProfile from "../EditProfile";
+import Bids from "../Bids";
+import HomePage from './HomePage';
+import UserPage from './UserPage';
+import PropertiesPage from './PropertiesPage';
+import BidsPage from './BidsPage';
 
 
-const navigation = [
-  { name: "Dashboard", href: "home", icon: HomeIcon, current: true },
-  { name: "Users", href: "get-all-users", icon: UsersIcon, current: false },
-  { name: "Properties", href: "get-properties", icon: HomeModernIcon, current: false },
-  { name: "Bids", href: "bids", icon: ArrowTrendingUpIcon, current: false },
-
-];
-const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
-];
-const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
-export default function Example() {
-  const navigate = useNavigate()
-  var token = localStorage.getItem("JWT");
-  var userPic = localStorage.getItem("userData");
-  var userId = localStorage.getItem("userId");
-  var userName = localStorage.getItem("userName");
+const AdminDashboard = () => {
+ 
+  const navigation = [
+    { name: "Dashboard", href: "home-page", icon: HomeIcon, current: true },
+    { name: "Users", href: "get-all-users-page", icon: UsersIcon, current: false },
+    { name: "Properties", href: "get-properties-page", icon: HomeModernIcon, current: false },
+    { name: "Bids", href: "bids-page", icon: ArrowTrendingUpIcon, current: false },
+  
+  ];
+  const teams = [
+    { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
+    { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
+    { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
+  ];
+  const userNavigation = [
+    { name: "Your profile", href: "#" },
+    { name: "Sign out", href: "#" },
+  ];
+  
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(" ");
+  }
+  
+    const navigate = useNavigate()
+    var token = localStorage.getItem("JWT");
+    var userPic = localStorage.getItem("userData");
+    var userId = localStorage.getItem("userId");
+    var userName = localStorage.getItem("userName");
 
   return (
     <>
@@ -240,11 +233,12 @@ export default function Example() {
           <main className="py-10 ">
             <div className="px-4 sm:px-6  lg:px-3">
               <Routes>
-              <Route path="/get-all-users" element={<ViewAllUsers />} />
-              <Route path="/get-properties" element={<Properties />} />
+              <Route path="/home-page" element={<HomePage />} />
+              <Route path="/get-all-users-page" element={<UserPage />} />
+              <Route path="/get-properties-page" element={<PropertiesPage />} />
               <Route path="/edit-properties/:id" element={<PropertiesEdit />} />
               <Route path="/edit-profile/:id" element={<EditProfile />} />
-              <Route path="/bids" element={<Bids/>} />
+              <Route path="/bids-page" element={<BidsPage/>} />
                 {/* <Route path="/navbar" element={<ClientsNavBar />}>
                   <Route index element={<Clients />} />
                   <Route path="add-new-client" element={<AddNewClient />} />
@@ -259,3 +253,7 @@ export default function Example() {
     </>
   );
 }
+
+ 
+
+export default AdminDashboard

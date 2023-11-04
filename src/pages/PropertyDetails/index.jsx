@@ -7,6 +7,7 @@ import LandingPageHeader from "components/LandingPageHeader";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
+import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { Fragment, useState } from "react";
 import {
   Dialog,
@@ -18,9 +19,11 @@ import {
 } from "@headlessui/react";
 import {
   Bars3Icon,
+  CheckCircleIcon,
   HeartIcon,
   MagnifyingGlassIcon,
   MinusIcon,
+  PencilIcon,
   PlusIcon,
   ShoppingBagIcon,
   UserIcon,
@@ -28,18 +31,94 @@ import {
 } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
+import { useFormik } from "formik";
+
+const reviews = [
+  {
+    id: 1,
+    rating: 5,
+    content: `
+      <p>This icon pack is just what I need for my latest project. There's an icon for just about anything I could ever need. Love the playful look!</p>
+    `,
+    date: "July 16, 2021",
+    datetime: "2021-07-16",
+    author: "Emily Selman",
+    avatarSrc:
+      "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
+  },
+  {
+    id: 2,
+    rating: 5,
+    content: `
+      <p>Blown away by how polished this icon pack is. Everything looks so consistent and each SVG is optimized out of the box so I can use it directly with confidence. It would take me several hours to create a single icon this good, so it's a steal at this price.</p>
+    `,
+    date: "July 12, 2021",
+    datetime: "2021-07-12",
+    author: "Hector Gibbons",
+    avatarSrc:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
+  }, {
+    id: 3,
+    rating: 5,
+    content: `
+      <p>This icon pack is just what I need for my latest project. There's an icon for just about anything I could ever need. Love the playful look!</p>
+    `,
+    date: "July 16, 2021",
+    datetime: "2021-07-16",
+    author: "Emily Selman",
+    avatarSrc:
+      "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
+  },
+  {
+    id: 4,
+    rating: 5,
+    content: `
+      <p>Blown away by how polished this icon pack is. Everything looks so consistent and each SVG is optimized out of the box so I can use it directly with confidence. It would take me several hours to create a single icon this good, so it's a steal at this price.</p>
+    `,
+    date: "July 12, 2021",
+    datetime: "2021-07-12",
+    author: "Hector Gibbons",
+    avatarSrc:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
+  }, {
+    id: 5,
+    rating: 5,
+    content: `
+      <p>This icon pack is just what I need for my latest project. There's an icon for just about anything I could ever need. Love the playful look!</p>
+    `,
+    date: "July 16, 2021",
+    datetime: "2021-07-16",
+    author: "Emily Selman",
+    avatarSrc:
+      "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
+  },
+  {
+    id: 6,
+    rating: 5,
+    content: `
+      <p>Blown away by how polished this icon pack is. Everything looks so consistent and each SVG is optimized out of the box so I can use it directly with confidence. It would take me several hours to create a single icon this good, so it's a steal at this price.</p>
+    `,
+    date: "July 12, 2021",
+    datetime: "2021-07-12",
+    author: "Hector Gibbons",
+    avatarSrc:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
+  },
+  // More reviews...
+];
+
 const people = [
   {
-    name: 'Lindsay Walton',
-    title: 'Front-end Developer',
-    department: 'Optimization',
-    email: 'lindsay.walton@example.com',
-    role: 'Member',
+    name: "Lindsay Walton",
+    title: "Front-end Developer",
+    department: "Optimization",
+    email: "lindsay.walton@example.com",
+    role: "Member",
     image:
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
   },
   // More people...
-]
+];
 const navigation = {
   categories: [
     {
@@ -333,12 +412,13 @@ const PropertyDetailsPage = () => {
 
   const { id } = useParams();
   const [open, setOpen] = useState(false);
+  const [reviewFormvisible, setReviewFormvisible] = useState(false);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [propertyDetails, setPropertyDetails] = useState(null);
   const [sellerInfo, setSellerInfo] = useState(null);
   const [propertyImages, setPropertyImages] = useState([]);
   const [propertyCoordinates, setPropertyCoordiantes] = useState(null);
-  const [propertyBids, setPropertyBids] = useState(null)
+  const [propertyBids, setPropertyBids] = useState(null);
   useEffect(() => {
     const handleLisitng = async () => {
       try {
@@ -347,10 +427,8 @@ const PropertyDetailsPage = () => {
           .then((res) => {
             setPropertyDetails(res?.data?.property);
             setPropertyImages(res?.data?.property?.images);
-            setPropertyCoordiantes(
-              res?.data?.property?.location?.coordinates
-            );
-            setPropertyBids(res?.data?.property?.bids)
+            setPropertyCoordiantes(res?.data?.property?.location?.coordinates);
+            setPropertyBids(res?.data?.property?.bids);
             console.log(res?.data?.property?.location?.coordinates);
             console.log(res?.data?.property);
           });
@@ -376,6 +454,23 @@ const PropertyDetailsPage = () => {
     };
     handleSellerInfo();
   }, [propertyDetails]);
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      review: "",
+      email: "",
+      address: "",
+      rating: "",
+    },
+    onSubmit: (values) => {
+      console.log(values);
+      handelreset()
+    },
+  });
+  const handelreset=()=>{
+    formik.resetForm()
+  }
 
   return (
     <>
@@ -929,13 +1024,12 @@ const PropertyDetailsPage = () => {
               </div>
             </main>
           </div>
-
-
         </div>
         <div className="max-w-7xl mx-auto font-manrope flex flex-col gap-y-10">
           <div>
-
-            <h1 className="text-xl mb-2 text-gray-900 font-semibold">Map View:</h1>
+            <h1 className="text-xl mb-2 text-gray-900 font-semibold">
+              Map View:
+            </h1>
             <iframe
               className="w-[80rem] rounded-lg h-72 sm:h-96"
               marginheight="0"
@@ -952,139 +1046,393 @@ const PropertyDetailsPage = () => {
                 Seller Information
               </Text>
               <Link to={`/agentprofile/${sellerInfo?._id}`} className="w-full">
-              <div className="flex flex-row gap-6 items-center justify-start w-full hover:bg-gray-100 rounded-lg cursor-pointer">
-                <Img
-                  className="h-40 object-cover object-center rounded-full w-40"
-                  src={
-                    sellerInfo?.profilePicture
-                      ? sellerInfo?.profilePicture
-                      : "https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"
-                  }
-                  alt="rectangle5599"
-                />
-                <div className="flex flex-col gap-[3px] items-start justify-start w-auto">
-                  <Text
-                    className="text-gray-900 text-xl tracking-widder w-auto"
-                    size="txtManropeSemiBold20Gray900"
-                  >
-                    {sellerInfo?.username.toUpperCase()}
-                  </Text>
-                  <div className="flex flex-row gap-3.5 items-center justify-start w-full">
-                    <div className="flex flex-row gap-1 items-start justify-start w-auto">
-                      <StarIcon className="w-5 h-5 text-orange-500" />
-                      <StarIcon className="w-5 h-5 text-orange-500" />
-                      <StarIcon className="w-5 h-5 text-orange-500" />
-                      <StarIcon className="w-5 h-5 text-orange-500" />
-                      <StarIcon className="w-5 h-5 text-orange-500" />
+                <div className="flex flex-row gap-6 items-center justify-start w-full hover:bg-gray-100 rounded-lg cursor-pointer">
+                  <Img
+                    className="h-40 object-cover object-center rounded-full w-40"
+                    src={
+                      sellerInfo?.profilePicture
+                        ? sellerInfo?.profilePicture
+                        : "https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"
+                    }
+                    alt="rectangle5599"
+                  />
+                  <div className="flex flex-col gap-[3px] items-start justify-start w-auto">
+                    <Text
+                      className="text-gray-900 text-xl tracking-widder w-auto"
+                      size="txtManropeSemiBold20Gray900"
+                    >
+                      {sellerInfo?.username.toUpperCase()}
+                    </Text>
+                    <div className="flex flex-row gap-3.5 items-center justify-start w-full">
+                      <div className="flex flex-row gap-1 items-start justify-start w-auto">
+                        <StarIcon className="w-5 h-5 text-orange-500" />
+                        <StarIcon className="w-5 h-5 text-orange-500" />
+                        <StarIcon className="w-5 h-5 text-orange-500" />
+                        <StarIcon className="w-5 h-5 text-orange-500" />
+                        <StarIcon className="w-5 h-5 text-orange-500" />
+                        <Text
+                          className="text-base text-gray-900 w-auto"
+                          size="txtManropeSemiBold16"
+                        >
+                          (5.0 rating)
+                        </Text>
+                      </div>
+                    </div>
+                    <div className="flex flex-row gap-2.5 items-center justify-start w-full">
+                      <EnvelopeIcon className="w-5 h-5 text-gray-600" />
                       <Text
-                        className="text-base text-gray-900 w-auto"
-                        size="txtManropeSemiBold16"
+                        className="text-base text-gray-600 w-auto"
+                        size="txtManropeMedium16"
                       >
-                        (5.0 rating)
+                        {sellerInfo?.email}
+                      </Text>
+                    </div>
+                    <div className="flex flex-row gap-2.5 items-center justify-start w-full">
+                      <PhoneIcon className="w-5 h-5 text-gray-600" />
+                      <Text
+                        className="text-base text-gray-600 w-auto"
+                        size="txtManropeMedium16"
+                      >
+                        {sellerInfo?.phone}
                       </Text>
                     </div>
                   </div>
-                  <div className="flex flex-row gap-2.5 items-center justify-start w-full">
-                    <EnvelopeIcon className="w-5 h-5 text-gray-600" />
-                    <Text
-                      className="text-base text-gray-600 w-auto"
-                      size="txtManropeMedium16"
-                    >
-                      {sellerInfo?.email}
-                    </Text>
-                  </div>
-                  <div className="flex flex-row gap-2.5 items-center justify-start w-full">
-                    <PhoneIcon className="w-5 h-5 text-gray-600" />
-                    <Text
-                      className="text-base text-gray-600 w-auto"
-                      size="txtManropeMedium16"
-                    >
-                      {sellerInfo?.phone}
-                    </Text>
-                  </div>
                 </div>
-              </div>
               </Link>
             </div>
           </div>
         </div>
 
         <div className="w-full px-44">
-        <div className="px-4 sm:px-6 lg:px-8">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-xl font-semibold leading-6 text-gray-900">Property Bids</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            A list of all the users who bids for this property.
-          </p>
-        </div>
-        
-      </div>
-      <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle px-4 rounded-md">
-            <table className="min-w-full divide-y divide-gray-300 border">
-              <thead>
-                <tr>
-                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                    Name
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Bidding Amount
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Status
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Role
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Date
-                  </th>
-                  
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 ">
-                {propertyBids?.map((bid) => (
-                  <tr key={bid._id}>
-                    <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
-                      <div className="flex items-center">
-                        <div className="h-11 w-11 flex-shrink-0">
-                          <img className="h-11 w-11 rounded-full" src={bid?.user?.profilePicture} alt="" />
-                        </div>
-                        <div className="ml-4">
-                          <div className="font-medium text-gray-900">{bid?.user?.username}</div>
-                          <div className="mt-1 text-gray-500">{bid?.user?.email}</div>
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="sm:flex sm:items-center">
+              <div className="sm:flex-auto">
+                <h1 className="text-xl font-semibold leading-6 text-gray-900">
+                  Property Bids
+                </h1>
+                <p className="mt-2 text-sm text-gray-700">
+                  A list of all the users who bids for this property.
+                </p>
+              </div>
+            </div>
+            <div className="mt-8 flow-root">
+              <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div className="inline-block min-w-full py-2 align-middle px-4 rounded-md">
+                  <table className="min-w-full divide-y divide-gray-300 border">
+                    <thead>
+                      <tr>
+                        <th
+                          scope="col"
+                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+                        >
+                          Name
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Bidding Amount
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Status
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Role
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Date
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 ">
+                      {propertyBids?.map((bid) => (
+                        <tr key={bid._id}>
+                          <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
+                            <div className="flex items-center">
+                              <div className="h-11 w-11 flex-shrink-0">
+                                <img
+                                  className="h-11 w-11 rounded-full"
+                                  src={bid?.user?.profilePicture}
+                                  alt=""
+                                />
+                              </div>
+                              <div className="ml-4">
+                                <div className="font-medium text-gray-900">
+                                  {bid?.user?.username}
+                                </div>
+                                <div className="mt-1 text-gray-500">
+                                  {bid?.user?.email}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                            <div className="text-gray-900">
+                              {bid?.biddingPrice}
+                            </div>
+                            {/* <div className="mt-1 text-gray-500">{person.department}</div> */}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                            <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                              Active
+                            </span>
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                            <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                              {bid?.user?.role}
+                            </span>
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                            <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                              {bid?.timestamp?.split("T")[0]}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white">
+            <div>
+              <div className="flex justify-end items-center mt-6">
+                <button
+                  onClick={() => setReviewFormvisible(true)}
+                  type="button"
+                  className="inline-flex items-center gap-x-2 rounded-md tracking-widest bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Write Review
+                  <PencilIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+
+              {reviewFormvisible && (
+                <form onSubmit={formik.handleSubmit}>
+                  <div class="flex justify-center flex-col sm:pt-0 pt-4 items-center gap-y-4">
+                    <h2 class="text-xl font-medium text-gray-900">Score</h2>
+                    <div class="flex justify-center items-start">
+                      <div class="center">
+                        <div class="stars">
+                          <input
+                            type="radio"
+                            
+                            id="five"
+                            name="rating"
+                            checked={formik.values.rating === '5'}
+                            onChange={() => formik.setFieldValue('rating', '5')}
+                            value="5"
+                          />
+                          <label for="five"></label>
+                          <input
+                            type="radio"
+                            id="four"
+                            name="rating"
+                            checked={formik.values.rating === '4'}
+                            onChange={() => formik.setFieldValue('rating', '4')}
+                            value="4"
+                          />
+                          <label for="four"></label>
+                          <input
+                            type="radio"
+                            id="three"
+                            checked={formik.values.rating === '3'}
+                            onChange={() => formik.setFieldValue('rating', '3')}
+                            name="rating"
+                            value="3"
+                          />
+                          <label for="three"></label>
+                          <input
+                            type="radio"
+                            id="two"
+                            checked={formik.values.rating === '2'}
+                            onChange={() => formik.setFieldValue('rating', '2')}
+                            name="rating"
+                            value="2"
+                          />
+                          <label for="two"></label>
+                          <input
+                            type="radio"
+                            checked={formik.values.rating === '1'}
+                            onChange={() => formik.setFieldValue('rating', '1')}
+                            id="one"
+                            name="rating"
+                            value="1"
+                          />
+                          <label for="one"></label>
+                          <span class="result"></span>
                         </div>
                       </div>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                      <div className="text-gray-900">{bid?.biddingPrice}</div>
-                      {/* <div className="mt-1 text-gray-500">{person.department}</div> */}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                      <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                        Active
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                      <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                        {bid?.user?.role}
-                      </span>
-                    </td> 
-                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                      <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                        {bid?.timestamp?.split('T')[0]}
-                      </span>
-                    </td> 
-                  </tr>
+                    </div>
+                  </div>
+                  <div className="space-y-12">
+                    <div className="border-b border-gray-900/10 pb-12">
+                      <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-6">
+                        <div className="sm:col-span-3">
+                          <label
+                            htmlFor="name"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Name
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              onChange={formik.handleChange}
+                              value={formik.values.name}
+                              name="name"
+                              id="name"
+                              autoComplete="given-name"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-3">
+                          <label
+                            htmlFor="email"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Email
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              onChange={formik.handleChange}
+                              value={formik.values.email}
+                              type="email"
+                              name="email"
+                              id="email"
+                              autoComplete="family-name"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-3">
+                          <label
+                            htmlFor="address"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Address
+                          </label>
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              onChange={formik.handleChange}
+                              value={formik.values.address}
+                              name="address"
+                              id="address"
+                              autoComplete="Address"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-3">
+                          <label
+                            htmlFor="review"
+                            className="block text-sm font-medium leading-6 text-gray-900"
+                          >
+                            Review
+                          </label>
+                          <div className="mt-2">
+                            <textarea
+                              type="text"
+                              onChange={formik.handleChange}
+                              value={formik.values.review}
+                              name="review"
+                              id="review"
+                              autoComplete="review"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-end gap-x-6">
+                    <button
+                      type="button"
+                      onClick={() => setReviewFormvisible(!reviewFormvisible)}
+                      className="text-sm px-6 py-1.5 font-semibold leading-6 text-gray-900"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      // onClick={() => setReviewFormvisible(!reviewFormvisible)}
+                      type="submit"
+                      className="rounded-md bg-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              <div className="mb-1 mt-8 h-80 overflow-y-auto ">
+                {reviews.map((review, reviewIdx) => (
+                  <div
+                    key={review.id}
+                    className="flex space-x-4 text-sm text-gray-500"
+                  >
+                    <div className="flex-none py-4">
+                      <img
+                        src={review.avatarSrc}
+                        alt=""
+                        className="h-10 w-10 rounded-full bg-gray-100"
+                      />
+                    </div>
+                    <div
+                      className={classNames(
+                        reviewIdx === 0 ? "" : "border-t border-gray-200",
+                        "flex-1 py-4"
+                      )}
+                    >
+                      <h3 className="font-medium tracking-wider text-gray-900">
+                        {review.author}
+                      </h3>
+                      <p>
+                        <time dateTime={review.datetime}>{review.date}</time>
+                      </p>
+
+                      <div className="mt-2 flex items-center">
+                        {[0, 1, 2, 3, 4].map((rating) => (
+                          <StarIcon
+                            key={rating}
+                            className={classNames(
+                              review.rating > rating
+                                ? "text-yellow-400"
+                                : "text-gray-300",
+                              "h-5 w-5 flex-shrink-0"
+                            )}
+                            aria-hidden="true"
+                          />
+                        ))}
+                      </div>
+                      <p className="sr-only">{review.rating} out of 5 stars</p>
+
+                      <div
+                        className="prose prose-sm mt-2 max-w-none text-gray-500"
+                        dangerouslySetInnerHTML={{ __html: review.content }}
+                      />
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
         </div>
         <LandingPageFooter className="bg-orange-50 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>

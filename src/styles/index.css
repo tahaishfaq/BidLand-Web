@@ -189,3 +189,37 @@ ul li a{
  
   color:#3056D3 ;
 }
+
+
+
+.center .stars {
+  /* height: 40px; */
+  /* width: 200px; */
+  text-align: center;
+}
+.stars input {
+  display: none;
+}
+.stars label {
+  float: right;
+  font-size: 50px;
+  color: lightgrey;
+  margin: 0 4px;
+  text-shadow: 1px 1px #bbb;
+}
+.stars label:before {
+  content: "★";
+}
+.stars input:checked ~ label {
+  color: gold;
+  text-shadow: 1px 1px #c60;
+}
+.stars:not(:checked) > label:hover,
+.stars:not(:checked) > label:hover ~ label {
+  color: gold;
+}
+.stars input:checked > label:hover,
+.stars input:checked > label:hover ~ label {
+  color: gold;
+  text-shadow: 1px 1px goldenrod;
+}

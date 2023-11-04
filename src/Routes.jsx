@@ -12,6 +12,7 @@ import SellerDashboard from "pages/Seller Dashboard/SellerDashboard";
 import EditProfile from "pages/Auth/EditProfile";
 import BiddingListing from "pages/Bidding/BiddingListing";
 import Wishlist from "pages/WishList/Wishlist";
+import AdminDashboard from "pages/Seller Dashboard/Admin Dashboard/AdminDashboard";
 const License = React.lazy(() => import("pages/License"));
 const PrivacyPolicy = React.lazy(() => import("pages/PrivacyPolicy"));
 const FAQ = React.lazy(() => import("pages/FAQ"));
@@ -46,6 +47,7 @@ const ProjectRoutes = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/sellerdashboard/*" element={<SellerDashboard />} />
+          <Route path="/admindashboard/*" element={<AdminDashboard />} />
           <Route path="/userprofile/:id" element={<Profile />} />
           <Route path="/editprofile/:id" element={<EditProfile />} />
           <Route path="/forgetpassword" element={<ForgetPassword />} />
