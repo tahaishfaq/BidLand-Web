@@ -403,12 +403,16 @@ const footerNavigation = {
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
+var userPic = localStorage.getItem("userData")
+var userName = localStorage.getItem("userName")
+var userEmail = localStorage.getItem("userEmail")
 const PropertyDetailsPage = () => {
   const landingPageCardPropList = [
     {},
     { image: "images/img_image_1.png" },
     { image: "images/img_image_2.png" },
   ];
+  
 
   const { id } = useParams();
   const [open, setOpen] = useState(false);
@@ -455,16 +459,26 @@ const PropertyDetailsPage = () => {
     handleSellerInfo();
   }, [propertyDetails]);
 
+  const [reviews, setReviews] = useState(null)
   const formik = useFormik({
     initialValues: {
-      name: "",
-      review: "",
-      email: "",
-      address: "",
-      rating: "",
+     
     },
     onSubmit: (values) => {
-      console.log(values);
+
+      var JSON = {
+        username: userName,
+        reviewText: values.review,
+        email: userEmail,
+        rating: values.rating,
+      }
+      try {
+        axios.post(`http://localhost:3000/property/review/${id}`,JSON).then((res) =>{
+         console.log(res);
+        })
+      } catch (error) {
+        console.log(error);
+      }
       handelreset()
     },
   });
@@ -1205,7 +1219,7 @@ const PropertyDetailsPage = () => {
             </div>
           </div>
 
-          <div className="bg-white">
+          <div className="bg-white mt-20">
             <div>
               <div className="flex justify-end items-center mt-6">
                 <button
@@ -1230,8 +1244,8 @@ const PropertyDetailsPage = () => {
                             
                             id="five"
                             name="rating"
-                            checked={formik.values.rating === '5'}
-                            onChange={() => formik.setFieldValue('rating', '5')}
+                            checked={formik.values.rating === 5}
+                            onChange={() => formik.setFieldValue('rating', 5)}
                             value="5"
                           />
                           <label for="five"></label>
@@ -1239,16 +1253,16 @@ const PropertyDetailsPage = () => {
                             type="radio"
                             id="four"
                             name="rating"
-                            checked={formik.values.rating === '4'}
-                            onChange={() => formik.setFieldValue('rating', '4')}
+                            checked={formik.values.rating === 4}
+                            onChange={() => formik.setFieldValue('rating', 4)}
                             value="4"
                           />
                           <label for="four"></label>
                           <input
                             type="radio"
                             id="three"
-                            checked={formik.values.rating === '3'}
-                            onChange={() => formik.setFieldValue('rating', '3')}
+                            checked={formik.values.rating === 3}
+                            onChange={() => formik.setFieldValue('rating', 3)}
                             name="rating"
                             value="3"
                           />
@@ -1256,16 +1270,16 @@ const PropertyDetailsPage = () => {
                           <input
                             type="radio"
                             id="two"
-                            checked={formik.values.rating === '2'}
-                            onChange={() => formik.setFieldValue('rating', '2')}
+                            checked={formik.values.rating === 2}
+                            onChange={() => formik.setFieldValue('rating', 2)}
                             name="rating"
                             value="2"
                           />
                           <label for="two"></label>
                           <input
                             type="radio"
-                            checked={formik.values.rating === '1'}
-                            onChange={() => formik.setFieldValue('rating', '1')}
+                            checked={formik.values.rating === 1}
+                            onChange={() => formik.setFieldValue('rating', 1)}
                             id="one"
                             name="rating"
                             value="1"
@@ -1289,7 +1303,7 @@ const PropertyDetailsPage = () => {
                           <div className="mt-2">
                             <input
                               type="text"
-                              onChange={formik.handleChange}
+                              disabled
                               value={formik.values.name}
                               name="name"
                               id="name"
@@ -1308,32 +1322,12 @@ const PropertyDetailsPage = () => {
                           </label>
                           <div className="mt-2">
                             <input
-                              onChange={formik.handleChange}
+                              disabled
                               value={formik.values.email}
                               type="email"
                               name="email"
                               id="email"
                               autoComplete="family-name"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="sm:col-span-3">
-                          <label
-                            htmlFor="address"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Address
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              onChange={formik.handleChange}
-                              value={formik.values.address}
-                              name="address"
-                              id="address"
-                              autoComplete="Address"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                           </div>
@@ -1382,7 +1376,7 @@ const PropertyDetailsPage = () => {
               )}
 
               <div className="mb-1 mt-8 h-80 overflow-y-auto ">
-                {reviews.map((review, reviewIdx) => (
+                {reviews?.map((review, reviewIdx) => (
                   <div
                     key={review.id}
                     className="flex space-x-4 text-sm text-gray-500"

@@ -31,6 +31,7 @@ const Login = () => {
           localStorage.setItem("userData", res?.data?.user?.profilePicture);
           localStorage.setItem("userRole", res?.data?.user?.role);
           localStorage.setItem("userName", res?.data?.user?.username);
+          localStorage.setItem("userEmail", res?.data?.user?.email);
           setUser(res?.data?.user);
           setTimeout(() => {
             if (res?.data?.user?.role == "seller") {
