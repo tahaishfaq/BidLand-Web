@@ -38,6 +38,7 @@ import ViewAllUsers from "./ViewAllUsers";
 import Properties from "./Properties";
 import PropertiesEdit from "./PropertiesEdit";
 import EditProfile from "./EditProfile";
+import Bids from "./Bids";
 
 
 const navigation = [

@@ -423,6 +423,7 @@ const PropertyDetailsPage = () => {
   const [propertyImages, setPropertyImages] = useState([]);
   const [propertyCoordinates, setPropertyCoordiantes] = useState(null);
   const [propertyBids, setPropertyBids] = useState(null);
+  const [reviews, setReviews] = useState([])
   useEffect(() => {
     const handleLisitng = async () => {
       try {
@@ -435,6 +436,7 @@ const PropertyDetailsPage = () => {
             setPropertyBids(res?.data?.property?.bids);
             console.log(res?.data?.property?.location?.coordinates);
             console.log(res?.data?.property);
+            setReviews(res?.data?.property?.reviews)
           });
       } catch (error) {
         console.log(error);
@@ -459,7 +461,7 @@ const PropertyDetailsPage = () => {
     handleSellerInfo();
   }, [propertyDetails]);
 
-  const [reviews, setReviews] = useState(null)
+ 
   const formik = useFormik({
     initialValues: {
      
@@ -475,6 +477,7 @@ const PropertyDetailsPage = () => {
       try {
         axios.post(`http://localhost:3000/property/review/${id}`,JSON).then((res) =>{
          console.log(res);
+         location.reload()
         })
       } catch (error) {
         console.log(error);
@@ -485,6 +488,7 @@ const PropertyDetailsPage = () => {
   const handelreset=()=>{
     formik.resetForm()
   }
+ 
 
   return (
     <>
@@ -1378,14 +1382,14 @@ const PropertyDetailsPage = () => {
               <div className="mb-1 mt-8 h-80 overflow-y-auto ">
                 {reviews?.map((review, reviewIdx) => (
                   <div
-                    key={review.id}
+                    key={review._id}
                     className="flex space-x-4 text-sm text-gray-500"
                   >
                     <div className="flex-none py-4">
                       <img
-                        src={review.avatarSrc}
+                        src={review?.profilePicture}
                         alt=""
-                        className="h-10 w-10 rounded-full bg-gray-100"
+                        className="h-10 w-10 rounded-full bg-gray-900"
                       />
                     </div>
                     <div
@@ -1395,10 +1399,10 @@ const PropertyDetailsPage = () => {
                       )}
                     >
                       <h3 className="font-medium tracking-wider text-gray-900">
-                        {review.author}
+                        {review.username}
                       </h3>
                       <p>
-                        <time dateTime={review.datetime}>{review.date}</time>
+                        {/* <time dateTime={review.datetime}>{review.date}</time> */}
                       </p>
 
                       <div className="mt-2 flex items-center">
@@ -1419,8 +1423,8 @@ const PropertyDetailsPage = () => {
 
                       <div
                         className="prose prose-sm mt-2 max-w-none text-gray-500"
-                        dangerouslySetInnerHTML={{ __html: review.content }}
-                      />
+                         
+                      >{review.reviewText }</div>
                     </div>
                   </div>
                 ))}
