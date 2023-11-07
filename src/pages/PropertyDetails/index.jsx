@@ -404,6 +404,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 var userPic = localStorage.getItem("userData")
+var token = localStorage.getItem("JWT")
 var userName = localStorage.getItem("userName")
 var userEmail = localStorage.getItem("userEmail")
 const PropertyDetailsPage = () => {
@@ -1225,7 +1226,7 @@ const PropertyDetailsPage = () => {
 
           <div className="bg-white mt-20">
             <div>
-              <div className="flex justify-end items-center mt-6">
+             {token && <div className="flex justify-end items-center mt-6">
                 <button
                   onClick={() => setReviewFormvisible(true)}
                   type="button"
@@ -1234,7 +1235,7 @@ const PropertyDetailsPage = () => {
                   Write Review
                   <PencilIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
                 </button>
-              </div>
+              </div>}
 
               {reviewFormvisible && (
                 <form onSubmit={formik.handleSubmit}>
@@ -1378,12 +1379,12 @@ const PropertyDetailsPage = () => {
                   </div>
                 </form>
               )}
-
+              <h2 className="text-xl font-semibold ml-2">Reviews</h2>
               <div className="mb-1 mt-8 h-80 overflow-y-auto ">
                 {reviews?.map((review, reviewIdx) => (
                   <div
                     key={review._id}
-                    className="flex space-x-4 text-sm text-gray-500"
+                    className="flex space-x-4 text-sm text-gray-500 bg-gray-100 px-5"
                   >
                     <div className="flex-none py-4">
                       <img

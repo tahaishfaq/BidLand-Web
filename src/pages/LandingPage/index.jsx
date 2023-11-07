@@ -27,35 +27,31 @@ const LandingPagePage = () => {
       <div className="bg-orange-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col items-start justify-start w-full">
           <LandingPageHeader className="bg-orange-50 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
-          <div className="bg-white flex flex-col font-manrope items-start justify-start md:pl-10 sm:pl-5 pl-[120px] py-[50px] w-full">
-            <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-center justify-start w-full">
-              <div className="flex flex-1 flex-col gap-10 items-start justify-start w-full">
-                <div className="flex flex-col gap-4 items-start justify-start w-full">
-                  <Text
-                    className="leading-[140.00%] sm:text-4xl md:text-[42px] text-[46px] text-gray-900 tracking-[-0.92px]"
-                    size="txtManropeExtraBold46"
-                  >
-                    <>
-                      Find a perfect property
-                      <br />
-                      Where you&#39;ll love to live
-                    </>
-                  </Text>
-                  <Text
-                    className="leading-[180.00%] max-w-[610px] md:max-w-full text-gray-700 text-xl"
-                    size="txtManropeRegular20"
-                  >
-                    We helps businesses customize, automate and scale up their
-                    ad production and delivery.
-                  </Text>
-                </div>
-              </div>
-              <div className="flex md:flex-1 flex-col items-center justify-start w-[47%] md:w-full">
-                <img
-                  className="h-[503px] md:h-auto object-cover w-full"
-                  src="images/img_image.png"
-                  alt="image"
-                />
+          <div className="bg-white flex flex-col font-manrope w-full">
+            {/* <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-center justify-start w-full"> */}
+              <div
+                className="relative overflow-hidden rounded-lg bg-cover bg-no-repeat p-12 text-center"
+                style={{ backgroundImage: "url('https://wallpapers.com/images/hd/real-estate-miniature-house-model-zcovmnik4h0l5s7k.jpg')", height: "760px" }}
+              >
+                <div
+                  className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-fixed"
+                  style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+                >
+                  <div className="flex h-full items-center justify-center">
+                    <div className="text-white">
+                      <h2 className="mb-4 text-4xl font-semibold">Heading</h2>
+                      <h4 className="mb-6 text-xl font-semibold">Subheading</h4>
+                      <button
+                        type="button"
+                        className="rounded border-2 border-neutral-50 px-7 pb-[8px] pt-[10px] text-sm font-medium uppercase leading-normal text-neutral-50 transition duration-150 ease-in-out hover:border-neutral-100 hover:bg-neutral-500 hover:bg-opacity-10 hover:text-neutral-100 focus:border-neutral-100 focus:text-neutral-100 focus:outline-none focus:ring-0 active:border-neutral-200 active:text-neutral-200 dark:hover:bg-neutral-100 dark:hover:bg-opacity-10"
+                        data-te-ripple-init
+                        data-te-ripple-color="light"
+                      >
+                        Call to action
+                      </button>
+                    </div>
+                  </div>
+                {/* </div> */}
               </div>
             </div>
           </div>
