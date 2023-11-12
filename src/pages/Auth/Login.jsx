@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { HomeModernIcon } from "@heroicons/react/20/solid";
 import Spinner from "components/Spinner/Spinner";
+import { Toaster, toast } from "sonner";
 const Login = () => {
   const [user, setUser] = useState(null);
   const [loader, setLoader] = useState(false);
@@ -17,7 +18,7 @@ const Login = () => {
       password: "",
     },
     onSubmit: (values) => {
-      setLoader(true);
+      // setLoader(true);
       var JSON = {
         email: values.email,
         password: values.password,
@@ -33,20 +34,31 @@ const Login = () => {
           localStorage.setItem("userName", res?.data?.user?.username);
           localStorage.setItem("userEmail", res?.data?.user?.email);
           setUser(res?.data?.user);
+          toast.success("Login Successfully")
           setTimeout(() => {
             if (res?.data?.user?.role == "seller") {
               setLoader(false);
               navigate("/sellerdashboard/home");
-            } else {
+            }
+            else if (res?.data?.user?.role == "admin") {
+              setLoader(false);
+              navigate("/admindashboard/home-page");
+            }
+             else {
               setLoader(false);
               navigate("/");
             }
           }, 1000);
+        }).catch((err) =>{
+          setLoader(false);
+          console.log(err);
+          toast.error(err?.response?.data?.message)
         });
       } catch (error) {
         console.log(error);
       }
     },
+    enableReinitialize: true,
   });
 
   const handleForgetPass = () => {
@@ -54,6 +66,7 @@ const Login = () => {
   };
   return (
     <>
+    <Toaster richColors/>
       {loader && <Spinner />}
       <div className="bg-white flex flex-col font-markoone  items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col  items-center justify-center w-full">
@@ -70,7 +83,7 @@ const Login = () => {
                     BidLand
                   </span>
                 </div>
-                <p class="text-white mt-1 text-white">
+                <p class="text-white mt-1 ">
                   The most popular property selling platform
                 </p>
                 <button

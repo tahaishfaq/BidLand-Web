@@ -28,6 +28,7 @@ import Timer from "./Timer";
 
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useFormik } from "formik";
+import { Link } from "react-router-dom";
 const sortOptions = [
   { name: "Most Popular", href: "#" },
   { name: "Best Rating", href: "#" },
@@ -87,7 +88,8 @@ const BiddingListing = () => {
   const [bidEndTime, setBidEndTime] = useState("");
   const [open, setOpen] = useState(false);
   const [biddingId, setBiddingId] = useState("");
-
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredListing, setFilteredListing] = useState([]);
   const cancelButtonRef = useRef(null);
   const navigate = useNavigate();
 
@@ -98,6 +100,7 @@ const BiddingListing = () => {
           .get("http://localhost:3000/property/get-bidding-properties")
           .then((res) => {
             setListing(res?.data);
+            setFilteredListing(res?.data)
             console.log(res?.data);
             var dateOnly;
             res?.data?.map((time) => {
@@ -119,6 +122,14 @@ const BiddingListing = () => {
 
   const handlePropertyDetails = (id) => {
     navigate(`/propertydetails/${id}`);
+  };
+
+  const handleSearch = (searchValue) => {
+    setSearchTerm(searchValue);
+    const filtered = listing?.filter((property) =>
+      property?.name?.toLowerCase()?.includes(searchValue?.toLowerCase())
+    );
+    setFilteredListing(filtered);
   };
 
   const PlaceBid = useFormik({
@@ -188,12 +199,12 @@ const BiddingListing = () => {
                   </svg>
                 </div>
                 <input
-                  type="search"
-                  id="default-search"
-                  class="block w-full py-3 pl-10 pr-20 text-sm text-gray-900 border font-manrope border-gray-300 rounded-lg bg-gray-50"
+                  type="text"
+                  class="flex w-[22rem] py-3 pl-10 pr-20 text-sm text-gray-900 border font-manrope border-gray-300 rounded-lg bg-gray-50"
                   placeholder="Search Properties"
-                  required
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
+              
               </div>
             </form>
           </div>
@@ -299,10 +310,11 @@ const BiddingListing = () => {
                   </div>
                 </div>
               </div>
-              {userRole == "user" && (
+              {userRole == "user" ? (
                 <div className="flex flex-row items-start justify-start w-full">
                   <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-2 justify-center min-h-[auto] w-full">
-                    {listing?.map((property) => (
+                    {filteredListing?.length > 0 ?
+                    filteredListing?.map((property) => (
                       <div className="bg-white border border-red-101 border-solid flex items-start justify-start rounded-lg w-full">
                         <div className="flex flex-col gap-[27px] items-start justify-start w-full">
                           <div className="flex flex-col">
@@ -437,10 +449,21 @@ const BiddingListing = () => {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    )): "No Properties Added For Bidding"}
                   </div>
                 </div>
-              )}
+              ): 
+              <div className="flex flex-col w-full items-center justify-center">
+                <span>Only Authorize Users Can See Bidding</span>
+                <div className="flex gap-x-2">
+
+                <span>Login to Your Account</span>
+                <Link to="/login">
+                <span className="underline hover:text-blue-600">Login</span>
+                </Link>
+                </div>
+              </div>
+              }
               {/* <div className="flex flex-1 flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
                 <div className="flex sm:flex-col flex-row gap-5 items-center justify-between w-full">
                   <div className="flex flex-row gap-[5px] items-start justify-start w-auto">

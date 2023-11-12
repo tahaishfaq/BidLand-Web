@@ -7,6 +7,7 @@ import LandingPageHeader from "components/LandingPageHeader";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { PhoneIcon, StarIcon } from "@heroicons/react/20/solid";
+import { Link } from "react-router-dom";
 
 const buttonmediumOptionsList = [
   { label: "Option1", value: "option1" },
@@ -147,10 +148,7 @@ const AgentProfilePage = () => {
                         </Text>
                       </div>
                     </div>
-                  </div>
-                  <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-3 rounded-[10px] text-base text-center text-white">
-                    Contact
-                  </Button>
+                  </div> 
                 </div>
               </div>
               <div className="flex flex-col items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
@@ -256,7 +254,7 @@ const AgentProfilePage = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
+        {/* <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
           <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-center justify-center max-w-[1200px] mx-auto p-[42px] md:px-5 rounded-[10px] w-full">
             <div className="flex flex-col items-center justify-center w-full">
               <div className="flex md:flex-col flex-row md:gap-10 gap-[65px] items-start justify-center w-full">
@@ -486,8 +484,8 @@ const AgentProfilePage = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
+        </div> */}
+        {/* <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
           <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start max-w-[1200px] mx-auto md:px-5 py-[30px] rounded-[10px] w-full">
             <div className="flex flex-col items-start justify-start w-full">
               <div className="flex flex-col gap-10 items-start justify-start w-full">
@@ -764,7 +762,7 @@ const AgentProfilePage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <LandingPageFooter className="bg-orange-50  flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>

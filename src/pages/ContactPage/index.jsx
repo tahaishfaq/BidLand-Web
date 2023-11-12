@@ -72,7 +72,7 @@ const ContactPagePage = () => {
                         placeholder="Phone Number"
                         className="font-semibold p-0 placeholder:text-gray-600 sm:pr-5 text-gray-600 text-left text-lg w-full"
                         wrapClassName="bg-white-A700 border border-bluegray-100 border-solid flex pl-4 pr-[35px] py-[17px] rounded-[10px] w-full"
-                        type="number"
+                        type="text"
                         prefix={
                           <Img
                             className="mt-auto mb-px h-6 mr-3.5"
@@ -81,17 +81,17 @@ const ContactPagePage = () => {
                           />
                         }
                       ></Input>
-                      <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col h-[152px] md:h-auto items-start justify-start px-[19px] py-3.5 rounded-[10px] w-full">
-                        <Text
-                          className="text-gray-600 text-lg w-auto"
-                          size="txtManropeSemiBold18Gray600"
-                        >
-                          Message
-                        </Text>
+                      <div className="w-full">
+                        <textarea
+                          id="message"
+                          rows="4"
+                          class="block p-2.5 w-full text-sm text-gray-900 bg-white rounded-lg border border-gray-300"
+                          placeholder="Write your Message"
+                        ></textarea>
                       </div>
                     </div>
                   </div>
-                  <Button className="bg-gray-900 cursor-pointer font-semibold py-[17px] rounded-[10px] text-base text-center text-white-A700 w-full">
+                  <Button className="bg-gray-900 cursor-pointer font-semibold py-[17px] rounded-[10px] text-base text-center text-white w-full">
                     Send Request
                   </Button>
                 </div>

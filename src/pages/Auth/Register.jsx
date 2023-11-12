@@ -6,13 +6,15 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { HomeModernIcon, PhoneIcon } from "@heroicons/react/20/solid";
-import storage from "../../../fireabse";
+import {storage} from "../../../fireabse";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Toaster, toast } from "sonner";
 const Register = () => {
   const [image, setImage] = useState(null);
   const [url, setUrl] = useState("");
   const [loader, setLoader] = useState(false);
   const [imgMetaData, setImgMetaData] = useState("")
+  const navigate = useNavigate()
 
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
@@ -24,7 +26,7 @@ const Register = () => {
 
   const handleUpload = (image) => {
     if (!image) {
-      console.error("Please select an image.");
+      toast.error("Please select an image.");
       return;
     }
 
@@ -32,22 +34,20 @@ const Register = () => {
 
     uploadBytes(storageRef, image)
       .then((snapshot) => {
-        console.log("File uploaded successfully!", snapshot);
         setImgMetaData(snapshot?.metadata?.fullPath)
-        // Get the download URL for the file
         getDownloadURL(snapshot.ref)
           .then((downloadURL) => {
-            console.log("File download URL:", downloadURL);
+            setLoader(false); 
+            toast.success("File uploaded successfully");
             setUrl(downloadURL);
-            setLoader(false); // Set the download URL in the component state
           })
           .catch((error) => {
-            console.error("Error getting download URL:", error);
+            toast.error("Error getting download URL:", error);
             setLoader(false);
           });
       })
       .catch((error) => {
-        console.error("Error uploading file:", error);
+        toast.error("Error uploading file:", error);
         setLoader(false);
       });
   };
@@ -70,12 +70,18 @@ const Register = () => {
         phone: values.phone,
         profilePicture: url,
       };
-      console.log("json", json);
       try {
         await axios
           .post("http://localhost:3000/auth/register", json)
           .then((res) => {
             console.log(res.data);
+            toast.success("User Register Successfully")
+            setTimeout(() => {
+              navigate("/login")
+            }, 500);
+          }).catch((err) =>{
+            console.log(err);
+            toast.error(err?.response?.data?.message)
           });
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -84,6 +90,7 @@ const Register = () => {
   });
   return (
     <>
+    <Toaster richColors/>
       <div className="bg-white flex flex-col font-markoone  items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col  items-center justify-center w-full">
           <LandingPageHeader className="bg-orange-50  flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
@@ -99,7 +106,7 @@ const Register = () => {
                     BidLand
                   </span>
                 </div>
-                <p class="text-white mt-1 text-white">
+                <p class="text-white mt-1 ">
                   The most popular property selling platform
                 </p>
                 <button

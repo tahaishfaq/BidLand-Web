@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { HomeModernIcon } from "@heroicons/react/20/solid";
 import Spinner from "components/Spinner/Spinner";
+import { Toaster, toast } from "sonner";
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
   const [loader, setLoader] = useState(false);
@@ -16,9 +17,12 @@ const ForgetPassword = () => {
     setLoader(true)
     try {
       axios.post(`http://localhost:3000/auth/forgot-password`, {email}).then((res) => {
-        console.log(res.data);
+        toast.success(res?.data?.message);
         setLoader(false)
+        setEmail("")
         
+      }).catch((err) =>{
+        toast.error("Enter Valid Email")
       });
     } catch (error) {
       console.log(error);
@@ -26,17 +30,18 @@ const ForgetPassword = () => {
   };
   return (
     <>
+    <Toaster richColors/>
     {loader && <Spinner/>}
-      <div className="bg-gray-51 flex flex-col font-markoone  items-start justify-start mx-auto w-auto sm:w-full md:w-full">
+      <div className="bg-white flex flex-col font-markoone  items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col  items-center justify-center w-full">
           <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div class="w-full h-screen flex font-manrope">
             <div class="relative overflow-hidden flex w-1/2 bg-gradient-to-tr from-orange-600 to-purple-300 i justify-around items-center ">
               <div>
                 <div className="flex flex-row gap-x-1 items-center justify-start">
-                  <HomeModernIcon className="h-8 w-8 text-white-A700" />
+                  <HomeModernIcon className="h-8 w-8 text-white" />
                   <span
-                    className="text-white-A700 text-xl mt-2.5 font-semibold"
+                    className="text-white text-xl mt-2.5 font-semibold"
                     size="txtMarkoOneRegular20"
                   >
                     BidLand
@@ -47,7 +52,7 @@ const ForgetPassword = () => {
                 </p>
                 <button
                   type="submit"
-                  class="block w-36  bg-indigo-600 hover:bg-indigo-700  text-white-A700 mt-4 py-3 rounded-2xl font-semibold mb-2"
+                  class="block w-36  bg-indigo-600 hover:bg-indigo-700  text-white mt-4 py-3 rounded-2xl font-semibold mb-2"
                 >
                   Read More
                 </button>
@@ -92,7 +97,7 @@ const ForgetPassword = () => {
                   required
                 />
               </div>
-              <button  onClick={handleForgetPass} class="w-80 bg-indigo-600 hover:bg-indigo-700 mt-4 py-4  text-white-A700 rounded-2xl tracking-wide font-semibold mb-2">
+              <button  onClick={handleForgetPass} class="w-80 bg-indigo-600 hover:bg-indigo-700 mt-4 py-4  text-white rounded-2xl tracking-wide font-semibold mb-2">
                 Forget Password
               </button>
             </div>

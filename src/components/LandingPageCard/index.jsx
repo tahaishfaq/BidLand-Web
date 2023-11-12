@@ -8,7 +8,7 @@ import { HeartIcon } from "@heroicons/react/24/outline";
 const LandingPageCard = (props) => {
   const navigate = useNavigate();
   const [listing, setListing] = useState(null);
-  const [wishlist, setWishlist] = useState(JSON.parse(localStorage.getItem("wishlist")));
+  const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
     const handleLisitng = () => {
@@ -29,16 +29,24 @@ const LandingPageCard = (props) => {
   };
   
 
-  useEffect(() => {
-    // Save the wishlist to localStorage whenever it changes
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  }, [wishlist]);
+  // useEffect(() => {
+  //   console.log(wishlist);
+  //   localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  // }, [wishlist]);
 
-  const handleWishList = (product) => {
-    if (!wishlist.some((item) => item._id === product._id)) {
-      setWishlist([...wishlist, product]);
+  const handleWishList = (property) => {
+    if(!wishlist?.find((item) => item?._id === property?._id)){
+        if(wishlist?.length <= 0){
+        setWishlist([property])
+        localStorage.setItem("wishlist", JSON.stringify([property]));
+      }
+      else{
+        setWishlist([...wishlist, property])
+        localStorage.setItem("wishlist", JSON.stringify([...wishlist, property]));
+      }
     }
   };
+
   return (
     <>
       {listing?.map((property) => (

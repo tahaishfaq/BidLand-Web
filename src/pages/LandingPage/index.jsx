@@ -30,7 +30,7 @@ const LandingPagePage = () => {
           <div className="bg-white flex flex-col font-manrope w-full">
             {/* <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-center justify-start w-full"> */}
               <div
-                className="relative overflow-hidden rounded-lg bg-cover bg-no-repeat p-12 text-center"
+                className="relative overflow-hidden  bg-cover bg-no-repeat p-12 text-center"
                 style={{ backgroundImage: "url('https://wallpapers.com/images/hd/real-estate-miniature-house-model-zcovmnik4h0l5s7k.jpg')", height: "760px" }}
               >
                 <div

@@ -21,15 +21,19 @@ import {
   HomeModernIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import ViewAllUsers from "../ViewAllUsers";
-import Properties from "../Properties";
-import PropertiesEdit from '../PropertiesEdit';
-import EditProfile from "../EditProfile";
-import Bids from "../Bids";
+import ViewAllUsers from "../Seller Dashboard/ViewAllUsers";
+import Properties from "../Seller Dashboard/Properties";
+import PropertiesEdit from '../Seller Dashboard/PropertiesEdit';
+import EditProfile from "../Seller Dashboard/EditProfile";
+import Bids from "../Seller Dashboard/Bids";
 import HomePage from './HomePage';
-import UserPage from './UserPage';
-import PropertiesPage from './PropertiesPage';
+import UserPage from './AllUsers';
+import PropertiesPage from './AllProperties';
 import BidsPage from './BidsPage';
+import AllProperties from './AllProperties';
+import AllUsers from './AllUsers';
+import AllSellers from './AllSellers';
+import AdminEditProfile from './EditProfile';
 
 
 const AdminDashboard = () => {
@@ -37,6 +41,7 @@ const AdminDashboard = () => {
   const navigation = [
     { name: "Dashboard", href: "home-page", icon: HomeIcon, current: true },
     { name: "Users", href: "get-all-users-page", icon: UsersIcon, current: false },
+    { name: "Sellers", href: "get-all-sellers-page", icon: UsersIcon, current: false },
     { name: "Properties", href: "get-properties-page", icon: HomeModernIcon, current: false },
     { name: "Bids", href: "bids-page", icon: ArrowTrendingUpIcon, current: false },
   
@@ -106,8 +111,14 @@ const AdminDashboard = () => {
                 </li>
                
                 <li className="mt-auto">
-                  <a
-                  //  onClick={() => logOut()}
+                  <button
+                    onClick={() => {
+                      navigate("/");
+                      localStorage.removeItem("JWT");
+                      localStorage.removeItem("userData");
+                      localStorage.removeItem("userId");
+                      location.reload();
+                    }}
                     className="group -mx-2 cursor-pointer flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
                   >
                     <ArrowRightOnRectangleIcon
@@ -115,7 +126,7 @@ const AdminDashboard = () => {
                       aria-hidden="true"
                     />
                     Log out
-                  </a>
+                  </button>
                 </li>
               </ul>
             </nav>
@@ -212,6 +223,9 @@ const AdminDashboard = () => {
                               localStorage.removeItem("JWT");
                               localStorage.removeItem("userData");
                               localStorage.removeItem("userId");
+                              localStorage.removeItem("userRole")
+                              localStorage.removeItem("userName")
+                              localStorage.removeItem("userEmail")
                               location.reload();
                             }}
                             className={classNames(
@@ -234,17 +248,13 @@ const AdminDashboard = () => {
             <div className="px-4 sm:px-6  lg:px-3">
               <Routes>
               <Route path="/home-page" element={<HomePage />} />
-              <Route path="/get-all-users-page" element={<UserPage />} />
-              <Route path="/get-properties-page" element={<PropertiesPage />} />
+              <Route path="/get-all-users-page" element={<AllUsers />} />
+              <Route path="/get-all-sellers-page" element={<AllSellers />} />
+              <Route path="/get-properties-page" element={<AllProperties />} />
               <Route path="/edit-properties/:id" element={<PropertiesEdit />} />
-              <Route path="/edit-profile/:id" element={<EditProfile />} />
+              <Route path="/edit-profile/:id" element={<AdminEditProfile />} />
               <Route path="/bids-page" element={<BidsPage/>} />
-                {/* <Route path="/navbar" element={<ClientsNavBar />}>
-                  <Route index element={<Clients />} />
-                  <Route path="add-new-client" element={<AddNewClient />} />
-                  <Route path="client" element={<AddNewClient />}/>
-                  <Route path=":id" element={<UpdateClientProfile />} />
-                </Route> */}
+               
               </Routes>
             </div>
           </main>

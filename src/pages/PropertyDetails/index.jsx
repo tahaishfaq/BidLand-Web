@@ -423,7 +423,7 @@ const PropertyDetailsPage = () => {
   const [sellerInfo, setSellerInfo] = useState(null);
   const [propertyImages, setPropertyImages] = useState([]);
   const [propertyCoordinates, setPropertyCoordiantes] = useState(null);
-  const [propertyBids, setPropertyBids] = useState(null);
+  const [propertyBids, setPropertyBids] = useState([]);
   const [reviews, setReviews] = useState([])
   useEffect(() => {
     const handleLisitng = async () => {
@@ -445,6 +445,10 @@ const PropertyDetailsPage = () => {
     };
     handleLisitng();
   }, []);
+  
+
+  const sortedBids = [...propertyBids]?.sort((a, b) => b.biddingPrice - a.biddingPrice);
+
 
   useEffect(() => {
     const handleSellerInfo = async () => {
@@ -465,12 +469,14 @@ const PropertyDetailsPage = () => {
  
   const formik = useFormik({
     initialValues: {
-     
+      username: userName,     
+      email: userEmail,
     },
     onSubmit: (values) => {
 
       var JSON = {
         username: userName,
+        profilePicture: userPic,
         reviewText: values.review,
         email: userEmail,
         rating: values.rating,
@@ -497,343 +503,6 @@ const PropertyDetailsPage = () => {
         <div className="flex flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
           <div className="flex flex-col gap-10 items-start justify-start w-full">
             <LandingPageHeader className="bg-orange-50 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
-
-            {/* <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
-              <div className="flex md:flex-col flex-row gap-x-6 items-center justify-center max-w-[1200px] mx-auto w-full">
-                <div className="flex flex-1 flex-col items-center justify-start w-full">
-                  <Img
-                    className="object-cover rounded-lg w-full h-full object-center"
-                    src={propertyImages[0]}
-                    alt="rectangle5610"
-                  />
-                </div>
-                <div className="flex sm:flex-1 flex-col gap-y-3 h-[530px] md:h-auto items-start justify-start w-auto sm:w-full">
-                  {propertyImages?.map((img) => (
-                    <Img
-                      className="h-40 w-40 object-cover object-center rounded-lg"
-                      src={img}
-                      alt="rectangle5611"
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
-              <div className="flex md:flex-col flex-row gap-6 items-start justify-center max-w-[1200px] mx-auto w-full">
-                <div className="flex flex-1 flex-col gap-6 items-start justify-start w-full">
-                  <div className="bg-orange-50 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-[10px] w-full">
-                    <div className="flex flex-col gap-11 items-start justify-start w-full">
-                      <div className="flex flex-col gap-6 items-start justify-start w-full">
-                        <div className="flex flex-col gap-4 items-start justify-start w-full">
-                          <Text
-                            className="leading-[135.00%] max-w-[712px] md:max-w-full sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px]"
-                            size="txtManropeExtraBold28"
-                          >
-                            {propertyDetails?.name}
-                          </Text>
-                          <Text
-                            className="text-gray-900 text-xl tracking-[-0.40px] w-full"
-                            size="txtManropeSemiBold20Gray900"
-                          >
-                            {propertyDetails?.location?.address}
-                          </Text>
-                        </div>
-                        <div className="flex sm:flex-col flex-row gap-4 items-start justify-start md:pr-10 sm:pr-5 pr-[180px] w-full">
-                          <div className="bg-orange-50 border border-gray-600 border-solid flex flex-1 flex-col items-center justify-center sm:px-5 px-6 py-[7px] rounded-[10px] w-full">
-                            <div className="flex flex-col gap-1 items-start justify-start w-full">
-                              <Text
-                                className="text-2xl md:text-[22px] text-gray-900 sm:text-xl tracking-[-0.48px] w-full"
-                                size="txtManropeBold24Gray900"
-                              >
-                                {"$" + propertyDetails?.fixedPrice}
-                              </Text>
-                              <Text
-                                className="text-gray-600 text-xs w-full"
-                                size="txtManropeSemiBold12"
-                              >
-                                Online / Cash Payment
-                              </Text>
-                            </div>
-                          </div>
-                          <div className="bg-orange-50 border border-bluegray-100 border-solid flex flex-1 flex-col items-center justify-center sm:px-5 px-6 py-[7px] rounded-[10px] w-full">
-                            <div className="flex flex-col gap-1 items-start justify-start w-full">
-                              <Text
-                                className="text-2xl md:text-[22px] text-gray-900 sm:text-xl tracking-[-0.48px] w-full"
-                                size="txtManropeBold24Gray900"
-                              >
-                                {"$" +
-                                  Math.floor(
-                                    propertyDetails?.fixedPrice / 12
-                                  )}{" "}
-                                / month
-                              </Text>
-                              <Text
-                                className="text-gray-600 text-xs w-full"
-                                size="txtManropeSemiBold12"
-                              >
-                                0% EMI for 6 Months
-                              </Text>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col gap-4 items-start justify-start w-full">
-                        <Text
-                          className="text-gray-900 text-xl tracking-[-0.40px] w-full"
-                          size="txtManropeSemiBold20Gray900"
-                        >
-                          {"Well-constructed (" +
-                            propertyDetails?.specifications[2] +
-                            ") Home Is Now Offering To You In Uttara For Sale"}
-                        </Text>
-                        <Text
-                          className="leading-[180.00%] max-w-[712px] md:max-w-full text-gray-600 text-lg"
-                          size="txtManropeRegular18Gray600"
-                        >
-                          <>{propertyDetails?.description}</>
-                        </Text>
-                      </div>
-                      <div className="flex flex-col gap-4 items-start justify-start w-full">
-                        <h2 className="text-xl font-semibold font-manrope">
-                          Location:
-                        </h2>
-                        <div className="h-[400px] relative w-full">
-                          <GoogleMap
-                            className="h-[400px] m-auto rounded-[10px] w-full"
-                            showMarker={true}
-                          ></GoogleMap>
-                          <Img
-                            className="absolute h-[54px] inset-[0] m-auto w-[389px]"
-                            src="images/img_frame1000001425.svg"
-                            alt="frame1000001425"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-orange-50 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-[10px] w-full">
-                    <div className="flex flex-col gap-6 items-start justify-start w-full">
-                      <Text
-                        className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-auto"
-                        size="txtManropeExtraBold28"
-                      >
-                        Home Highlights
-                      </Text>
-                      <List
-                        className="sm:flex-col flex-row md:gap-10 gap-[150px] grid md:grid-cols-1 grid-cols-2 justify-start w-full"
-                        orientation="horizontal"
-                      >
-                        <div className="flex flex-1 flex-col gap-2.5 items-start justify-start w-full">
-                          <div className="flex flex-row gap-[55px] items-start justify-start w-full">
-                            <div className="flex flex-1 flex-row gap-2.5 items-center justify-start w-full">
-                              <div className="bg-gray-600 h-2 rounded-[50%] w-2"></div>
-                              <Text
-                                className="flex-1 text-gray-600 text-lg w-auto"
-                                size="txtManropeRegular18Gray600"
-                              >
-                                Parking
-                              </Text>
-                            </div>
-                            <Text
-                              className="flex-1 text-gray-900 text-lg text-right w-auto"
-                              size="txtManropeSemiBold18"
-                            >
-                              No Info
-                            </Text>
-                          </div>
-                          <div className="flex flex-row gap-[47px] items-start justify-start w-full">
-                            <div className="flex flex-1 flex-row gap-2.5 items-center justify-start w-full">
-                              <div className="bg-gray-600 h-2 rounded-[50%] w-2"></div>
-                              <Text
-                                className="flex-1 text-gray-600 text-lg w-auto"
-                                size="txtManropeRegular18Gray600"
-                              >
-                                Outdoor
-                              </Text>
-                            </div>
-                            <Text
-                              className="flex-1 text-gray-900 text-lg text-right w-auto"
-                              size="txtManropeSemiBold18"
-                            >
-                              No Info
-                            </Text>
-                          </div>
-                          <div className="flex flex-row gap-[85px] items-start justify-start w-full">
-                            <div className="flex flex-1 flex-row gap-2.5 items-center justify-start w-full">
-                              <div className="bg-gray-600 h-2 rounded-[50%] w-2"></div>
-                              <Text
-                                className="flex-1 text-gray-600 text-lg w-auto"
-                                size="txtManropeRegular18Gray600"
-                              >
-                                A/C
-                              </Text>
-                            </div>
-                            <Text
-                              className="flex-1 text-gray-900 text-lg text-right w-auto"
-                              size="txtManropeSemiBold18"
-                            >
-                              No Info
-                            </Text>
-                          </div>
-                          <div className="flex flex-row gap-10 items-start justify-start w-full">
-                            <div className="flex flex-1 flex-row gap-2.5 items-center justify-start w-full">
-                              <div className="bg-gray-600 h-2 rounded-[50%] w-2"></div>
-                              <Text
-                                className="flex-1 text-gray-600 text-lg w-auto"
-                                size="txtManropeRegular18Gray600"
-                              >
-                                Year Built
-                              </Text>
-                            </div>
-                            <Text
-                              className="flex-1 text-gray-900 text-lg text-right w-auto"
-                              size="txtManropeSemiBold18"
-                            >
-                              2021
-                            </Text>
-                          </div>
-                        </div>
-                        <div className="flex flex-1 flex-col gap-2.5 items-start justify-start w-full">
-                          <div className="flex flex-row gap-20 items-start justify-start w-full">
-                            <div className="flex flex-1 flex-row gap-2.5 items-center justify-start w-full">
-                              <div className="bg-gray-600 h-2 rounded-[50%] w-2"></div>
-                              <Text
-                                className="flex-1 text-gray-600 text-lg w-auto"
-                                size="txtManropeRegular18Gray600"
-                              >
-                                HOA
-                              </Text>
-                            </div>
-                            <Text
-                              className="flex-1 text-gray-900 text-lg text-right w-auto"
-                              size="txtManropeSemiBold18"
-                            >
-                              None
-                            </Text>
-                          </div>
-                          <div className="flex flex-row gap-8 items-start justify-start w-full">
-                            <div className="flex flex-1 flex-row gap-2.5 items-center justify-start w-full">
-                              <div className="bg-gray-600 h-2 rounded-[50%] w-2"></div>
-                              <Text
-                                className="flex-1 text-gray-600 text-lg w-auto"
-                                size="txtManropeRegular18Gray600"
-                              >
-                                Price/Sqft
-                              </Text>
-                            </div>
-                            <Text
-                              className="flex-1 text-gray-900 text-lg text-right w-auto"
-                              size="txtManropeSemiBold18"
-                            >
-                              $560
-                            </Text>
-                          </div>
-                          <div className="flex flex-row gap-[66px] items-start justify-start w-full">
-                            <div className="flex flex-1 flex-row gap-2.5 items-center justify-start w-full">
-                              <div className="bg-gray-600 h-2 rounded-[50%] w-2"></div>
-                              <Text
-                                className="flex-1 text-gray-600 text-lg w-auto"
-                                size="txtManropeRegular18Gray600"
-                              >
-                                Listed
-                              </Text>
-                            </div>
-                            <Text
-                              className="flex-1 text-gray-900 text-lg text-right w-auto"
-                              size="txtManropeSemiBold18"
-                            >
-                              Yes
-                            </Text>
-                          </div>
-                        </div>
-                      </List>
-                    </div>
-                  </div>
-                 
-                </div>
-                <div className="bg-orange-50 border border-bluegray-100 border-solid flex sm:flex-1 flex-col items-start justify-start p-6 sm:px-5 rounded-[10px] w-auto sm:w-full">
-                  <div className="flex flex-col gap-10 items-start justify-start w-[336px]">
-                    <div className="flex flex-col gap-6 items-start justify-start w-full">
-                      <Text
-                        className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
-                        size="txtManropeExtraBold28"
-                      >
-                        Request for Visit
-                      </Text>
-                      <div className="flex flex-col gap-3 h-[440px] md:h-auto items-start justify-start w-full">
-                        <Input
-                          name="textfieldlarge"
-                          placeholder="Full Name"
-                          className="font-semibold p-0 placeholder:text-gray-600 sm:pr-5 text-gray-600 text-left text-lg w-full"
-                          wrapClassName="bg-orange-50 border border-bluegray-100 border-solid flex pl-4 pr-[35px] py-[17px] rounded-[10px] w-full"
-                          type="text"
-                          prefix={
-                            <Img
-                              className="mt-auto mb-px h-6 mr-3.5"
-                              src="images/img_user.svg"
-                              alt="user"
-                            />
-                          }
-                        ></Input>
-                        <Input
-                          name="textfieldlarge_One"
-                          placeholder="Email Address"
-                          className="font-semibold p-0 placeholder:text-gray-600 sm:pr-5 text-gray-600 text-left text-lg w-full"
-                          wrapClassName="bg-orange-50 border border-bluegray-100 border-solid flex pl-4 pr-[35px] py-[17px] rounded-[10px] w-full"
-                          type="email"
-                          prefix={
-                            <Img
-                              className="mt-auto mb-px h-6 mr-3.5"
-                              src="images/img_mail_gray_600_24x24.svg"
-                              alt="mail"
-                            />
-                          }
-                        ></Input>
-                        <Input
-                          name="textfieldlarge_Two"
-                          placeholder="Phone Number"
-                          className="font-semibold p-0 placeholder:text-gray-600 sm:pr-5 text-gray-600 text-left text-lg w-full"
-                          wrapClassName="bg-orange-50 border border-bluegray-100 border-solid flex pl-4 pr-[35px] py-[17px] rounded-[10px] w-full"
-                          type="number"
-                          prefix={
-                            <Img
-                              className="mt-auto mb-px h-6 mr-3.5"
-                              src="images/img_call.svg"
-                              alt="call"
-                            />
-                          }
-                        ></Input>
-                        <Input
-                          name="textfieldlarge_Three"
-                          placeholder="Date"
-                          className="font-semibold p-0 placeholder:text-gray-600 sm:pr-5 text-gray-600 text-left text-lg w-full"
-                          wrapClassName="bg-orange-50 border border-bluegray-100 border-solid flex pl-4 pr-[35px] py-[17px] rounded-[10px] w-full"
-                          prefix={
-                            <Img
-                              className="mt-auto mb-px h-6 mr-3.5"
-                              src="images/img_calendar.svg"
-                              alt="calendar"
-                            />
-                          }
-                        ></Input>
-                        <div className="bg-orange-50 border border-bluegray-100 border-solid flex flex-col h-[152px] md:h-auto items-start justify-start px-[19px] py-3.5 rounded-[10px] w-full">
-                          <Text
-                            className="text-gray-600 text-lg w-auto"
-                            size="txtManropeSemiBold18Gray600"
-                          >
-                            Message
-                          </Text>
-                        </div>
-                      </div>
-                    </div>
-                    <Button className="bg-gray-900 cursor-pointer font-semibold py-[17px] rounded-[10px] text-base text-center text-white-A700 w-full">
-                      Send Request
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div> */}
             <main className="max-w-7xl mx-auto font-manrope my-12">
               <div className="max-w-none">
                 {/* Product */}
@@ -1056,18 +725,18 @@ const PropertyDetailsPage = () => {
               src={`https://maps.google.com/maps?q=${propertyCoordinates?.coordinates[0]},${propertyCoordinates?.coordinates[1]}&hl=en&z=14&amp&output=embed`}
             ></iframe>
           </div>
-          <div className="bg-white border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-[10px] w-full">
-            <div className="flex flex-col gap-[26px] items-start justify-start w-full">
+          <div className="bg-white border border-bluegray-100 border-solid flex flex-col items-start justify-start sm:px-5 rounded-[10px] w-full">
+            <div className="flex flex-col gap-[26px] items-start justify-start w-full bg-gray-100 px-10 py-4">
               <Text
-                className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
+                className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full "
                 size="txtManropeExtraBold28"
               >
                 Seller Information
               </Text>
               <Link to={`/agentprofile/${sellerInfo?._id}`} className="w-full">
-                <div className="flex flex-row gap-6 items-center justify-start w-full hover:bg-gray-100 rounded-lg cursor-pointer">
+                <div className="flex flex-row gap-6 items-center justify-start w-full rounded-lg cursor-pointer bg-white">
                   <Img
-                    className="h-40 object-cover object-center rounded-full w-40"
+                    className="h-48 object-cover object-center rounded-full w-48"
                     src={
                       sellerInfo?.profilePicture
                         ? sellerInfo?.profilePicture
@@ -1075,7 +744,7 @@ const PropertyDetailsPage = () => {
                     }
                     alt="rectangle5599"
                   />
-                  <div className="flex flex-col gap-[3px] items-start justify-start w-auto">
+                  <div className="flex flex-col gap-[3px] items-start justify-start w-auto mt-2">
                     <Text
                       className="text-gray-900 text-xl tracking-widder w-auto"
                       size="txtManropeSemiBold20Gray900"
@@ -1114,6 +783,11 @@ const PropertyDetailsPage = () => {
                       >
                         {sellerInfo?.phone}
                       </Text>
+                    </div>
+                    <div className="flex flex-row gap-2.5 items-center justify-start w-full mt-1">
+                      <Link to={`/user-chat/${id}`}>
+                     <button className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Chat With Seller</button>
+                     </Link>
                     </div>
                   </div>
                 </div>
@@ -1173,8 +847,9 @@ const PropertyDetailsPage = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 ">
-                      {propertyBids?.map((bid) => (
-                        <tr key={bid._id}>
+                      {sortedBids.length  > 0 ?
+                      sortedBids?.map((bid) => (
+                        <tr key={bid?._id}>
                           <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
                             <div className="flex items-center">
                               <div className="h-11 w-11 flex-shrink-0">
@@ -1195,9 +870,9 @@ const PropertyDetailsPage = () => {
                             </div>
                           </td>
                           <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                            <div className="text-gray-900">
-                              {bid?.biddingPrice}
-                            </div>
+                          <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                          {"$"+bid?.biddingPrice.toLocaleString()}
+                            </span>
                             {/* <div className="mt-1 text-gray-500">{person.department}</div> */}
                           </td>
                           <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
@@ -1216,7 +891,7 @@ const PropertyDetailsPage = () => {
                             </span>
                           </td>
                         </tr>
-                      ))}
+                      )): <span className="text-gray-600">No Bids Yet</span>}
                     </tbody>
                   </table>
                 </div>
@@ -1230,7 +905,7 @@ const PropertyDetailsPage = () => {
                 <button
                   onClick={() => setReviewFormvisible(true)}
                   type="button"
-                  className="inline-flex items-center gap-x-2 rounded-md tracking-widest bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="inline-flex items-center gap-x-2 rounded-md tracking-widest bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                 >
                   Write Review
                   <PencilIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
@@ -1297,8 +972,8 @@ const PropertyDetailsPage = () => {
                   </div>
                   <div className="space-y-12">
                     <div className="border-b border-gray-900/10 pb-12">
-                      <div className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-6">
-                        <div className="sm:col-span-3">
+                      <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                        {/* <div className="sm:col-span-3">
                           <label
                             htmlFor="name"
                             className="block text-sm font-medium leading-6 text-gray-900"
@@ -1309,16 +984,16 @@ const PropertyDetailsPage = () => {
                             <input
                               type="text"
                               disabled
-                              value={formik.values.name}
-                              name="name"
-                              id="name"
+                              value={formik.values.username}
+                              name="username"
+                              id="username"
                               autoComplete="given-name"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                           </div>
-                        </div>
+                        </div> */}
 
-                        <div className="sm:col-span-3">
+                        {/* <div className="sm:col-span-3">
                           <label
                             htmlFor="email"
                             className="block text-sm font-medium leading-6 text-gray-900"
@@ -1336,12 +1011,12 @@ const PropertyDetailsPage = () => {
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                           </div>
-                        </div>
+                        </div> */}
 
-                        <div className="sm:col-span-3">
+                        <div className="w-full">
                           <label
                             htmlFor="review"
-                            className="block text-sm font-medium leading-6 text-gray-900"
+                            className="block text-lg font-medium leading-6 text-gray-900"
                           >
                             Review
                           </label>
@@ -1353,7 +1028,7 @@ const PropertyDetailsPage = () => {
                               name="review"
                               id="review"
                               autoComplete="review"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              className="block w-full rounded-md border-0 pb-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 bg-gray-100"
                             />
                           </div>
                         </div>
@@ -1372,7 +1047,7 @@ const PropertyDetailsPage = () => {
                     <button
                       // onClick={() => setReviewFormvisible(!reviewFormvisible)}
                       type="submit"
-                      className="rounded-md bg-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     >
                       Save
                     </button>
@@ -1381,7 +1056,8 @@ const PropertyDetailsPage = () => {
               )}
               <h2 className="text-xl font-semibold ml-2">Reviews</h2>
               <div className="mb-1 mt-8 h-80 overflow-y-auto ">
-                {reviews?.map((review, reviewIdx) => (
+                {reviews?.length > 0 ?
+                reviews?.map((review, reviewIdx) => (
                   <div
                     key={review._id}
                     className="flex space-x-4 text-sm text-gray-500 bg-gray-100 px-5"
@@ -1428,7 +1104,7 @@ const PropertyDetailsPage = () => {
                       >{review.reviewText }</div>
                     </div>
                   </div>
-                ))}
+                )): "No Reviews Yet"}
               </div>
             </div>
           </div>

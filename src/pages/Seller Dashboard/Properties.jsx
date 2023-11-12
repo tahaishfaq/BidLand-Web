@@ -1,10 +1,11 @@
 import { ArrowSmallLeftIcon } from "@heroicons/react/20/solid";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import storage from "../../../fireabse";
+import {storage} from "../../../fireabse";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
+import { Toaster, toast } from "sonner";
 
 const Properties = () => {
     
@@ -46,9 +47,10 @@ const Properties = () => {
         // Get the download URL for the file
         getDownloadURL(snapshot.ref)
           .then((downloadURL) => {
-            console.log("File download URL:", downloadURL);
+            console.log("File Uploaded Successfully");
+            toast.success("File Uploaded Successfully")
             setUrl(downloadURL);
-            setLoader(false); // Set the download URL in the component state
+            setLoader(false);
           })
           .catch((error) => {
             console.error("Error getting download URL:", error);
@@ -90,9 +92,11 @@ const Properties = () => {
             .post(`http://localhost:3000/property/add`, json, config)
             .then((res) => {
               console.log(res.data);
+              toast.success("Property Added Successfully")
               setProperties(res?.data?.properties)
               setShow(true)
-            });
+            }).catch((err) =>
+            toast.error("Property Added Failed"));
         } catch (error) {
           console.error("Error submitting form:", error);
         }
@@ -105,7 +109,10 @@ const Properties = () => {
           .delete(`http://localhost:3000/property/delete/${id}`, config)
           .then((res) => {
             console.log(res.data);
-            setProperties(res?.data?.properties)
+            toast.success("Property Deleted Successfully")
+            setProperties(res?.data?.properties?.deletedProperty)
+          }).catch((err) =>{
+            toast.error("Property Delete Failed")
           });
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -119,7 +126,10 @@ const Properties = () => {
           .put(`http://localhost:3000/bidding/${id}/startBidding`, config)
           .then((res) => {
             console.log(res.data);
+            toast.success("Bidding Started Successfully")
             // setProperties(res?.data?.properties)
+          }).catch((err) =>{
+            toast.error("Bidding Start Failed")
           });
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -132,7 +142,10 @@ const Properties = () => {
           .put(`http://localhost:3000/bidding/${id}/stopBidding`, config)
           .then((res) => {
             console.log(res.data);
+            toast.success("Bidding Stop Successfully")
             // setProperties(res?.data?.properties)
+          }).catch((err) =>{
+            toast.error("Bidding Stop Failed")
           });
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -141,6 +154,7 @@ const Properties = () => {
 
   return (
     <>
+    <Toaster richColors/>
       {show ? (
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="sm:flex sm:items-center">
@@ -187,6 +201,12 @@ const Properties = () => {
                       </th>
                       <th
                         scope="col"
+                        className="relative py-3.5 pl-3 pr-4 sm:pr-0"
+                      >
+                        <span className="">Chat</span>
+                      </th>
+                      <th
+                        scope="col"
                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                       >
                         Price
@@ -203,6 +223,7 @@ const Properties = () => {
                       >
                         Bidding
                       </th>
+                     
                       <th
                         scope="col"
                         className="relative py-3.5 pl-3 pr-4 sm:pr-0"
@@ -245,6 +266,11 @@ const Properties = () => {
                             </p>
                           
                         </td>
+                        <td className="whitespace-nowrap px-3 py-5 text-center text-sm text-gray-500">
+                        <button className="text-white px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500" onClick={()=> navigate(`/sellerdashboard/seller-chat/${property?._id}`) }>
+                            Chat
+                          </button>
+                        </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
                             {"$" + property?.fixedPrice}
@@ -256,6 +282,7 @@ const Properties = () => {
                         <td className="whitespace-nowrap px-3 py-5 text-center text-sm text-gray-500">
                         {property?.isBidding == true ? "Yes" : "No"}
                         </td>
+                        
                         <td className="flex items-center gap-x-2 justify-center whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                           <button className="text-white px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500" onClick={()=> navigate(`/sellerdashboard/edit-properties/${property?._id}`) }>
                             Edit

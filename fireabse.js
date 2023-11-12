@@ -2,20 +2,22 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";
+import {getFirestore} from "firebase/firestore"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCm46l4B2Grv-9Sy6tT6qvCeIExhDA4Y1U",
-  authDomain: "bidland-bfee5.firebaseapp.com",
-  projectId: "bidland-bfee5",
-  storageBucket: "bidland-bfee5.appspot.com",
-  messagingSenderId: "902767822690",
-  appId: "1:902767822690:web:7d348a2baf7f37701e4e3b",
-  measurementId: "G-VE8GNS03XE"
+  apiKey: "AIzaSyAB2hnyYPuU9MeJtuqjdd8Pi3cBLuoIHMM",
+  authDomain: "bidland-7717d.firebaseapp.com",
+  projectId: "bidland-7717d",
+  storageBucket: "bidland-7717d.appspot.com",
+  messagingSenderId: "1056364502460",
+  appId: "1:1056364502460:web:f954cdc0c24a2d36d51fb9",
+  measurementId: "G-M2DFBERGEJ"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-const storage = getStorage(app);
+ const db = getFirestore(app);
+ const storage = getStorage(app);
 
-export default storage
+ export { db, storage };

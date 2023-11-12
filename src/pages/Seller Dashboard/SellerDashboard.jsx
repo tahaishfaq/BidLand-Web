@@ -14,7 +14,14 @@
 */
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { Link, NavLink, Outlet, Route, Routes, useNavigate } from 'react-router-dom'
+import {
+  Link,
+  NavLink,
+  Outlet,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import {
   Bars3Icon,
   BellIcon,
@@ -30,6 +37,7 @@ import {
 import {
   ArrowRightOnRectangleIcon,
   ArrowTrendingUpIcon,
+  ChatBubbleBottomCenterIcon,
   ChevronDownIcon,
   HomeModernIcon,
   MagnifyingGlassIcon,
@@ -39,14 +47,18 @@ import Properties from "./Properties";
 import PropertiesEdit from "./PropertiesEdit";
 import EditProfile from "./EditProfile";
 import Bids from "./Bids";
-
+import Chat from "./Chat";
 
 const navigation = [
   { name: "Dashboard", href: "home", icon: HomeIcon, current: true },
   { name: "Users", href: "get-all-users", icon: UsersIcon, current: false },
-  { name: "Properties", href: "get-properties", icon: HomeModernIcon, current: false },
+  {
+    name: "Properties",
+    href: "get-properties",
+    icon: HomeModernIcon,
+    current: false,
+  },
   { name: "Bids", href: "bids", icon: ArrowTrendingUpIcon, current: false },
-
 ];
 const teams = [
   { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
@@ -63,7 +75,7 @@ function classNames(...classes) {
 }
 
 export default function Example() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   var token = localStorage.getItem("JWT");
   var userPic = localStorage.getItem("userData");
   var userId = localStorage.getItem("userId");
@@ -94,28 +106,42 @@ export default function Example() {
                   <ul role="list" className="-mx-2.5 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <NavLink 
+                        <NavLink
                           to={item.href}
                           className={`group flex gap-x-3 text-gray-700 rounded-md p-2 hover:text-indigo-600 hover:bg-[#F4F7FF]  text-sm leading-6 font-semibold ${
-                            location.pathname.includes(`${item.href}`)? 'border-l-4 border-indigo-600' : ''
+                            location.pathname.includes(`${item.href}`)
+                              ? "border-l-4 border-indigo-600"
+                              : ""
                           }`}
                         >
-                         <item.icon
+                          <item.icon
                             className={`h-6 w-6 text-gray-400 group-hover:text-indigo-600 shrink-0 ${
-                             location.pathname.includes(`${item.href}`)? 'text-indigo-600' : ''
-                               }`}
-                               aria-hidden="true"/>
-           
+                              location.pathname.includes(`${item.href}`)
+                                ? "text-indigo-600"
+                                : ""
+                            }`}
+                            aria-hidden="true"
+                          />
+
                           {item.name}
                         </NavLink>
                       </li>
                     ))}
                   </ul>
                 </li>
-               
+
                 <li className="mt-auto">
-                  <a
-                  //  onClick={() => logOut()}
+                  <button
+                   onClick={() => {
+                    navigate("/");
+                    localStorage.removeItem("JWT");
+                    localStorage.removeItem("userData");
+                    localStorage.removeItem("userId");
+                    localStorage.removeItem("userRole")
+                    localStorage.removeItem("userName")
+                    localStorage.removeItem("userEmail")
+                    location.reload();
+                  }}
                     className="group -mx-2 cursor-pointer flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
                   >
                     <ArrowRightOnRectangleIcon
@@ -123,7 +149,7 @@ export default function Example() {
                       aria-hidden="true"
                     />
                     Log out
-                  </a>
+                  </button>
                 </li>
               </ul>
             </nav>
@@ -170,7 +196,11 @@ export default function Example() {
                     <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full bg-gray-50"
-                      src={userPic ? userPic : "https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"}
+                      src={
+                        userPic
+                          ? userPic
+                          : "https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"
+                      }
                       alt=""
                     />
                     <span className="flex items-center">
@@ -220,6 +250,9 @@ export default function Example() {
                               localStorage.removeItem("JWT");
                               localStorage.removeItem("userData");
                               localStorage.removeItem("userId");
+                              localStorage.removeItem("userRole");
+                              localStorage.removeItem("userName");
+                              localStorage.removeItem("userEmail");
                               location.reload();
                             }}
                             className={classNames(
@@ -241,17 +274,16 @@ export default function Example() {
           <main className="py-10 ">
             <div className="px-4 sm:px-6  lg:px-3">
               <Routes>
-              <Route path="/get-all-users" element={<ViewAllUsers />} />
-              <Route path="/get-properties" element={<Properties />} />
-              <Route path="/edit-properties/:id" element={<PropertiesEdit />} />
-              <Route path="/edit-profile/:id" element={<EditProfile />} />
-              <Route path="/bids" element={<Bids/>} />
-                {/* <Route path="/navbar" element={<ClientsNavBar />}>
-                  <Route index element={<Clients />} />
-                  <Route path="add-new-client" element={<AddNewClient />} />
-                  <Route path="client" element={<AddNewClient />}/>
-                  <Route path=":id" element={<UpdateClientProfile />} />
-                </Route> */}
+                <Route path="/get-all-users" element={<ViewAllUsers />} />
+                <Route path="/get-properties" element={<Properties />} />
+                <Route
+                  path="/edit-properties/:id"
+                  element={<PropertiesEdit />}
+                />
+                
+                <Route path="/edit-profile/:id" element={<EditProfile />} />
+                <Route path="/bids" element={<Bids />} />
+                <Route path="/seller-chat/:propertyId" element={<Chat />} />
               </Routes>
             </div>
           </main>

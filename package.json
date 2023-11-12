@@ -14,9 +14,11 @@
     "@testing-library/user-event": "^12.8.3",
     "axios": "^1.5.1",
     "dotenv": "^16.0.1",
+    "emoji-picker-react": "^4.5.15",
     "firebase": "^10.4.0",
     "formik": "^2.4.5",
     "jsonwebtoken": "^9.0.2",
+    "moment": "^2.29.4",
     "prop-types": "^15.8.1",
     "react": "17.0.2",
     "react-alice-carousel": "^2.5.1",
@@ -26,7 +28,8 @@
     "react-router-dom": "6.0.2",
     "react-router-hash-link": "^2.4.3",
     "react-select": "^5.2.1",
-    "react-timer-hook": "^3.0.7"
+    "react-timer-hook": "^3.0.7",
+    "sonner": "^1.2.0"
   },
   "scripts": {
     "start": "vite",

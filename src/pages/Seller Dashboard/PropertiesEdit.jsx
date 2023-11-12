@@ -3,8 +3,9 @@ import axios from "axios";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import storage from "../../../fireabse";
+import {storage} from "../../../fireabse";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Toaster, toast } from "sonner";
 const PropertiesEdit = () => {
   var userId = localStorage.getItem("userId");
   var token = localStorage.getItem("JWT");
@@ -31,7 +32,7 @@ const PropertiesEdit = () => {
 
   const handleUpload = (image) => {
     if (!image) {
-      console.error("Please select an image.");
+      toast.error("Please select an image.");
       return;
     }
 
@@ -45,11 +46,12 @@ const PropertiesEdit = () => {
         getDownloadURL(snapshot.ref)
           .then((downloadURL) => {
             console.log("File download URL:", downloadURL);
+            toast.success("File Uploaded Successfully")
             setUrl(downloadURL);
             setLoader(false); // Set the download URL in the component state
           })
           .catch((error) => {
-            console.error("Error getting download URL:", error);
+            toast.error("Error getting download URL:", error);
             setLoader(false);
           });
       })
@@ -108,14 +110,19 @@ const PropertiesEdit = () => {
           .put(`http://localhost:3000/property/update/${id}`, json, config)
           .then((res) => {
             console.log(res.data);
+            toast.success(res?.data?.message)
            
+          }).catch((err) =>{
+            toast.error("Updation Failed")
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        toast.error("Error submitting form:", error);
       }
     },
   });
   return (
+    <>
+    <Toaster richColors/>
     <div>
       <div className="divide-y divide-white/5 ">
         <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 sm:px-6 md:grid-cols-3 lg:px-8">
@@ -168,7 +175,7 @@ const PropertiesEdit = () => {
                   >
                     <div class="flex flex-col items-center justify-center">
                       <svg
-                        class="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400"
+                        class="w-8 h-8 mb-2 text-gray-500 "
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -206,7 +213,7 @@ const PropertiesEdit = () => {
               <div className="col-span-full">
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 "
                 >
                   Property Name*
                 </label>
@@ -217,7 +224,7 @@ const PropertiesEdit = () => {
                     value={EditProperty.values.name}
                     onChange={EditProperty.handleChange}
                     type="text"
-                    className="block w-full rounded-md border-0 bg-gray-100 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 bg-gray-100 py-1.5  shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
@@ -225,7 +232,7 @@ const PropertiesEdit = () => {
               <div className="col-span-full">
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 "
                 >
                   Property Description*
                 </label>
@@ -237,7 +244,7 @@ const PropertiesEdit = () => {
                     value={EditProperty.values?.description}
                     onChange={EditProperty.handleChange}
                     autoComplete="email"
-                    className="block w-full rounded-md border-0 bg-gray-100 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 bg-gray-100 py-1.5 shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
@@ -245,7 +252,7 @@ const PropertiesEdit = () => {
               <div className="col-span-full">
                 <label
                   htmlFor="fixedPrice"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 "
                 >
                   Price*
                 </label>
@@ -256,7 +263,7 @@ const PropertiesEdit = () => {
                     type="text"
                     value={EditProperty.values?.fixedPrice}
                     onChange={EditProperty.handleChange}
-                    className="block w-full rounded-md border-0 bg-gray-100 py-1.5 text-white shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 bg-gray-100 py-1.5  shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
@@ -280,7 +287,7 @@ const PropertiesEdit = () => {
               <div className="col-span-full">
                 <label
                   htmlFor="specification"
-                  className="block text-sm font-medium leading-6 text-white"
+                  className="block text-sm font-medium leading-6 "
                 >
                   Specification*
                 </label>
@@ -290,7 +297,7 @@ const PropertiesEdit = () => {
                     name="bedrooms"
                     value={EditProperty.values.bedrooms}
                     onChange={EditProperty.handleChange}
-                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                   >
                     <option value="">Choose Beedrooms</option>
                     <option value="2 Bedrooms">2 Bedrooms</option>
@@ -301,7 +308,7 @@ const PropertiesEdit = () => {
                     name="bathrooms"
                     value={EditProperty.values.bathrooms}
                     onChange={EditProperty.handleChange}
-                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                   >
                     <option value="">Choose Bathrooms</option>
                     <option value="2 Bathrooms">2 Bathrooms</option>
@@ -314,7 +321,7 @@ const PropertiesEdit = () => {
                     name="square"
                     value={EditProperty.values.square}
                     onChange={EditProperty.handleChange}
-                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                   >
                     <option value="">Choose Area(sqft)</option>
                     <option value="1500 sqft">1500 sqft</option>
@@ -325,7 +332,7 @@ const PropertiesEdit = () => {
                     name="other"
                     value={EditProperty.values.other}
                     onChange={EditProperty.handleChange}
-                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                   >
                     <option value="">Choose Other</option>
                     <option value="Swimming Pool">Swimming Pool</option>
@@ -340,7 +347,7 @@ const PropertiesEdit = () => {
             <div className="mt-8 flex px-4">
               <button
                 type="submit"
-                className="rounded-md bg-blue-500 text-white-A700 px-4 py-2 text-sm font-semibold tracking-wide shadow-sm hover:bg-blue-400 "
+                className="rounded-md bg-blue-500 text-white px-4 py-2 text-sm font-semibold tracking-wide shadow-sm hover:bg-blue-400 "
               >
                 Save Property
               </button>
@@ -349,6 +356,7 @@ const PropertiesEdit = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

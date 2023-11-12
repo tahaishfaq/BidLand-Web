@@ -223,3 +223,14 @@ ul li a{
   color: gold;
   text-shadow: 1px 1px goldenrod;
 }
+
+
+
+.emoji-picker {
+  position: absolute;
+  bottom: 40px;
+  right: -15px;
+  height: 450px;
+  margin-left: 35rem;
+  margin-right: 1rem;
+}

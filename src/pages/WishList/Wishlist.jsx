@@ -74,15 +74,10 @@ function classNames(...classes) {
 }
 
 const Wishlist = () => {
-  const [listing, setListing] = useState(null);
+  const [listing, setListing] = useState(JSON.parse(localStorage.getItem("wishlist")));
   const [open, setOpen] = useState(false);
   const navigate = useNavigate()
-
-  useEffect(() => {
-    // Load the wishlist from localStorage when the component mounts
-    const storedWishlist = JSON.parse(localStorage.getItem("wishlist"));
-    setListing(storedWishlist);
-  }, []);
+ 
 
   const handlePropertyDetails = (id) => {
     navigate(`/propertydetails/${id}`);
@@ -105,7 +100,8 @@ const Wishlist = () => {
             <div className="flex  flex-row gap-6 items-start justify-center mx-auto w-full">
               <div className="flex flex-row items-start justify-start w-full">
                 <div className="md:gap-5 gap-x-10 grid md:grid-cols-1 grid-cols-3 justify-center  w-full">
-                  {listing?.map((property) => (
+                  {listing?.length > 0 ?
+                  listing?.map((property) => (
                     <div className="border border-solid flex items-start justify-start rounded-lg w-full">
                       <div className="flex flex-col gap-[27px] items-start justify-start w-full">
                         <div className="flex flex-col relative">
@@ -192,7 +188,7 @@ const Wishlist = () => {
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )): "No Properties Added"}
                 </div>
               </div>
             </div>

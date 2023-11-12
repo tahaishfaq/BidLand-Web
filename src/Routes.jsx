@@ -12,7 +12,8 @@ import SellerDashboard from "pages/Seller Dashboard/SellerDashboard";
 import EditProfile from "pages/Auth/EditProfile";
 import BiddingListing from "pages/Bidding/BiddingListing";
 import Wishlist from "pages/WishList/Wishlist";
-import AdminDashboard from "pages/Seller Dashboard/Admin Dashboard/AdminDashboard";
+import AdminDashboard from "pages/Admin Dashboard/AdminDashboard";
+import Chat from "pages/chat/Chat";
 const License = React.lazy(() => import("pages/License"));
 const PrivacyPolicy = React.lazy(() => import("pages/PrivacyPolicy"));
 const FAQ = React.lazy(() => import("pages/FAQ"));
@@ -48,10 +49,11 @@ const ProjectRoutes = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/sellerdashboard/*" element={<SellerDashboard />} />
           <Route path="/admindashboard/*" element={<AdminDashboard />} />
+          <Route path="/user-chat/:propertyId" element={<Chat />} />
           <Route path="/userprofile/:id" element={<Profile />} />
           <Route path="/editprofile/:id" element={<EditProfile />} />
           <Route path="/forgetpassword" element={<ForgetPassword />} />
-          <Route path="/resetpassword/:token" element={<ResetPassword />} />
+          <Route path="/resetpassword/:id" element={<ResetPassword />} />
           <Route path="/listingmapview" element={<ListingMapView />} />
           <Route path="/propertydetails/:id" element={<PropertyDetails />} />
           <Route path="/agentlist" element={<AgentList />} />

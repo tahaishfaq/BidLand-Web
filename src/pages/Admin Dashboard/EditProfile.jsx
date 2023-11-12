@@ -23,7 +23,7 @@ import { Toaster, toast } from 'sonner';
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-const EditProfile = () => {
+const AdminEditProfile = () => {
     const [user, setUser] = useState(null);
     const [userPic, setUserPic] = useState("");
     const { id } = useParams();
@@ -149,24 +149,6 @@ const EditProfile = () => {
       enableReinitialize: true,
     });
   
-    const handleDeleteAccount = (id) => {
-      console.log(id);
-      try {
-        axios.delete(`http://localhost:3000/auth/delete/${id}`).then((res) => {
-          console.log(res);
-          toast.success("Delete Account Successfully")
-          navigate("/");
-          localStorage.removeItem("JWT");
-          localStorage.removeItem("userData");
-          localStorage.removeItem("userPic");
-          localStorage.removeItem("userId");
-          location.reload();
-        });
-      } catch (error) {
-        toast.error("Delete Account Error")
-        console.log(error);
-      }
-    };
   return (
     <>
     <Toaster richColors/>
@@ -388,31 +370,9 @@ const EditProfile = () => {
                 </div>
               </form>
             </div>
-
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
-              <div>
-                <h2 className="text-base font-semibold leading-7 ">
-                  Delete account
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-400">
-                  No longer want to use our service? You can delete your account
-                  here. This action is not reversible. All information related
-                  to this account will be deleted permanently.
-                </p>
-              </div>
-
-              <div className="flex items-start md:col-span-2">
-                <button
-                  onClick={() => handleDeleteAccount(id)}
-                  className="rounded-md bg-red-500 text-white px-4 py-4 text-sm font-semibold  shadow-sm hover:bg-red-400"
-                >
-                  Yes, delete my account
-                </button>
-              </div>
-            </div>
           </div>
           </>
   )
 }
 
-export default EditProfile
+export default AdminEditProfile

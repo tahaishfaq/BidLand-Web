@@ -185,6 +185,9 @@ const LandingPageHeader = (props) => {
                               localStorage.removeItem("JWT");
                               localStorage.removeItem("userData");
                               localStorage.removeItem("userId");
+                              localStorage.removeItem("userRole")
+                              localStorage.removeItem("userName")
+                              localStorage.removeItem("userEmail")
                               location.reload();
                             }}
                             className={classNames(

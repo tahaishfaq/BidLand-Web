@@ -21,8 +21,9 @@ import {
   Popover,
   Transition,
 } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { HeartIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { useNavigate } from "react-router-dom";
 
 const sortOptions = [
   { name: "Most Popular", href: "#" },
@@ -73,13 +74,18 @@ function classNames(...classes) {
 }
 
 const ListingPage = () => {
+  const navigate = useNavigate();
   const [listing, setListing] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredListing, setFilteredListing] = useState([]);
+
   useEffect(() => {
     const handleLisitng = () => {
       try {
         axios.get("http://localhost:3000/property/view").then((res) => {
           setListing(res?.data?.properties);
+          setFilteredListing(res?.data?.properties)
           console.log(res?.data?.properties);
         });
       } catch (error) {
@@ -89,129 +95,155 @@ const ListingPage = () => {
     handleLisitng();
   }, []);
 
+  const handlePropertyDetails = (id) => {
+    navigate(`/propertydetails/${id}`);
+  };
+  
+
+
+  const handleSearch = (searchValue) => {
+    setSearchTerm(searchValue);
+    const filtered = listing?.filter((property) =>
+      property?.name?.toLowerCase()?.includes(searchValue?.toLowerCase())
+    );
+    setFilteredListing(filtered);
+  };
+
+
+  const handleWishList = (property) => {
+    if(!wishlist?.find((item) => item?._id === property?._id)){
+        if(wishlist?.length <= 0){
+        setWishlist([property])
+        localStorage.setItem("wishlist", JSON.stringify([property]));
+      }
+      else{
+        setWishlist([...wishlist, property])
+        localStorage.setItem("wishlist", JSON.stringify([...wishlist, property]));
+      }
+    }
+  };
+
   return (
     <>
       <div className="bg-white flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col md:gap-10 gap-y-10 items-center justify-center w-full">
           <LandingPageHeader className="bg-orange-50 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
-         
-            {/* Mobile filter dialog */}
-           
-            <div className="w-full sm:px-6 px-32 font-manrope">
-              <section
-                aria-labelledby="filter-heading"
-              >
-                <h2 id="filter-heading" className="text-4xl font-bold mb-10">
-                  Find The Property
-                </h2>
 
-                <div className="flex items-center justify-between border-t border-gray-200 py-6">
-                  <Menu as="div" className="relative inline-block text-left">
-                    <div>
-                      <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                        Sort
-                        <ChevronDownIcon
-                          className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                        />
-                      </Menu.Button>
-                    </div>
+          {/* Mobile filter dialog */}
 
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
+          <div className="w-full sm:px-6 px-32 font-manrope">
+            <section aria-labelledby="filter-heading">
+              <h2 id="filter-heading" className="text-4xl font-bold mb-10">
+                Find The Property
+              </h2>
+
+              {/* <div className="flex items-center justify-between border-t border-gray-200 py-6">
+                <Menu as="div" className="relative inline-block text-left">
+                  <div>
+                    <Menu.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                      Sort
+                      <ChevronDownIcon
+                        className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                        aria-hidden="true"
+                      />
+                    </Menu.Button>
+                  </div>
+
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute left-0 z-10 mt-2 w-40 origin-top-left rounded-md bg-white-A700 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <div className="py-1">
+                        {sortOptions.map((option) => (
+                          <Menu.Item key={option}>
+                            {({ active }) => (
+                              <a
+                                href={option.href}
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm font-medium text-gray-900"
+                                )}
+                              >
+                                {option.name}
+                              </a>
+                            )}
+                          </Menu.Item>
+                        ))}
+                      </div>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+
+                <Popover.Group className=" sm:flex sm:items-baseline sm:space-x-8 space-x-8">
+                  {filters.map((section, sectionIdx) => (
+                    <Popover
+                      as="div"
+                      key={section.name}
+                      id={`desktop-menu-${sectionIdx}`}
+                      className="relative inline-block text-left"
                     >
-                      <Menu.Items className="absolute left-0 z-10 mt-2 w-40 origin-top-left rounded-md bg-white-A700 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1">
-                          {sortOptions.map((option) => (
-                            <Menu.Item key={option}>
-                              {({ active }) => (
-                                <a
-                                  href={option.href}
-                                  className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm font-medium text-gray-900"
-                                  )}
-                                >
-                                  {option.name}
-                                </a>
-                              )}
-                            </Menu.Item>
-                          ))}
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
+                      <div>
+                        <Popover.Button className="group inline-flex items-center justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
+                          <span>{section.name}</span>
+                          {sectionIdx === 0 ? (
+                            <span className="ml-1.5 rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-gray-700">
+                              1
+                            </span>
+                          ) : null}
+                          <ChevronDownIcon
+                            className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                            aria-hidden="true"
+                          />
+                        </Popover.Button>
+                      </div>
 
-                  <Popover.Group className=" sm:flex sm:items-baseline sm:space-x-8 space-x-8">
-                    {filters.map((section, sectionIdx) => (
-                      <Popover
-                        as="div"
-                        key={section.name}
-                        id={`desktop-menu-${sectionIdx}`}
-                        className="relative inline-block text-left"
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
                       >
-                        <div>
-                          <Popover.Button className="group inline-flex items-center justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
-                            <span>{section.name}</span>
-                            {sectionIdx === 0 ? (
-                              <span className="ml-1.5 rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-gray-700">
-                                1
-                              </span>
-                            ) : null}
-                            <ChevronDownIcon
-                              className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                              aria-hidden="true"
-                            />
-                          </Popover.Button>
-                        </div>
-
-                        <Transition
-                          as={Fragment}
-                          enter="transition ease-out duration-100"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-75"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
-                        >
-                          <Popover.Panel className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white-A700 p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <form className="space-y-4">
-                              {section.options.map((option, optionIdx) => (
-                                <div
-                                  key={option.value}
-                                  className="flex items-center"
+                        <Popover.Panel className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white-A700 p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <form className="space-y-4">
+                            {section.options.map((option, optionIdx) => (
+                              <div
+                                key={option.value}
+                                className="flex items-center"
+                              >
+                                <input
+                                  id={`filter-${section.id}-${optionIdx}`}
+                                  name={`${section.id}[]`}
+                                  defaultValue={option.value}
+                                  type="checkbox"
+                                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                />
+                                <label
+                                  htmlFor={`filter-${section.id}-${optionIdx}`}
+                                  className="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900"
                                 >
-                                  <input
-                                    id={`filter-${section.id}-${optionIdx}`}
-                                    name={`${section.id}[]`}
-                                    defaultValue={option.value}
-                                    type="checkbox"
-                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                  />
-                                  <label
-                                    htmlFor={`filter-${section.id}-${optionIdx}`}
-                                    className="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900"
-                                  >
-                                    {option.label}
-                                  </label>
-                                </div>
-                              ))}
-                            </form>
-                          </Popover.Panel>
-                        </Transition>
-                      </Popover>
-                    ))}
-                  </Popover.Group>
-                </div>
-              </section>
-            </div>
-            <div className=" w-full inline-flex justify-end px-32">
+                                  {option.label}
+                                </label>
+                              </div>
+                            ))}
+                          </form>
+                        </Popover.Panel>
+                      </Transition>
+                    </Popover>
+                  ))}
+                </Popover.Group>
+              </div> */}
+            </section>
+          </div>
+          <div className="w-full flex justify-end px-32">
             <form>
               <label
                 for="default-search"
@@ -238,16 +270,15 @@ const ListingPage = () => {
                   </svg>
                 </div>
                 <input
-                  type="search"
-                  id="default-search"
-                  class="block w-full py-3 pl-10 pr-20 text-sm text-gray-900 border font-manrope border-gray-300 rounded-lg bg-gray-50" placeholder="Search Properties"
-                  required
+                  type="text"
+                  class="flex w-[22rem] py-3 pl-10 pr-20 text-sm text-gray-900 border font-manrope border-gray-300 rounded-lg bg-gray-50"
+                  placeholder="Search Properties"
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
-                
               </div>
             </form>
-            </div>
-          
+          </div>
+
           <div className="flex flex-row font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full ">
             <div className="flex  flex-row gap-6 items-start justify-center mx-auto w-full">
               <div className="h-[511px] relative w-[32%] md:w-full">
@@ -351,7 +382,102 @@ const ListingPage = () => {
               </div>
               <div className="flex flex-row items-start justify-start w-full">
                 <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-2 justify-center min-h-[auto] w-full">
-                  <LandingPageCard className="flex flex- md:h-auto items-start justify-start w-full" />
+                  {filteredListing?.map((property) => (
+                    <div className="border border-solid flex items-start justify-start rounded-lg w-full">
+                      <div className="flex flex-col gap-[27px] items-start justify-start w-full">
+                        <div className="flex flex-col relative">
+                          <img
+                            className="h-96 w-full object-center object-cover rounded-t-lg "
+                            src={property?.images[0]}
+                            alt="eye"
+                          />
+                          <div className="flex w-full items-center justify-between pr-2 pl-2">
+                            <h2 className="text-xl font-semibold px-4 pt-4 font-manrope">
+                              {property?.name}
+                            </h2>
+                            <h2 className="text-xl font-semibold px-4 pt-4 font-manrope">
+                              {"$" + property?.fixedPrice}
+                            </h2>
+                          </div>
+                          <div
+                            className="absolute bg-gray-100 items-center rounded-full p-2 top-4 right-4"
+                            onClick={() => handleWishList(property)}
+                          >
+                            <span>
+                              <HeartIcon className="w-8 h-8 text-gray-600 cursor-pointer hover:text-gray-800" />
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-[21px] items-start justify-start w-full px-4">
+                          <div className="flex flex-row gap-10 items-center justify-between w-full px-4">
+                            <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                              <Img
+                                className="h-5 w-5"
+                                src="images/img_bookmark.svg"
+                                alt="bookmark"
+                              />
+                              <Text
+                                className="flex-1 text-base text-gray-700 w-auto"
+                                size="txtManropeSemiBold16Gray700"
+                              >
+                                {property?.specifications[0]}
+                              </Text>
+                            </div>
+                            <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                              <Img
+                                className="h-5 w-5"
+                                src="images/img_ticket.svg"
+                                alt="ticket"
+                              />
+                              <Text
+                                className="text-base text-gray-700 w-auto"
+                                size="txtManropeSemiBold16Gray700"
+                              >
+                                {property?.specifications[1]}
+                              </Text>
+                            </div>
+                          </div>
+                          <div className="flex flex-row gap-10 items-center justify-between w-full px-4">
+                            <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                              <Img
+                                className="h-5 w-5"
+                                src="images/img_icon.svg"
+                                alt="icon"
+                              />
+                              <Text
+                                className="flex-1 text-base text-gray-700 w-auto"
+                                size="txtManropeSemiBold16Gray700"
+                              >
+                                {property?.specifications[2]}
+                              </Text>
+                            </div>
+                            <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                              <Img
+                                className="h-5 w-5"
+                                src="images/img_settings.svg"
+                                alt="settings"
+                              />
+                              <Text
+                                className="text-base text-gray-700 w-auto"
+                                size="txtManropeSemiBold16Gray700"
+                              >
+                                {property?.specifications[3]}
+                              </Text>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-row items-center justify-start w-full">
+                          <button
+                            className="bg-gray-900 cursor-pointer text-white flex-1 font-manrope font-semibold py-5 rounded-[10px] text-base text-center  w-full"
+                            onClick={() => handlePropertyDetails(property?._id)}
+                          >
+                            Details
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
               {/* <div className="flex flex-1 flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
