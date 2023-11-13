@@ -176,7 +176,7 @@ const Profile = () => {
                                   {property?.name}
                                 </h2>
                                 <h2 className="text-xl font-semibold px-4 pt-4 font-manrope">
-                                  {"$" + property?.fixedPrice}
+                                  {"Rs " + property?.fixedPrice}
                                 </h2>
                               </div>
                             </div>

@@ -32,6 +32,7 @@ import {
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
+import { Toaster, toast } from "sonner";
 
 const reviews = [
   {
@@ -484,10 +485,15 @@ const PropertyDetailsPage = () => {
       try {
         axios.post(`http://localhost:3000/property/review/${id}`,JSON).then((res) =>{
          console.log(res);
+         toast.success("Successfully Added Review")
          location.reload()
+        }).catch((err) =>{
+          toast.error(err?.response?.data?.message)
         })
       } catch (error) {
         console.log(error);
+        
+
       }
       handelreset()
     },
@@ -499,6 +505,7 @@ const PropertyDetailsPage = () => {
 
   return (
     <>
+    <Toaster richColors/>
       <div className="bg-white flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
           <div className="flex flex-col gap-10 items-start justify-start w-full">
@@ -561,7 +568,7 @@ const PropertyDetailsPage = () => {
                     <div className="my-4">
                       <h2 className="sr-only">Product information</h2>
                       <p className="text-3xl tracking-tight text-gray-900">
-                        {"$ " + propertyDetails?.fixedPrice}
+                        {"Rs " + propertyDetails?.fixedPrice}
                       </p>
                     </div>
 
@@ -871,7 +878,7 @@ const PropertyDetailsPage = () => {
                           </td>
                           <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                          {"$"+bid?.biddingPrice.toLocaleString()}
+                          {"Rs "+bid?.biddingPrice.toLocaleString()}
                             </span>
                             {/* <div className="mt-1 text-gray-500">{person.department}</div> */}
                           </td>

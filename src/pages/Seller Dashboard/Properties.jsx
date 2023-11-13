@@ -1,14 +1,14 @@
 import { ArrowSmallLeftIcon } from "@heroicons/react/20/solid";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import {storage} from "../../../fireabse";
+import { storage } from "../../../fireabse";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "sonner";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 const Properties = () => {
-    
   var userId = localStorage.getItem("userId");
   var token = localStorage.getItem("JWT");
   const config = {
@@ -17,51 +17,65 @@ const Properties = () => {
   const [properties, setProperties] = useState(null);
   const [show, setShow] = useState(true);
   const [image, setImage] = useState(null);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState([]);
   const [loader, setLoader] = useState(false);
   const [imgMetaData, setImgMetaData] = useState("");
   const [specification, setSpecification] = useState([]);
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
 
   const handleImageChange = (e) => {
-    if (e.target.files[0]) {
+    const selectedFiles = e.target.files;
+    if (selectedFiles.length > 0) {
       setLoader(true);
-      setImage(e.target.files[0]);
-      handleUpload(e.target.files[0]);
+      const uploadTasks = [];
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const image = selectedFiles[i];
+        const storageRef = ref(storage, `images/${image.name}`);
+        uploadTasks.push(uploadBytes(storageRef, image));
+      }
+      Promise.all(uploadTasks)
+        .then((snapshots) => {
+          console.log("All files uploaded successfully!", snapshots);
+          const downloadURLPromises = snapshots.map((snapshot) =>
+            getDownloadURL(snapshot.ref)
+          );
+          Promise.all(downloadURLPromises)
+            .then((downloadURLs) => {
+              console.log("All files uploaded successfully");
+              toast.success("All files uploaded successfully");
+              console.log("Download URLs:", downloadURLs);
+              setUrl(downloadURLs);
+              setLoader(false);
+            })
+            .catch((error) => {
+              console.error("Error getting download URLs:", error);
+              setLoader(false);
+            });
+        })
+        .catch((error) => {
+          console.error("Error uploading files:", error);
+          setLoader(false);
+        });
     }
   };
 
-  const handleUpload = (image) => {
-    if (!image) {
-      console.error("Please select an image.");
-      return;
-    }
+  // const handleDeleteImage = async (imageUrl) => {
+  //   // Extract the file name from the image URL
+  //   const fileName = imageUrl.split("/").pop();
 
-    const storageRef = ref(storage, `images/${image.name}`);
+  //   // Create a reference to the image in Firebase Storage
+  //   const storageRef = ref(storage, `images/${fileName}`);
 
-    uploadBytes(storageRef, image)
-      .then((snapshot) => {
-        console.log("File uploaded successfully!", snapshot);
-        setImgMetaData(snapshot?.metadata?.fullPath);
-        // Get the download URL for the file
-        getDownloadURL(snapshot.ref)
-          .then((downloadURL) => {
-            console.log("File Uploaded Successfully");
-            toast.success("File Uploaded Successfully")
-            setUrl(downloadURL);
-            setLoader(false);
-          })
-          .catch((error) => {
-            console.error("Error getting download URL:", error);
-            setLoader(false);
-          });
-      })
-      .catch((error) => {
-        console.error("Error uploading file:", error);
-        setLoader(false);
-      });
-  };
+  //   try {
+  //     // Delete the image from Firebase Storage
+  //     await deleteObject(storageRef);
+  //     console.log("File deleted successfully!");
+
+  //     // Perform any other necessary state updates or actions
+  //   } catch (error) {
+  //     console.error("Error deleting file:", error);
+  //   }
+  // };
 
   useEffect(() => {
     try {
@@ -83,78 +97,89 @@ const Properties = () => {
         name: values.name,
         description: values.description,
         fixedPrice: values.fixedPrice,
+        city: values.city,
+        propertyType: values.propertyType,
         images: url,
-        specifications: [values.bedrooms, values.bathrooms, values.square, values.other],
+        specifications: [
+          values.bedrooms,
+          values.bathrooms,
+          values.square,
+          values.other,
+        ],
       };
       console.log("json", json);
-        try {
-          await axios
-            .post(`http://localhost:3000/property/add`, json, config)
-            .then((res) => {
-              console.log(res.data);
-              toast.success("Property Added Successfully")
-              setProperties(res?.data?.properties)
-              setShow(true)
-            }).catch((err) =>
-            toast.error("Property Added Failed"));
-        } catch (error) {
-          console.error("Error submitting form:", error);
-        }
+      try {
+        await axios
+          .post(`http://localhost:3000/property/add`, json, config)
+          .then((res) => {
+            console.log(res.data);
+            toast.success("Property Added Successfully");
+            setProperties(res?.data?.properties);
+            setShow(true);
+          })
+          .catch((err) => toast.error("Property Added Failed"));
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
     },
   });
 
-  const handleDeleteProperty = async (id) =>{
+  const handleDeleteProperty = async (id) => {
     try {
-        await axios
-          .delete(`http://localhost:3000/property/delete/${id}`, config)
-          .then((res) => {
-            console.log(res.data);
-            toast.success("Property Deleted Successfully")
-            setProperties(res?.data?.properties?.deletedProperty)
-          }).catch((err) =>{
-            toast.error("Property Delete Failed")
-          });
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-  }
+      await axios
+        .delete(`http://localhost:3000/property/delete/${id}`, config)
+        .then((res) => {
+          console.log(res.data);
+          toast.success("Property Deleted Successfully");
+          setProperties(res?.data?.properties?.deletedProperty);
+        })
+        .catch((err) => {
+          toast.error("Property Delete Failed");
+        });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
 
-
-  const handleStartBidding = async (id) =>{
+  const handleStartBidding = async (id) => {
     try {
-        await axios
-          .put(`http://localhost:3000/bidding/${id}/startBidding`, config)
-          .then((res) => {
-            console.log(res.data);
-            toast.success("Bidding Started Successfully")
-            // setProperties(res?.data?.properties)
-          }).catch((err) =>{
-            toast.error("Bidding Start Failed")
-          });
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-  }
+      await axios
+        .put(`http://localhost:3000/bidding/${id}/startBidding`, config)
+        .then((res) => {
+          console.log(res.data);
+          toast.success("Bidding Started Successfully");
+          // setProperties(res?.data?.properties)
+        })
+        .catch((err) => {
+          toast.error("Bidding Start Failed");
+        });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
 
-  const handleStopBidding = async (id) =>{
+  const handleStopBidding = async (id) => {
     try {
-        await axios
-          .put(`http://localhost:3000/bidding/${id}/stopBidding`, config)
-          .then((res) => {
-            console.log(res.data);
-            toast.success("Bidding Stop Successfully")
-            // setProperties(res?.data?.properties)
-          }).catch((err) =>{
-            toast.error("Bidding Stop Failed")
-          });
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-  }
+      await axios
+        .put(`http://localhost:3000/bidding/${id}/stopBidding`, config)
+        .then((res) => {
+          console.log(res.data);
+          toast.success("Bidding Stop Successfully");
+          // setProperties(res?.data?.properties)
+        })
+        .catch((err) => {
+          toast.error("Bidding Stop Failed");
+        });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  console.log(url);
 
   return (
     <>
-    <Toaster richColors/>
+      <Toaster richColors />
       {show ? (
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="sm:flex sm:items-center">
@@ -223,7 +248,7 @@ const Properties = () => {
                       >
                         Bidding
                       </th>
-                     
+
                       <th
                         scope="col"
                         className="relative py-3.5 pl-3 pr-4 sm:pr-0"
@@ -256,44 +281,66 @@ const Properties = () => {
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500 ">
-                         <p className="truncate w-60">
-                             {property?.description}
-                            </p>
+                          <p className="truncate w-60">
+                            {property?.description}
+                          </p>
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        <p className="truncate w-40">
-                        {property?.location?.address}
-                            </p>
-                          
+                          <p className="truncate w-40">
+                            {property?.location?.address}
+                          </p>
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-center text-sm text-gray-500">
-                        <button className="text-white px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500" onClick={()=> navigate(`/sellerdashboard/seller-chat/${property?._id}`) }>
+                          <button
+                            className="text-white px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500"
+                            onClick={() =>
+                              navigate(
+                                `/sellerdashboard/seller-chat/${property?._id}`
+                              )
+                            }
+                          >
                             Chat
                           </button>
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                            {"$" + property?.fixedPrice}
+                            {"Rs " + property?.fixedPrice}
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           5.0 rating
                         </td>
                         <td className="whitespace-nowrap px-3 py-5 text-center text-sm text-gray-500">
-                        {property?.isBidding == true ? "Yes" : "No"}
+                          {property?.isBidding == true ? "Yes" : "No"}
                         </td>
-                        
+
                         <td className="flex items-center gap-x-2 justify-center whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                          <button className="text-white px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500" onClick={()=> navigate(`/sellerdashboard/edit-properties/${property?._id}`) }>
+                          <button
+                            className="text-white px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500"
+                            onClick={() =>
+                              navigate(
+                                `/sellerdashboard/edit-properties/${property?._id}`
+                              )
+                            }
+                          >
                             Edit
                           </button>
-                          <button className="text-white px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500" onClick={()=>handleDeleteProperty(property?._id)}> 
+                          <button
+                            className="text-white px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500"
+                            onClick={() => handleDeleteProperty(property?._id)}
+                          >
                             Delete
                           </button>
-                          <button className="text-white px-3 py-2 rounded-lg bg-green-600 hover:bg-green-500" onClick={()=>handleStartBidding(property?._id)}> 
+                          <button
+                            className="text-white px-3 py-2 rounded-lg bg-green-600 hover:bg-green-500"
+                            onClick={() => handleStartBidding(property?._id)}
+                          >
                             Start Bidding
                           </button>
-                          <button className="text-white px-3 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-500" onClick={()=>handleStopBidding(property?._id)}>
+                          <button
+                            className="text-white px-3 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-500"
+                            onClick={() => handleStopBidding(property?._id)}
+                          >
                             Stop Bidding
                           </button>
                         </td>
@@ -315,11 +362,11 @@ const Properties = () => {
                     className="w-7 h-7 cursor-pointer"
                     onClick={() => setShow(true)}
                   />
-                  <h2 className="text-base font-semibold leading-7">
-                    Back
-                  </h2>
+                  <h2 className="text-base font-semibold leading-7">Back</h2>
                 </div>
-                <h2 className="mt-5  ml-6 text-base font-semibold leading-7">Add Property</h2>
+                <h2 className="mt-5  ml-6 text-base font-semibold leading-7">
+                  Add Property
+                </h2>
                 <p className="mt-1  ml-6 text-sm leading-6 text-gray-400">
                   You can add property to the platform here.
                 </p>
@@ -331,13 +378,14 @@ const Properties = () => {
               >
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:max-w-xl sm:grid-cols-6 px-4">
                   <div className="col-span-full flex items-center gap-x-8">
-                    <img
-                      src={url ? url : "https://w7.pngwing.com/pngs/527/625/png-transparent-scalable-graphics-computer-icons-upload-uploading-cdr-angle-text-thumbnail.png"}
-                      alt=""
-                      className="h-24 w-24 flex-none rounded-lg bg-gray-800 object-cover"
-                    />
                     {loader ? (
-                      <div role="status">
+                      <div
+                        role="status"
+                        className="flex items-center justify-center w-full gap-x-2 border rounded-md py-4"
+                      >
+                        <span className="text-gray-600 text-xl">
+                          Uploding...
+                        </span>
                         <svg
                           aria-hidden="true"
                           class="inline w-8 h-8 mr-2 text-gray-200 animate-spin fill-blue-600"
@@ -354,7 +402,6 @@ const Properties = () => {
                             fill="currentFill"
                           />
                         </svg>
-                        <span class="sr-only">Loading...</span>
                       </div>
                     ) : (
                       <label
@@ -378,32 +425,46 @@ const Properties = () => {
                             />
                           </svg>
 
-                          {url ? (
-                            <span className="bg-purple-100 text-sm rounded-full px-2 text-purple-800">
-                              {imgMetaData}
+                          {url.length > 0 ? (
+                            <span className="text-sm rounded-full px-2 text-gray-500">
+                              <span class="font-semibold">Click to update</span>{" "}
                             </span>
                           ) : (
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                            <span className="text-sm rounded-full px-2 text-gray-500">
                               <span class="font-semibold">Click to upload</span>{" "}
-                              or drag and drop
-                            </p>
+                            </span>
                           )}
                         </div>
                         <input
                           id="dropzone-file"
                           type="file"
+                          multiple
                           class="hidden"
                           onChange={handleImageChange}
                         />
                       </label>
                     )}
                   </div>
+                  <div className="flex gap-x-2 w-full">
+                    {url?.map((url) => (
+                      <div className="relative" key={url}>
+                        <img
+                          src={url}
+                          alt=""
+                          className="h-40 w-40 flex-none rounded-lg bg-gray-800 object-cover relative"
+                        />
+                        {/* <div className="absolute top-1 right-1 cursor-pointer" onClick={() => handleDeleteImage(url)}>
+                          <TrashIcon className="w-8 h-8 text-red-600 bg-white rounded-full p-1" />
+                        </div> */}
+                      </div>
+                    ))}
+                  </div>
                   <div className="col-span-full">
                     <label
                       htmlFor="name"
                       className="block text-sm font-medium leading-6 "
                     >
-                      Property Name*
+                      Property Title*
                     </label>
                     <div className="mt-2">
                       <input
@@ -414,6 +475,50 @@ const Properties = () => {
                         type="text"
                         className="block w-full rounded-md border-0 bg-gray-100 py-1.5  shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                       />
+                    </div>
+                  </div>
+                  <div className="flex gap-x-3 mt-2">
+                    <div className="flex flex-col w-full">
+                      <label
+                        htmlFor="city"
+                        className="block text-sm font-medium leading-6 "
+                      >
+                       Choose City*
+                      </label>
+                      <select
+                        id="city"
+                        name="city"
+                        value={AddProperty.values.city}
+                        onChange={AddProperty.handleChange}
+                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                      >
+                        <option value="">Choose City</option>
+                        <option value="Lahore">Lahore</option>
+                        <option value="Islamabad">Islamabad</option>
+                        <option value="Karachi">Karachi</option>
+                        <option value="Rawalpindi">Rawalpindi</option>
+                        <option value="Multan">Multan</option>
+                        <option value="Peshawar">Peshawar</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col w-full">
+                      <label
+                        htmlFor="propertyType"
+                        className="block text-sm font-medium leading-6 "
+                      >
+                        Property Type*
+                      </label>
+                      <select
+                        id="propertyType"
+                        name="propertyType"
+                        value={AddProperty.values.propertyType}
+                        onChange={AddProperty.handleChange}
+                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                      >
+                        <option value="">Choose Property Type</option>
+                        <option value="Residential">Residential</option>
+                        <option value="Commercial">Commercial</option>
+                      </select>
                     </div>
                   </div>
 
@@ -476,8 +581,9 @@ const Properties = () => {
                       htmlFor="specification"
                       className="block text-sm font-medium leading-6 "
                     >
-                      Specification*
+                      Specification
                     </label>
+                    {AddProperty.values.propertyType === "Residential" &&
                     <div className="flex gap-x-3 mt-2">
                       <select
                         id="bedrooms"
@@ -501,7 +607,7 @@ const Properties = () => {
                         <option value="2 Bathrooms">2 Bathrooms</option>
                         <option value="3 Bathrooms">3 Bathrooms</option>
                       </select>
-                    </div>
+                    </div>}
                     <div className="flex gap-x-3 mt-2">
                       <select
                         id="square"
@@ -510,10 +616,13 @@ const Properties = () => {
                         onChange={AddProperty.handleChange}
                         class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
                       >
-                        <option value="">Choose Area(sqft)</option>
-                        <option value="1500 sqft">1500 sqft</option>
-                        <option value="2000 sqft">2000 sqft</option>
+                        <option value="">Choose Area</option>
+                        <option value="10 Marla">10 Marla</option>
+                        <option value="15 Marla">15 Marla</option>
+                        <option value="1 Kannal">1 Kannal</option>
+                        <option value="2 Kannal">2 Kannal</option>
                       </select>
+                      {AddProperty.values.propertyType === "Residential" &&
                       <select
                         id="other"
                         name="other"
@@ -526,7 +635,7 @@ const Properties = () => {
                         <option value="Loan">Loan</option>
                         <option value="Basement">Basement</option>
                         <option value="Furnished">Furnished</option>
-                      </select>
+                      </select>}
                     </div>
                   </div>
                 </div>

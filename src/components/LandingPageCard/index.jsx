@@ -29,10 +29,10 @@ const LandingPageCard = (props) => {
   };
   
 
-  // useEffect(() => {
-  //   console.log(wishlist);
-  //   localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  // }, [wishlist]);
+  useEffect(() => {
+    console.log(wishlist);
+    // localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  }, [wishlist]);
 
   const handleWishList = (property) => {
     if(!wishlist?.find((item) => item?._id === property?._id)){
@@ -63,7 +63,7 @@ const LandingPageCard = (props) => {
                   {property?.name}
                 </h2>
                 <h2 className="text-xl font-semibold px-4 pt-4 font-manrope">
-                  {"$" + property?.fixedPrice}
+                  {"Rs " + property?.fixedPrice}
                 </h2>
               </div>
               <div

@@ -53,6 +53,16 @@ const LandingPageHeader = (props) => {
               orientation="horizontal"
             >
               <div className="flex flex-row gap-1.5 items-start justify-start ">
+                <Link to="/">
+                  <Text
+                    className="text-base text-gray-900 w-auto"
+                    size="txtManropeSemiBold16"
+                  >
+                    Home
+                  </Text>
+                </Link>
+              </div>
+              <div className="flex flex-row gap-1.5 items-start justify-start ">
                 <Link to="/listing">
                   <Text
                     className="text-base text-gray-900 w-auto"
