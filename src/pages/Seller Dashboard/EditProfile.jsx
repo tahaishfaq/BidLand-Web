@@ -1,4 +1,3 @@
-import React from 'react'
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
@@ -18,160 +17,178 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import {storage} from "../../../fireabse";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Toaster, toast } from 'sonner';
+import { Toaster, toast } from "sonner";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
+
 const EditProfile = () => {
-    const [user, setUser] = useState(null);
-    const [userPic, setUserPic] = useState("");
-    const { id } = useParams();
-    const [image, setImage] = useState(null);
-    const [url, setUrl] = useState("");
-    const [loader, setLoader] = useState(false);
-    const [imgMetaData, setImgMetaData] = useState("");
-    const navigate = useNavigate();
-  
-    const handleImageChange = (e) => {
-      if (e.target.files[0]) {
-        setLoader(true);
-        setImage(e.target.files[0]);
-        handleUpload(e.target.files[0]);
-      }
-    };
-  
-    const handleUpload = (image) => {
-      if (!image) {
-        console.error("Please select an image.");
-        return;
-      }
-  
-      const storageRef = ref(storage, `images/${image.name}`);
-  
-      uploadBytes(storageRef, image)
-        .then((snapshot) => {
-          console.log("File uploaded successfully!", snapshot);
-          setImgMetaData(snapshot?.metadata?.fullPath);
-          // Get the download URL for the file
-          getDownloadURL(snapshot.ref)
-            .then((downloadURL) => {
-              console.log("File download URL:", downloadURL);
-              toast.success("File Uploaded Successfully")
-              setUrl(downloadURL);
-              setLoader(false); // Set the download URL in the component state
-            })
-            .catch((error) => {
-              console.error("Error getting download URL:", error);
-              setLoader(false);
-            });
-        })
-        .catch((error) => {
-          console.error("Error uploading file:", error);
-          setLoader(false);
-        });
-    };
-  
-    useEffect(() => {
-      const handleUserProfile = () => {
-        try {
-          axios.get(`http://localhost:3000/auth/user/${id}`).then((res) => {
-            console.log(res?.data?.user);
-            setUser(res?.data?.user);
-            setUserPic(res?.data?.user?.profilePicture);
-            ProfileForm.setValues({
-              username: res?.data?.user?.username,
-              email: res?.data?.user?.email,
-              phone: res?.data?.user?.phone,
-            });
+  const [user, setUser] = useState(null);
+  const [userPic, setUserPic] = useState("");
+  const { id } = useParams();
+  const [image, setImage] = useState(null);
+  const [url, setUrl] = useState("");
+  const [loader, setLoader] = useState(false);
+  const [updaingProfile, setUpdaingProfile] = useState(false);
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+  const [accountDelete, setAccountDelete] = useState(false)
+  const [imgMetaData, setImgMetaData] = useState("");
+  const navigate = useNavigate();
+
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) {
+      setLoader(true);
+      setImage(e.target.files[0]);
+      handleUpload(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = (image) => {
+    if (!image) {
+      toast.error("Please select an image.");
+      return;
+    }
+
+    const storageRef = ref(storage, `images/${image.name}`);
+
+    uploadBytes(storageRef, image)
+      .then((snapshot) => {
+        console.log("File uploaded successfully!", snapshot);
+        setImgMetaData(snapshot?.metadata?.fullPath);
+        // Get the download URL for the file
+        getDownloadURL(snapshot.ref)
+          .then((downloadURL) => {
+            toast.success("File uploaded successfully");
+            setUrl(downloadURL);
+            setLoader(false); // Set the download URL in the component state
+          })
+          .catch((error) => {
+            toast.error("Error getting download URL:", error);
+            setLoader(false);
           });
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      handleUserProfile();
-    }, []);
-  
-    const ProfileForm = useFormik({
-      initialValues: {
-        username: "",
-        email: "",
-        password: "",
-        phone: "",
-        profilePicture: "",
-      },
-      onSubmit: async (values) => {
-        var json = {
-          username: values.username,
-          email: values.email,
-          phone: values.phone,
-          profilePicture: url ? url : userPic,
-        };
-        console.log("json", json);
-        try {
-          await axios
-            .put(`http://localhost:3000/auth/user/${id}`, json)
-            .then((res) => {
-              localStorage.setItem("userData", res?.data?.profilePicture);
-              console.log(res.data);
-              toast.success("Update Profile Successfully")
-            });
-        } catch (error) {
-          console.error("Error submitting form:", error);
-          toast.error("Update Profile Error")
-        }
-      },
-      enableReinitialize: true,
-    });
-  
-    const UpdatePassword = useFormik({
-      initialValues: {
-        currentPassword: "",
-        newPassword: "",
-      },
-      onSubmit: async (values) => {
-        var json = {
-          currentPassword: values.currentPassword,
-          newPassword: values.newPassword,
-        };
-        try {
-          await axios
-            .put(`http://localhost:3000/auth/update-password/${id}`, json)
-            .then((res) => {
-              console.log(res.data);
-              toast.success("Update Password Successfully")
-            });
-        } catch (error) {
-          console.error("Error submitting form:", error);
-          toast.error("Update Password Failed")
-        }
-      },
-      enableReinitialize: true,
-    });
-  
-    const handleDeleteAccount = (id) => {
-      console.log(id);
+      })
+      .catch((error) => {
+        toast.error("Error uploading file:", error);
+        setLoader(false);
+      });
+  };
+
+  useEffect(() => {
+    const handleUserProfile = () => {
       try {
-        axios.delete(`http://localhost:3000/auth/delete/${id}`).then((res) => {
-          console.log(res);
-          toast.success("Delete Account Successfully")
-          navigate("/");
-          localStorage.removeItem("JWT");
-          localStorage.removeItem("userData");
-          localStorage.removeItem("userPic");
-          localStorage.removeItem("userId");
-          location.reload();
+        axios.get(`http://localhost:3000/auth/user/${id}`).then((res) => {
+          console.log(res?.data?.user);
+          setUser(res?.data?.user);
+          setUserPic(res?.data?.user?.profilePicture);
+          ProfileForm.setValues({
+            username: res?.data?.user?.username,
+            email: res?.data?.user?.email,
+            phone: res?.data?.user?.phone,
+          });
         });
       } catch (error) {
-        toast.error("Delete Account Error")
         console.log(error);
       }
     };
+    handleUserProfile();
+  }, []);
+
+  const ProfileForm = useFormik({
+    initialValues: {
+      username: "",
+      email: "",
+      password: "",
+      phone: "",
+      profilePicture: "",
+    },
+    onSubmit: async (values) => {
+      var json = {
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        phone: values.phone,
+        profilePicture: url ? url : userPic,
+      };
+      try {
+        setUpdaingProfile(true);
+        await axios
+          .put(`http://localhost:3000/auth/user/${id}`, json)
+          .then((res) => {
+            localStorage.setItem("userData", res?.data?.profilePicture);
+            setUpdaingProfile(false);
+            toast.success("Profile Updated Successfully");
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        setUpdaingProfile(false);
+        toast.error("Error Updating Profile");
+      }
+    },
+    enableReinitialize: true,
+  });
+
+  const UpdatePassword = useFormik({
+    initialValues: {
+      currentPassword: "",
+      newPassword: "",
+    },
+    onSubmit: async (values) => {
+      var json = {
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+      };
+      try {
+        setUpdatingPassword(true)
+        await axios
+          .put(`http://localhost:3000/auth/update-password/${id}`, json)
+          .then((res) => {
+            console.log(res.data);
+            setUpdatingPassword(false)
+            toast.success("Password Updated Successfully")
+          }).catch((err) =>{
+            toast.error(err?.response?.data?.message)
+            setUpdatingPassword(false)
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        setUpdatingPassword(false)
+        toast.error("Password Updation Error")
+      }
+    },
+    enableReinitialize: true,
+  });
+
+  const handleDeleteAccount = (id) => {
+    console.log(id);
+    try {
+      setAccountDelete(true)
+      axios.delete(`http://localhost:3000/auth/delete/${id}`).then((res) => {
+        console.log(res);
+        toast.success("Account Deleted Successfully")
+        setAccountDelete(false)
+        navigate("/");
+        
+        localStorage.removeItem("JWT");
+        localStorage.removeItem("userData");
+        localStorage.removeItem("userPic");
+        localStorage.removeItem("userId");
+        location.reload();
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Account Delete Error")
+      setAccountDelete(false)
+    }
+  };
+
   return (
     <>
-    <Toaster richColors/>
-    <div className="divide-y divide-gray-300 font-manrope">
-            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 pb-6 sm:px-6 md:grid-cols-3 lg:px-8">
+      <Toaster richColors />
+      <div className="bg-white flex flex-col font-markoone  items-start justify-start mx-auto w-auto sm:w-full md:w-full">
+        <div className="flex flex-col  items-center justify-center w-full">
+          <div className="divide-y divide-gray-300 font-manrope">
+            <div className="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
               <div>
                 <h2 className="text-base font-semibold leading-7 ">
                   Personal Information
@@ -314,12 +331,34 @@ const EditProfile = () => {
                 </div>
 
                 <div className="mt-8 flex">
-                  <button
-                    type="submit"
-                    className="rounded-md bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-                  >
-                    Save
-                  </button>
+                  {updaingProfile ? (
+                    <div role="status">
+                      <svg
+                        aria-hidden="true"
+                        class="inline w-8 h-8 mr-2 text-gray-200 animate-spin  fill-blue-600"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="currentColor"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentFill"
+                        />
+                      </svg>
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="rounded-md bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                    >
+                      Save
+                    </button>
+                  )}
                 </div>
               </form>
             </div>
@@ -379,12 +418,34 @@ const EditProfile = () => {
                 </div>
 
                 <div className="mt-8 flex">
-                  <button
-                    type="submit"
-                    className="rounded-md bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-                  >
-                    Save
-                  </button>
+                  {updatingPassword ? (
+                    <div role="status">
+                      <svg
+                        aria-hidden="true"
+                        class="inline w-8 h-8 mr-2 text-gray-200 animate-spin  fill-blue-600"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="currentColor"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentFill"
+                        />
+                      </svg>
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="rounded-md bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                    >
+                      Save
+                    </button>
+                  )}
                 </div>
               </form>
             </div>
@@ -402,17 +463,38 @@ const EditProfile = () => {
               </div>
 
               <div className="flex items-start md:col-span-2">
+               {accountDelete ? 
+               <div role="status">
+               <svg
+                 aria-hidden="true"
+                 class="inline w-8 h-8 mr-2 text-gray-200 animate-spin  fill-red-600"
+                 viewBox="0 0 100 101"
+                 fill="none"
+                 xmlns="http://www.w3.org/2000/svg"
+               >
+                 <path
+                   d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                   fill="currentColor"
+                 />
+                 <path
+                   d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                   fill="currentFill"
+                 />
+               </svg>
+               <span class="sr-only">Loading...</span>
+             </div>:
                 <button
                   onClick={() => handleDeleteAccount(id)}
                   className="rounded-md bg-red-500 text-white px-4 py-4 text-sm font-semibold  shadow-sm hover:bg-red-400"
                 >
                   Yes, delete my account
-                </button>
+                </button>}
               </div>
             </div>
           </div>
-          </>
-  )
-}
-
-export default EditProfile
+        </div>
+      </div>
+    </>
+  );
+};
+export default EditProfile;

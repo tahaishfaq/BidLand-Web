@@ -9,9 +9,9 @@ const AllUsers = () => {
     headers: { Authorization: `Bearer ${token}` },
   };
   const [users, setUsers] = useState(null);
-  const [cnicFront, setCNICFront] = useState("")
-  const [cnicBack, setCNICBack] = useState("")
-  const [userId, setUserId] = useState("")
+  const [cnicFront, setCNICFront] = useState(null);
+  const [cnicBack, setCNICBack] = useState(null);
+  const [user, setUser] = useState("");
 
   useEffect(() => {
     try {
@@ -24,37 +24,59 @@ const AllUsers = () => {
     }
   }, []);
 
-  const handleVerification = (id) =>{
-    document.getElementById('my_modal_3').showModal()
+  const handleVerification = (id) => {
     try {
       axios.get(`http://localhost:3000/auth/user/${id}`).then((res) => {
         console.log(res?.data);
-        setUserId(res?.data?.user?._id)
-        setCNICFront(res?.data?.user?.verification?.cnicFront)
-        setCNICBack(res?.data?.user?.verification?.cnicBack)
+        setUser(res?.data?.user);
+        setCNICFront(res?.data?.user?.verification?.cnicFront);
+        setCNICBack(res?.data?.user?.verification?.cnicBack);
+        document.getElementById("my_modal_3").showModal();
       });
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  const hanldeVerifyUser = () =>{
-    const JSON = {
-        userId: userId, 
+  const hanldeVerifyUser = (status) => {
+    if (status == "Verify") {
+      const JSON = {
+        userId: user?._id,
         status: "Approved",
+      };
+      try {
+        axios
+          .post(`http://localhost:3000/auth/manage-verification`, JSON, config)
+          .then((res) => {
+            console.log(res?.data);
+            toast.success("User Verified Successfully");
+            location.reload()
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    } else if (status == "Reject") {
+      const JSON = {
+        userId: user?._id,
+        status: "Rejected",
+        reason: "Fake Documents",
+      };
+      try {
+        axios
+          .post(`http://localhost:3000/auth/manage-verification`, JSON, config)
+          .then((res) => {
+            console.log(res?.data);
+            toast.success("User Rejected Successfully");
+            location.reload()
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
-    try {
-      axios.post(`http://localhost:3000/auth/manage-verification`, JSON, config).then((res) => {
-        console.log(res?.data);
-        toast.success("User Verified Successfully")
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  };
   return (
     <>
-    <Toaster richColors/>
+      <Toaster richColors />
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
@@ -68,8 +90,8 @@ const AllUsers = () => {
           </div>
         </div>
         <div className="mt-8 flow-root">
-          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div className="-mx-4 -my-2 h-[40rem] overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full align-middle sm:px-6 lg:px-8">
               <table className="min-w-full divide-y divide-gray-300 border rounded-lg ">
                 <thead>
                   <tr>
@@ -139,14 +161,18 @@ const AllUsers = () => {
                           {person?.role == "user" && "Buyer"}
                         </span>
                       </td>
-                      <td className="flex items-center gap-x-2 justify-center whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                        <button className="text-white px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500" onClick={()=>handleVerification(person?._id)}>
-                          Verify
+                      <td className="flex items-center gap-x-2 justify-center whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 ">
+                        <button
+                          className="text-white px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 relative"
+                          onClick={() => handleVerification(person?._id)}
+                        >
+                          Check Verification
+                          {person?.verification?.status == "Requested" && (
+                            <span className="bg-red-500 text-white text-base rounded-full px-2 absolute -top-3 -right-3">
+                              1
+                            </span>
+                          )}
                         </button>
-
-                        {/* <button className="text-white px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500">
-                          Block
-                        </button> */}
                       </td>
                     </tr>
                   ))}
@@ -161,20 +187,68 @@ const AllUsers = () => {
                     </button>
                   </form>
                   <h3 className="font-bold text-2xl mb-10">Verification</h3>
-                  <div className="py-4 flex flex-col gap-y-4">
-                    <div className="flex flex-col items-center gap-y-2">
-                      <span className="text-lg text-gray-900 font-semibold">User CNIC Front</span>
-                      <a href={cnicFront} target="__blank" className="bg-blue-500 px-20 py-3 rounded-lg text-white font-semibold">View CNIC Front</a>
-                    </div>
-                    <div className="flex flex-col items-center gap-y-2">
-                      <span className="text-lg text-gray-900 font-semibold">User CNIC Back</span>
-                      <a href={cnicBack} target="__blank" className="bg-blue-500 px-20 py-3 rounded-lg text-white font-semibold">View CNIC Back</a>
-                    </div>
-                  </div>
-                  <div className="flex items-end justify-end gap-x-2 mt-10">
-                    <button className="bg-green-500 rounded-md px-6 py-3 text-white font-semibold" onClick={hanldeVerifyUser}>Verify</button>
-                    <button className="bg-red-500 rounded-md px-6 py-3 text-white font-semibold">Reject</button>
-                  </div>
+                  {cnicFront != null && cnicBack != null ? (
+                    <>
+                      <div className="py-4 flex flex-col gap-y-4">
+                        <div className="flex flex-col items-center gap-y-2">
+                          <span className="text-lg text-gray-900 font-semibold">
+                            User CNIC Front
+                          </span>
+                          <a
+                            href={cnicFront}
+                            target="__blank"
+                            className="bg-blue-500 px-20 py-3 rounded-lg text-white font-semibold"
+                          >
+                            View CNIC Front
+                          </a>
+                        </div>
+                        <div className="flex flex-col items-center gap-y-2">
+                          <span className="text-lg text-gray-900 font-semibold">
+                            User CNIC Back
+                          </span>
+                          <a
+                            href={cnicBack}
+                            target="__blank"
+                            className="bg-blue-500 px-20 py-3 rounded-lg text-white font-semibold"
+                          >
+                            View CNIC Back
+                          </a>
+                        </div>
+                      </div>
+                      {user?.verification?.status == "Requested" && (
+                        <div className="flex items-end justify-end gap-x-2 mt-10">
+                          <button
+                            className="bg-green-500 rounded-md px-6 py-3 text-white font-semibold"
+                            onClick={() => hanldeVerifyUser("Verify")}
+                          >
+                            Verify
+                          </button>
+                          <button
+                            className="bg-red-500 rounded-md px-6 py-3 text-white font-semibold"
+                            onClick={() => hanldeVerifyUser("Reject")}
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                      {user?.verification?.status == "Approved" && (
+                        <div className="flex items-center justify-center gap-x-2 mt-10">
+                          <span className="bg-green-500 px-3 py-2 rounded-full text-white font-semibold">
+                            Verified
+                          </span>
+                        </div>
+                      )}
+                      {user?.verification?.status == "Rejected" && (
+                        <div className="flex items-center justify-center gap-x-2 mt-10">
+                          <span className="bg-red-500 px-3 py-2 rounded-full text-white font-semibold">
+                            Rejected
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    "CNIC Not Uploaded By User"
+                  )}
                 </div>
               </dialog>
             </div>

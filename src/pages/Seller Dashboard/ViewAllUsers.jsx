@@ -32,9 +32,9 @@ const ViewAllUsers = () => {
         
       </div>
       <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <table className="min-w-full divide-y divide-gray-300 border rounded-lg ">
+        <div className="-mx-4 -my-2 h-[40rem] overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full align-middle sm:px-6 lg:px-8">
+            <table className="min-w-full divide-y divide-gray-300 border rounded-lg">
               <thead>
                 <tr>
                   <th
@@ -64,7 +64,7 @@ const ViewAllUsers = () => {
                   
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 bg-white ">
                 {users?.map((person) => (
                   <tr key={person?.id}>
                     <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">

@@ -48,6 +48,8 @@ import PropertiesEdit from "./PropertiesEdit";
 import EditProfile from "./EditProfile";
 import Bids from "./Bids";
 import Chat from "./Chat";
+import Profile from "./Profile";
+import VerifySellerProfile from "./VerifyProfile";
 
 const navigation = [
   { name: "Dashboard", href: "home", icon: HomeIcon, current: true },
@@ -225,12 +227,12 @@ export default function Example() {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 z-10 mt-3 w-48 origin-top-right rounded-md bg-white-A700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute right-0 z-10 mt-3 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item>
                         {({ active }) => (
                           <button
                             onClick={() => {
-                              navigate(`edit-profile/${userId}`);
+                              navigate(`profile/${userId}`);
                             }}
                             className={classNames(
                               active ? "bg-gray-100" : "",
@@ -280,8 +282,9 @@ export default function Example() {
                   path="/edit-properties/:id"
                   element={<PropertiesEdit />}
                 />
-                
+                <Route path="profile/:id" element={<Profile />} />
                 <Route path="/edit-profile/:id" element={<EditProfile />} />
+                <Route path="/verify-profile/:id" element={<VerifySellerProfile />} />
                 <Route path="/bids" element={<Bids />} />
                 <Route path="/seller-chat/:propertyId" element={<Chat />} />
               </Routes>

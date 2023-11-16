@@ -6,7 +6,12 @@ import LandingPageFooter from "components/LandingPageFooter";
 import LandingPageHeader from "components/LandingPageHeader";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
+import { Menu } from "@headlessui/react";
+import {
+  EllipsisVerticalIcon,
+  EnvelopeIcon,
+  PhoneIcon,
+} from "@heroicons/react/20/solid";
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { Fragment, useState } from "react";
 import {
@@ -20,6 +25,7 @@ import {
 import {
   Bars3Icon,
   CheckCircleIcon,
+  ChevronDownIcon,
   HeartIcon,
   MagnifyingGlassIcon,
   MinusIcon,
@@ -58,7 +64,8 @@ const reviews = [
     author: "Hector Gibbons",
     avatarSrc:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
-  }, {
+  },
+  {
     id: 3,
     rating: 5,
     content: `
@@ -81,7 +88,8 @@ const reviews = [
     author: "Hector Gibbons",
     avatarSrc:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
-  }, {
+  },
+  {
     id: 5,
     rating: 5,
     content: `
@@ -404,17 +412,14 @@ const footerNavigation = {
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-var userPic = localStorage.getItem("userData")
-var token = localStorage.getItem("JWT")
-var userName = localStorage.getItem("userName")
-var userEmail = localStorage.getItem("userEmail")
 const PropertyDetailsPage = () => {
-  const landingPageCardPropList = [
-    {},
-    { image: "images/img_image_1.png" },
-    { image: "images/img_image_2.png" },
-  ];
-  
+  var userPic = localStorage.getItem("userData");
+  var token = localStorage.getItem("JWT");
+  var userName = localStorage.getItem("userName");
+  var userEmail = localStorage.getItem("userEmail");
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
 
   const { id } = useParams();
   const [open, setOpen] = useState(false);
@@ -425,7 +430,7 @@ const PropertyDetailsPage = () => {
   const [propertyImages, setPropertyImages] = useState([]);
   const [propertyCoordinates, setPropertyCoordiantes] = useState(null);
   const [propertyBids, setPropertyBids] = useState([]);
-  const [reviews, setReviews] = useState([])
+  const [reviews, setReviews] = useState([]);
   useEffect(() => {
     const handleLisitng = async () => {
       try {
@@ -438,7 +443,7 @@ const PropertyDetailsPage = () => {
             setPropertyBids(res?.data?.property?.bids);
             console.log(res?.data?.property?.location?.coordinates);
             console.log(res?.data?.property);
-            setReviews(res?.data?.property?.reviews)
+            setReviews(res?.data?.property?.reviews);
           });
       } catch (error) {
         console.log(error);
@@ -446,10 +451,10 @@ const PropertyDetailsPage = () => {
     };
     handleLisitng();
   }, []);
-  
 
-  const sortedBids = [...propertyBids]?.sort((a, b) => b.biddingPrice - a.biddingPrice);
-
+  const sortedBids = [...propertyBids]?.sort(
+    (a, b) => b.biddingPrice - a.biddingPrice
+  );
 
   useEffect(() => {
     const handleSellerInfo = async () => {
@@ -467,45 +472,64 @@ const PropertyDetailsPage = () => {
     handleSellerInfo();
   }, [propertyDetails]);
 
- 
   const formik = useFormik({
     initialValues: {
-      username: userName,     
+      username: userName,
       email: userEmail,
     },
     onSubmit: (values) => {
-
       var JSON = {
         username: userName,
         profilePicture: userPic,
         reviewText: values.review,
         email: userEmail,
         rating: values.rating,
-      }
+      };
       try {
-        axios.post(`http://localhost:3000/property/review/${id}`,JSON).then((res) =>{
-         console.log(res);
-         toast.success("Successfully Added Review")
-         location.reload()
+        axios
+          .post(`http://localhost:3000/property/review/${id}`, JSON)
+          .then((res) => {
+            console.log(res);
+            toast.success("Successfully Added Review");
+            location.reload();
+          })
+          .catch((err) => {
+            toast.error(err?.response?.data?.message);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+      handelreset();
+    },
+  });
+  const handelreset = () => {
+    formik.resetForm();
+  };
+
+  const ReportForm = useFormik({
+    initialValues: {},
+    onSubmit: (values) => {
+      var JSON = {
+        feedbackMessage: values.feedbackMessage,
+        feedbackReason: values.feedbackReason,
+      };
+      try {
+        axios.post(`http://localhost:3000/property/report/${id}`, JSON, config).then((res)=>{
+          toast.success(res?.data?.message);
         }).catch((err) =>{
+          console.log(err);
           toast.error(err?.response?.data?.message)
         })
       } catch (error) {
         console.log(error);
-        
-
       }
-      handelreset()
     },
+    enableReinitialize: true,
   });
-  const handelreset=()=>{
-    formik.resetForm()
-  }
- 
 
   return (
     <>
-    <Toaster richColors/>
+      <Toaster richColors />
       <div className="bg-white flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
           <div className="flex flex-col gap-10 items-start justify-start w-full">
@@ -561,10 +585,114 @@ const PropertyDetailsPage = () => {
 
                   {/* Product info */}
                   <div className=" px-4 ">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                      {propertyDetails?.name}
-                    </h1>
-
+                    <div className="flex justify-between items-center">
+                      <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                        {propertyDetails?.name}
+                      </h1>
+                      <div>
+                        <Menu as="div" className="relative">
+                          <Menu.Button className="-m-1.5 flex items-center p-1.5">
+                            <span className="sr-only">Open user menu</span>
+                            <span className="flex items-center">
+                              <EllipsisVerticalIcon
+                                className=" h-8 w-8 "
+                                aria-hidden="true"
+                              />
+                            </span>
+                          </Menu.Button>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <Menu.Items className="absolute right-0 z-10 mt-3 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() => {
+                                      if (token) {
+                                        document
+                                          .getElementById("my_modal_3")
+                                          .showModal();
+                                      } else {
+                                        toast.error("User Not Login");
+                                      }
+                                    }}
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "flex px-4 py-2 w-full text-sm text-gray-700"
+                                    )}
+                                  >
+                                    Report
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
+                        <dialog id="my_modal_3" className="modal">
+                          <div className="modal-box">
+                            <form method="dialog">
+                              {/* if there is a button in form, it will close the modal */}
+                              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                                ✕
+                              </button>
+                            </form>
+                            <h3 className="font-bold text-xl">Report</h3>
+                            <form onSubmit={ReportForm.handleSubmit}>
+                              <div className="py-6">
+                                <label
+                                  for="feedbackMessage"
+                                  class="block mb-2 text-sm font-medium text-gray-900"
+                                >
+                                  Feedback
+                                </label>
+                                <textarea
+                                  id="feedbackMessage"
+                                  name="feedbackMessage"
+                                  value={ReportForm.values.feedbackMessage}
+                                  onChange={ReportForm.handleChange}
+                                  rows="4"
+                                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Write your feedback"
+                                ></textarea>
+                                <label
+                                  for="feedbackReason"
+                                  class="block mb-2 text-sm font-medium text-gray-900 mt-6"
+                                >
+                                  Select an option
+                                </label>
+                                <select
+                                  id="feedbackReason"
+                                  name="feedbackReason"
+                                  value={ReportForm.values.feedbackReason}
+                                  onChange={ReportForm.handleChange}
+                                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                                >
+                                  <option selected>Choose a option</option>
+                                  <option value="Fake Post">Fake Post</option>
+                                  <option value="Bidding Scam">
+                                    Bidding Scam
+                                  </option>
+                                </select>
+                              </div>
+                              <div className="flex justify-end">
+                                <button
+                                  type="submit"
+                                  className="bg-blue-500 rounded-md px-4 py-2 text-white"
+                                >
+                                  Submit
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                        </dialog>
+                      </div>
+                    </div>
                     <div className="my-4">
                       <h2 className="sr-only">Product information</h2>
                       <p className="text-3xl tracking-tight text-gray-900">
@@ -793,8 +921,10 @@ const PropertyDetailsPage = () => {
                     </div>
                     <div className="flex flex-row gap-2.5 items-center justify-start w-full mt-1">
                       <Link to={`/user-chat/${id}`}>
-                     <button className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">Chat With Seller</button>
-                     </Link>
+                        <button className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900">
+                          Chat With Seller
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -854,51 +984,54 @@ const PropertyDetailsPage = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 ">
-                      {sortedBids.length  > 0 ?
-                      sortedBids?.map((bid) => (
-                        <tr key={bid?._id}>
-                          <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
-                            <div className="flex items-center">
-                              <div className="h-11 w-11 flex-shrink-0">
-                                <img
-                                  className="h-11 w-11 rounded-full"
-                                  src={bid?.user?.profilePicture}
-                                  alt=""
-                                />
-                              </div>
-                              <div className="ml-4">
-                                <div className="font-medium text-gray-900">
-                                  {bid?.user?.username}
+                      {sortedBids.length > 0 ? (
+                        sortedBids?.map((bid) => (
+                          <tr key={bid?._id}>
+                            <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
+                              <div className="flex items-center">
+                                <div className="h-11 w-11 flex-shrink-0">
+                                  <img
+                                    className="h-11 w-11 rounded-full"
+                                    src={bid?.user?.profilePicture}
+                                    alt=""
+                                  />
                                 </div>
-                                <div className="mt-1 text-gray-500">
-                                  {bid?.user?.email}
+                                <div className="ml-4">
+                                  <div className="font-medium text-gray-900">
+                                    {bid?.user?.username}
+                                  </div>
+                                  <div className="mt-1 text-gray-500">
+                                    {bid?.user?.email}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                          <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                          {"Rs "+bid?.biddingPrice.toLocaleString()}
-                            </span>
-                            {/* <div className="mt-1 text-gray-500">{person.department}</div> */}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                            <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                              Active
-                            </span>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                            <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                              {bid?.user?.role}
-                            </span>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                            <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                              {bid?.timestamp?.split("T")[0]}
-                            </span>
-                          </td>
-                        </tr>
-                      )): <span className="text-gray-600">No Bids Yet</span>}
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                              <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                {"Rs " + bid?.biddingPrice.toLocaleString()}
+                              </span>
+                              {/* <div className="mt-1 text-gray-500">{person.department}</div> */}
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                              <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                Active
+                              </span>
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                              <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                {bid?.user?.role}
+                              </span>
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                              <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                {bid?.timestamp?.split("T")[0]}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <span className="text-gray-600">No Bids Yet</span>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -908,16 +1041,21 @@ const PropertyDetailsPage = () => {
 
           <div className="bg-white mt-20">
             <div>
-             {token && <div className="flex justify-end items-center mt-6">
-                <button
-                  onClick={() => setReviewFormvisible(true)}
-                  type="button"
-                  className="inline-flex items-center gap-x-2 rounded-md tracking-widest bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                >
-                  Write Review
-                  <PencilIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
-                </button>
-              </div>}
+              {token && (
+                <div className="flex justify-end items-center mt-6">
+                  <button
+                    onClick={() => setReviewFormvisible(true)}
+                    type="button"
+                    className="inline-flex items-center gap-x-2 rounded-md tracking-widest bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                  >
+                    Write Review
+                    <PencilIcon
+                      className="-mr-0.5 h-5 w-5"
+                      aria-hidden="true"
+                    />
+                  </button>
+                </div>
+              )}
 
               {reviewFormvisible && (
                 <form onSubmit={formik.handleSubmit}>
@@ -928,11 +1066,10 @@ const PropertyDetailsPage = () => {
                         <div class="stars">
                           <input
                             type="radio"
-                            
                             id="five"
                             name="rating"
                             checked={formik.values.rating === 5}
-                            onChange={() => formik.setFieldValue('rating', 5)}
+                            onChange={() => formik.setFieldValue("rating", 5)}
                             value="5"
                           />
                           <label for="five"></label>
@@ -941,7 +1078,7 @@ const PropertyDetailsPage = () => {
                             id="four"
                             name="rating"
                             checked={formik.values.rating === 4}
-                            onChange={() => formik.setFieldValue('rating', 4)}
+                            onChange={() => formik.setFieldValue("rating", 4)}
                             value="4"
                           />
                           <label for="four"></label>
@@ -949,7 +1086,7 @@ const PropertyDetailsPage = () => {
                             type="radio"
                             id="three"
                             checked={formik.values.rating === 3}
-                            onChange={() => formik.setFieldValue('rating', 3)}
+                            onChange={() => formik.setFieldValue("rating", 3)}
                             name="rating"
                             value="3"
                           />
@@ -958,7 +1095,7 @@ const PropertyDetailsPage = () => {
                             type="radio"
                             id="two"
                             checked={formik.values.rating === 2}
-                            onChange={() => formik.setFieldValue('rating', 2)}
+                            onChange={() => formik.setFieldValue("rating", 2)}
                             name="rating"
                             value="2"
                           />
@@ -966,7 +1103,7 @@ const PropertyDetailsPage = () => {
                           <input
                             type="radio"
                             checked={formik.values.rating === 1}
-                            onChange={() => formik.setFieldValue('rating', 1)}
+                            onChange={() => formik.setFieldValue("rating", 1)}
                             id="one"
                             name="rating"
                             value="1"
@@ -1063,55 +1200,57 @@ const PropertyDetailsPage = () => {
               )}
               <h2 className="text-xl font-semibold ml-2">Reviews</h2>
               <div className="mb-1 mt-8 h-80 overflow-y-auto ">
-                {reviews?.length > 0 ?
-                reviews?.map((review, reviewIdx) => (
-                  <div
-                    key={review._id}
-                    className="flex space-x-4 text-sm text-gray-500 bg-gray-100 px-5"
-                  >
-                    <div className="flex-none py-4">
-                      <img
-                        src={review?.profilePicture}
-                        alt=""
-                        className="h-10 w-10 rounded-full bg-gray-900"
-                      />
-                    </div>
-                    <div
-                      className={classNames(
-                        reviewIdx === 0 ? "" : "border-t border-gray-200",
-                        "flex-1 py-4"
-                      )}
-                    >
-                      <h3 className="font-medium tracking-wider text-gray-900">
-                        {review.username}
-                      </h3>
-                      <p>
-                        {/* <time dateTime={review.datetime}>{review.date}</time> */}
-                      </p>
-
-                      <div className="mt-2 flex items-center">
-                        {[0, 1, 2, 3, 4].map((rating) => (
-                          <StarIcon
-                            key={rating}
-                            className={classNames(
-                              review.rating > rating
-                                ? "text-yellow-400"
-                                : "text-gray-300",
-                              "h-5 w-5 flex-shrink-0"
-                            )}
-                            aria-hidden="true"
-                          />
-                        ))}
-                      </div>
-                      <p className="sr-only">{review.rating} out of 5 stars</p>
-
+                {reviews?.length > 0
+                  ? reviews?.map((review, reviewIdx) => (
                       <div
-                        className="prose prose-sm mt-2 max-w-none text-gray-500"
-                         
-                      >{review.reviewText }</div>
-                    </div>
-                  </div>
-                )): "No Reviews Yet"}
+                        key={review._id}
+                        className="flex space-x-4 text-sm text-gray-500 bg-gray-100 px-5"
+                      >
+                        <div className="flex-none py-4">
+                          <img
+                            src={review?.profilePicture}
+                            alt=""
+                            className="h-10 w-10 rounded-full bg-gray-900"
+                          />
+                        </div>
+                        <div
+                          className={classNames(
+                            reviewIdx === 0 ? "" : "border-t border-gray-200",
+                            "flex-1 py-4"
+                          )}
+                        >
+                          <h3 className="font-medium tracking-wider text-gray-900">
+                            {review.username}
+                          </h3>
+                          <p>
+                            {/* <time dateTime={review.datetime}>{review.date}</time> */}
+                          </p>
+
+                          <div className="mt-2 flex items-center">
+                            {[0, 1, 2, 3, 4].map((rating) => (
+                              <StarIcon
+                                key={rating}
+                                className={classNames(
+                                  review.rating > rating
+                                    ? "text-yellow-400"
+                                    : "text-gray-300",
+                                  "h-5 w-5 flex-shrink-0"
+                                )}
+                                aria-hidden="true"
+                              />
+                            ))}
+                          </div>
+                          <p className="sr-only">
+                            {review.rating} out of 5 stars
+                          </p>
+
+                          <div className="prose prose-sm mt-2 max-w-none text-gray-500">
+                            {review.reviewText}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  : "No Reviews Yet"}
               </div>
             </div>
           </div>

@@ -49,8 +49,8 @@ const Bids = () => {
         </div>
       </div>
       <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div className="-mx-4 -my-2 h-[20rem] overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full  align-middle sm:px-6 lg:px-8">
             <table className="min-w-full divide-y divide-gray-300 border rounded-lg ">
               <thead>
                 <tr>
@@ -163,8 +163,8 @@ const Bids = () => {
             </div>
           </div>
           <div className="mt-8 flow-root">
-            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-              <div className="inline-block min-w-full py-2 align-middle px-4 rounded-md">
+            <div className="-mx-4 -my-2 h-[20rem] overflow-x-auto sm:-mx-6 lg:-mx-8">
+              <div className="inline-block min-w-full  align-middle px-4 rounded-md">
                 <table className="min-w-full divide-y divide-gray-300 border">
                   <thead>
                     <tr>
