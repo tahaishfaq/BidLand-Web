@@ -265,16 +265,7 @@ const AllProperties = () => {
                         </button>
                       </td>
                       <td className="flex items-center gap-x-2 justify-center whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                        <button
-                          className="text-white px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500"
-                          onClick={() =>
-                            navigate(
-                              `/sellerdashboard/edit-properties/${property?._id}`
-                            )
-                          }
-                        >
-                          Edit
-                        </button>
+                     
                         <button
                           className="text-white px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500"
                           onClick={() => handleDeleteProperty(property?._id)}
