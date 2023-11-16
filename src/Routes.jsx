@@ -14,6 +14,7 @@ import BiddingListing from "pages/Bidding/BiddingListing";
 import Wishlist from "pages/WishList/Wishlist";
 import AdminDashboard from "pages/Admin Dashboard/AdminDashboard";
 import Chat from "pages/chat/Chat";
+import VerifyProfile from "pages/Auth/VerifyProfile";
 const License = React.lazy(() => import("pages/License"));
 const PrivacyPolicy = React.lazy(() => import("pages/PrivacyPolicy"));
 const FAQ = React.lazy(() => import("pages/FAQ"));
@@ -52,6 +53,7 @@ const ProjectRoutes = () => {
           <Route path="/user-chat/:propertyId" element={<Chat />} />
           <Route path="/userprofile/:id" element={<Profile />} />
           <Route path="/editprofile/:id" element={<EditProfile />} />
+          <Route path="/verify-profile/:id" element={<VerifyProfile />} />
           <Route path="/forgetpassword" element={<ForgetPassword />} />
           <Route path="/resetpassword/:id" element={<ResetPassword />} />
           <Route path="/listingmapview" element={<ListingMapView />} />

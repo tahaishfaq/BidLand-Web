@@ -6,7 +6,14 @@ import LandingPageFooter from "components/LandingPageFooter";
 import LandingPageHeader from "components/LandingPageHeader";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { PhoneIcon, StarIcon } from "@heroicons/react/20/solid";
+import {
+  CheckBadgeIcon,
+  CheckCircleIcon,
+  PhoneIcon,
+  StarIcon,
+  TicketIcon,
+  XCircleIcon,
+} from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
 
 const buttonmediumOptionsList = [
@@ -30,8 +37,8 @@ const Profile = () => {
   }
   const { id } = useParams();
   const [user, setUser] = useState(null);
-//   const [sellerProperties, setSellerProperties] = useState([]);
-  const navigate = useNavigate()
+  //   const [sellerProperties, setSellerProperties] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     const handleUserProfile = () => {
       try {
@@ -46,25 +53,25 @@ const Profile = () => {
     handleUserProfile();
   }, []);
 
-//   useEffect(() => {
-//     const handleSellerProperties = () => {
-//       try {
-//         axios
-//           .get(`http://localhost:3000/property/${id}/properties`)
-//           .then((res) => {
-//             console.log(res?.data?.properties);
-//             setSellerProperties(res?.data?.properties);
-//           });
-//       } catch (error) {
-//         console.log(error);
-//       }
-//     };
-//     handleSellerProperties();
-//   }, [seller]);
+  //   useEffect(() => {
+  //     const handleSellerProperties = () => {
+  //       try {
+  //         axios
+  //           .get(`http://localhost:3000/property/${id}/properties`)
+  //           .then((res) => {
+  //             console.log(res?.data?.properties);
+  //             setSellerProperties(res?.data?.properties);
+  //           });
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     };
+  //     handleSellerProperties();
+  //   }, [seller]);
 
-//   const handlePropertyDetails = (id) =>{
-//     navigate(`/propertydetails/${id}`)
-//   }
+  //   const handlePropertyDetails = (id) =>{
+  //     navigate(`/propertydetails/${id}`)
+  //   }
 
   return (
     <>
@@ -93,12 +100,22 @@ const Profile = () => {
                 <div className="flex flex-1 md:flex-col flex-row md:gap-10 gap-[60px] items-center justify-start w-full">
                   <div className="flex flex-1 md:flex-col flex-row gap-8 items-start justify-start w-full">
                     <div className="flex flex-1 flex-col gap-2 items-start justify-start w-full">
-                      <Text
-                        className="text-2xl md:text-[22px] text-gray-900 sm:text-xl tracking-[-0.48px] w-full"
-                        size="txtManropeBold24Gray900"
-                      >
-                        {user?.username}
-                      </Text>
+                      <div className="flex gap-x-3 items-center">
+                        <span className="text-2xl md:text-[22px] text-gray-900 sm:text-xl tracking-[-0.48px] ">
+                          {user?.username}
+                        </span>
+                        {user?.verification?.isVerified === true ? (
+                          <span className="text-green-500 font-semibold flex gap-x-2 items-center">
+                            <CheckBadgeIcon className="w-5 h-5" />
+                              Verified
+                          </span>
+                        ) : (
+                          <span className="text-red-500 font-semibold flex gap-x-2 items-center">
+                            <XCircleIcon className="w-5 h-5" />
+                            Not Verified
+                          </span>
+                        )}
+                      </div>
                       <div className="flex flex-row gap-3.5 items-center justify-start w-full">
                         <div className="flex flex-row items-center justify-evenly w-1/4">
                           <StarIcon className="w-5 h-5 text-orange-500" />
@@ -149,11 +166,20 @@ const Profile = () => {
                       </div>
                     </div>
                   </div>
-                  <Link to={`/editprofile/${user?._id}`}>
-                  <button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-3 rounded-[10px] text-base text-center text-white">
-                    Edit Profile
-                  </button>
-                  </Link>
+                  <div className="flex items-center gap-x-2">
+                    <Link to={`/editprofile/${user?._id}`}>
+                      <button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-3 rounded-[10px] text-base text-center text-white">
+                        Edit Profile
+                      </button>
+                    </Link>
+                    {user?.verification?.isVerified === false && (
+                      <Link to={`/verify-profile/${user?._id}`}>
+                        <button className="bg-gray-900 cursor-pointer font-semibold min-w-[112px] py-3 px-5 rounded-[10px] text-base text-center text-white">
+                          Verify Profile
+                        </button>
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
               {/* <div className="flex flex-col items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
