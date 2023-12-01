@@ -39,7 +39,7 @@ const ListingPage = () => {
   const [priceValue, setPriceValue] = useState([100000, 20000000]);
   const [propertyTypeFilter, setPropertyTypeFilter] = useState("");
   const [position, setPosition] = useState({
-    lat: 23.8859, lng: 45.0792
+    lat: 30.3753, lng: 69.3451 
   });
   useEffect(() => {
     const handleLisitng = () => {
@@ -303,15 +303,15 @@ const ListingPage = () => {
                           }}
                           className={"map"}
                           position={{
-                            lat: Number(c?.location?.coordinates?.coordinates[0]),
-                            lng: Number(c?.location?.coordinates?.coordinates[1]),
+                            lat: Number(c?.location?.coordinates?.coordinates[1]),
+                            lng: Number(c?.location?.coordinates?.coordinates[0]),
                           }}
-                          // name={c.model}
-                          // icon={{
-                          //   url: ambulaceMarker,
-                          //   anchor: new google.maps.Point(28, 28),
-                          //   scaledSize: new google.maps.Size(40, 40),
-                          // }}
+                          name={c?.name}
+                          icon={{
+                            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQf7t6LmFJZ4um2VtzR53bIjkeVPtWRYpz42A&usqp=CAU",
+                            anchor: new google.maps.Point(26, 26),
+                            scaledSize: new google.maps.Size(40, 40),
+                          }}
                           // draggable={false}
                           // onDragend={handleMarkerDragEnd}
                         />

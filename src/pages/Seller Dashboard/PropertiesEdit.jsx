@@ -19,6 +19,7 @@ const PropertiesEdit = () => {
   const [loader, setLoader] = useState(false);
   const [imgMetaData, setImgMetaData] = useState("");
   const [propertyImg, setPropertyImg] = useState([]);
+  const [locationAddress, setLocationAddress] = useState({});
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -80,6 +81,9 @@ const PropertiesEdit = () => {
           square: res?.data?.property?.specifications[2],
           other: res?.data?.property?.specifications[3],
         });
+        setLocationAddress({latitude:res?.data?.property?.location?.coordinates?.coordinates[1],
+          longitude: res?.data?.property?.location?.coordinates?.coordinates[0],
+          address:res?.data?.property?.location?.address })
         //   setProperties(res?.data?.properties);
       });
     } catch (error) {
@@ -103,6 +107,13 @@ const PropertiesEdit = () => {
           values.square,
           values.other,
         ],
+        location: {
+          coordinates: {
+            type: "Point",
+            coordinates: [locationAddress?.longitude, locationAddress?.latitude]  // Replace with the actual longitude and latitude values
+          },
+          address: locationAddress?.address
+        }
       };
       console.log("json", json);
       try {
@@ -120,6 +131,77 @@ const PropertiesEdit = () => {
       }
     },
   });
+
+
+  const sendDataToParent = (latitude,longitude,formatted_address) => {
+    setLocationAddress({
+      latitude: latitude,
+      longitude: longitude,
+      address:formatted_address
+    });
+  };
+
+  const handlePlaceChange = () => {
+    const map = new window.google.maps.Map(document.getElementById("map"), {
+      center: { lat: 50.064192, lng: -130.605469 },
+      zoom: 3,
+    });
+  
+    const card = document.getElementById("pac-card");
+    map.controls[window.google.maps.ControlPosition.TOP_RIGHT].push(card);
+  
+    const center = { lat: 50.064192, lng: -130.605469 };
+    const defaultBounds = {
+      north: center.lat + 0.1,
+      south: center.lat - 0.1,
+      east: center.lng + 0.1,
+      west: center.lng - 0.1,
+    };
+  
+    const input = document.getElementById("address");
+    const options = {
+      bounds: defaultBounds,
+      componentRestrictions: { country: "pk" }, // Set the country to Pakistan
+      fields: [
+        "address_components",
+        "geometry",
+        "icon",
+        "name",
+        "formatted_address",
+      ],
+      strictBounds: false,
+    };
+  
+    const autocomplete = new window.google.maps.places.Autocomplete(input, options);
+    const southwest = { lat: 23.6345, lng: 60.8724 };
+    const northeast = { lat: 37.0841, lng: 77.8375 };
+    const newBounds = new window.google.maps.LatLngBounds(southwest, northeast);
+    autocomplete.setBounds(newBounds);
+  
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      let address = "";
+      let postalCode = "";
+  
+      if (place.address_components) {
+        address = place.formatted_address;
+  
+        const postalCodeComponent = place.address_components.find(
+          (component) => component.types.includes("postal_code")
+        );
+  
+        postalCode = postalCodeComponent ? postalCodeComponent.short_name : "";
+      }
+  
+      console.log("Formatted Address:", address);
+      console.log("Postal Code:", postalCode);
+  
+      // The rest of your code...
+      const latitude = place.geometry.location.lat();
+      const longitude = place.geometry.location.lng();
+      sendDataToParent(latitude, longitude, address, postalCode);
+    });
+  };
   return (
     <>
       <Toaster richColors />
@@ -307,7 +389,34 @@ const PropertiesEdit = () => {
                     </select>
                   </div>
                 </div>
+                <div className="col-span-full">
+                  <label
+                      htmlFor="description"
+                      className="block text-sm font-medium leading-6 "
+                    >
+                      Location*
+                    </label>
+                  <div
+  
+    > <div id="pac-card" className="flex rounded-md gap-10 justify-center my-4">
+    <input
+      id="address"
+      name="address"
+      value={locationAddress?.address}
+      required
+      className="block w-full rounded-md border-0 bg-gray-100 py-1.5  shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                      type="text"
+      placeholder="Enter a location"
+      onChange={handlePlaceChange}
+      onClick={()=>setLocationAddress({})}
+    />
 
+  </div>
+  <div
+    id="map"
+    // style={{ height: "0px", width: "0px" }}
+  ></div>
+                  </div></div>
                 <div className="col-span-full">
                   <label
                     htmlFor="description"

@@ -7,7 +7,7 @@ import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "sonner";
 import { TrashIcon } from "@heroicons/react/24/outline";
-
+import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 const Properties = () => {
   var userId = localStorage.getItem("userId");
   var token = localStorage.getItem("JWT");
@@ -22,7 +22,7 @@ const Properties = () => {
   const [imgMetaData, setImgMetaData] = useState("");
   const [specification, setSpecification] = useState([]);
   const navigate = useNavigate();
-
+  const [locationAddress, setLocationAddress] = useState({});
   const handleImageChange = (e) => {
     const selectedFiles = e.target.files;
     if (selectedFiles.length > 0) {
@@ -106,6 +106,16 @@ const Properties = () => {
           values.square,
           values.other,
         ],
+        location: {
+          coordinates: {
+            type: "Point",
+            coordinates: [
+              locationAddress?.longitude,
+              locationAddress?.latitude,
+            ], // Replace with the actual longitude and latitude values
+          },
+          address: locationAddress?.address,
+        },
       };
       console.log("json", json);
       try {
@@ -176,6 +186,79 @@ const Properties = () => {
   };
 
   console.log(url);
+
+  const sendDataToParent = (latitude, longitude, formatted_address) => {
+    setLocationAddress({
+      latitude: latitude,
+      longitude: longitude,
+      address: formatted_address,
+    });
+  };
+
+  const handlePlaceChange = () => {
+    const map = new window.google.maps.Map(document.getElementById("map"), {
+      center: { lat: 50.064192, lng: -130.605469 },
+      zoom: 3,
+    });
+
+    const card = document.getElementById("pac-card");
+    map.controls[window.google.maps.ControlPosition.TOP_RIGHT].push(card);
+
+    const center = { lat: 50.064192, lng: -130.605469 };
+    const defaultBounds = {
+      north: center.lat + 0.1,
+      south: center.lat - 0.1,
+      east: center.lng + 0.1,
+      west: center.lng - 0.1,
+    };
+
+    const input = document.getElementById("address");
+    const options = {
+      bounds: defaultBounds,
+      componentRestrictions: { country: "pk" }, // Set the country to Pakistan
+      fields: [
+        "address_components",
+        "geometry",
+        "icon",
+        "name",
+        "formatted_address",
+      ],
+      strictBounds: false,
+    };
+
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      input,
+      options
+    );
+    const southwest = { lat: 23.6345, lng: 60.8724 };
+    const northeast = { lat: 37.0841, lng: 77.8375 };
+    const newBounds = new window.google.maps.LatLngBounds(southwest, northeast);
+    autocomplete.setBounds(newBounds);
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      let address = "";
+      let postalCode = "";
+
+      if (place.address_components) {
+        address = place.formatted_address;
+
+        const postalCodeComponent = place.address_components.find((component) =>
+          component.types.includes("postal_code")
+        );
+
+        postalCode = postalCodeComponent ? postalCodeComponent.short_name : "";
+      }
+
+      console.log("Formatted Address:", address);
+      console.log("Postal Code:", postalCode);
+
+      // The rest of your code...
+      const latitude = place.geometry.location.lat();
+      const longitude = place.geometry.location.lng();
+      sendDataToParent(latitude, longitude, address, postalCode);
+    });
+  };
 
   return (
     <>
@@ -483,7 +566,7 @@ const Properties = () => {
                         htmlFor="city"
                         className="block text-sm font-medium leading-6 "
                       >
-                       Choose City*
+                        Choose City*
                       </label>
                       <select
                         id="city"
@@ -522,6 +605,35 @@ const Properties = () => {
                     </div>
                   </div>
 
+                  <div className="col-span-full">
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-medium leading-6 "
+                    >
+                      Location*
+                    </label>
+                    <div>
+                      {" "}
+                      <div
+                        id="pac-card"
+                        className="flex rounded-md gap-10 justify-center my-4"
+                      >
+                        <input
+                          id="address"
+                          name="address"
+                          required
+                          className="block w-full rounded-md border-0 bg-gray-100 py-1.5  shadow-sm ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                          type="text"
+                          placeholder="Enter a location"
+                          onChange={handlePlaceChange}
+                        />
+                      </div>
+                      <div
+                        id="map"
+                        // style={{ height: "0px", width: "0px" }}
+                      ></div>
+                    </div>
+                  </div>
                   <div className="col-span-full">
                     <label
                       htmlFor="description"
@@ -583,31 +695,32 @@ const Properties = () => {
                     >
                       Specification
                     </label>
-                    {AddProperty.values.propertyType === "Residential" &&
-                    <div className="flex gap-x-3 mt-2">
-                      <select
-                        id="bedrooms"
-                        name="bedrooms"
-                        value={AddProperty.values.bedrooms}
-                        onChange={AddProperty.handleChange}
-                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                      >
-                        <option value="">Choose Beedrooms</option>
-                        <option value="2 Bedrooms">2 Bedrooms</option>
-                        <option value="3 Bedrooms">3 Bedrooms</option>
-                      </select>
-                      <select
-                        id="bathrooms"
-                        name="bathrooms"
-                        value={AddProperty.values.bathrooms}
-                        onChange={AddProperty.handleChange}
-                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                      >
-                        <option value="">Choose Bathrooms</option>
-                        <option value="2 Bathrooms">2 Bathrooms</option>
-                        <option value="3 Bathrooms">3 Bathrooms</option>
-                      </select>
-                    </div>}
+                    {AddProperty.values.propertyType === "Residential" && (
+                      <div className="flex gap-x-3 mt-2">
+                        <select
+                          id="bedrooms"
+                          name="bedrooms"
+                          value={AddProperty.values.bedrooms}
+                          onChange={AddProperty.handleChange}
+                          class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                        >
+                          <option value="">Choose Beedrooms</option>
+                          <option value="2 Bedrooms">2 Bedrooms</option>
+                          <option value="3 Bedrooms">3 Bedrooms</option>
+                        </select>
+                        <select
+                          id="bathrooms"
+                          name="bathrooms"
+                          value={AddProperty.values.bathrooms}
+                          onChange={AddProperty.handleChange}
+                          class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                        >
+                          <option value="">Choose Bathrooms</option>
+                          <option value="2 Bathrooms">2 Bathrooms</option>
+                          <option value="3 Bathrooms">3 Bathrooms</option>
+                        </select>
+                      </div>
+                    )}
                     <div className="flex gap-x-3 mt-2">
                       <select
                         id="square"
@@ -622,20 +735,21 @@ const Properties = () => {
                         <option value="1 Kannal">1 Kannal</option>
                         <option value="2 Kannal">2 Kannal</option>
                       </select>
-                      {AddProperty.values.propertyType === "Residential" &&
-                      <select
-                        id="other"
-                        name="other"
-                        value={AddProperty.values.other}
-                        onChange={AddProperty.handleChange}
-                        class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                      >
-                        <option value="">Choose Other</option>
-                        <option value="Swimming Pool">Swimming Pool</option>
-                        <option value="Loan">Loan</option>
-                        <option value="Basement">Basement</option>
-                        <option value="Furnished">Furnished</option>
-                      </select>}
+                      {AddProperty.values.propertyType === "Residential" && (
+                        <select
+                          id="other"
+                          name="other"
+                          value={AddProperty.values.other}
+                          onChange={AddProperty.handleChange}
+                          class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                        >
+                          <option value="">Choose Other</option>
+                          <option value="Swimming Pool">Swimming Pool</option>
+                          <option value="Loan">Loan</option>
+                          <option value="Basement">Basement</option>
+                          <option value="Furnished">Furnished</option>
+                        </select>
+                      )}
                     </div>
                   </div>
                 </div>

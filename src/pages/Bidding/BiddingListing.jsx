@@ -21,7 +21,7 @@ import {
   Popover,
   Transition,
 } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useNavigate } from "react-router-dom";
 import Timer from "./Timer";
@@ -84,7 +84,7 @@ const BiddingListing = () => {
   const config = {
     headers: { Authorization: `Bearer ${token}` },
   };
-  const [listing, setListing] = useState(null);
+  const [listing, setListing] = useState([]);
   const [bidEndTime, setBidEndTime] = useState("");
   const [open, setOpen] = useState(false);
   const [biddingId, setBiddingId] = useState("");
@@ -92,13 +92,26 @@ const BiddingListing = () => {
   const [filteredListing, setFilteredListing] = useState([]);
   const cancelButtonRef = useRef(null);
   const navigate = useNavigate();
-
+  const tableRef = useRef(null);
+  const [invitationCount, setInvitationCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageNumbers, setpageNumber] = useState([]);
   useEffect(() => {
     const handleLisitng = () => {
       try {
         axios
           .get("http://localhost:3000/property/get-bidding-properties")
           .then((res) => {
+            setInvitationCount(res?.data.length);
+            setpageNumber([]);
+            for (
+              let i = 1;
+              i <= Math.ceil(res.data.length / 4);
+              i++
+            ) {
+              setpageNumber((prevState) => [...prevState, i]);
+              console.log(pageNumbers);
+            }
             setListing(res?.data);
             setFilteredListing(res?.data)
             console.log(res?.data);
@@ -156,7 +169,35 @@ const BiddingListing = () => {
       }
     },
   });
-
+  const scrollToTop = () => {
+    tableRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const handleClick = (number) => {
+    setCurrentPage(number);
+    scroll();
+    scrollToTop()
+  };
+  const scroll = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+  const handlePaginationClick = (event) => {
+    if (event == "Previous") {
+      if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+        scroll();
+        scrollToTop()
+      }
+    } else if (event == "Next") {
+      if (currentPage < pageNumbers.length) {
+        setCurrentPage(currentPage + 1);
+        scroll();
+        scrollToTop()
+      }
+    }
+  };
   return (
     <>
       <div className="bg-white flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
@@ -211,110 +252,14 @@ const BiddingListing = () => {
 
           <div className="flex flex-row font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full ">
             <div className="flex  flex-row gap-6 items-start justify-center mx-auto w-full">
-              <div className="h-[511px] relative w-[32%] md:w-full">
-                <div className="h-[511px] m-auto w-full">
-                  <GoogleMap
-                    className="h-[611px] m-auto rounded-[10px] w-full"
-                    showMarker={false}
-                  ></GoogleMap>
-                  <Img
-                    className="absolute h-[427px] inset-y-[0] my-auto right-[6%]"
-                    src="images/img_group1000001533.svg"
-                    alt="group1000001533"
-                  />
-                </div>
-                <div className="absolute bg-white-A700-A700 border border-gray-600 border-solid flex flex-col h-max inset-y-[0] items-center justify-start left-[7%] my-auto px-4 py-6 rounded-lg w-[308px]">
-                  <div className="flex flex-col gap-[21.66px] items-start justify-start w-full">
-                    <div className="flex flex-row gap-[9.63px] items-center justify-start w-full">
-                      <Img
-                        className="h-[19px] w-[19px]"
-                        src="images/img_eye.svg"
-                        alt="eye"
-                      />
-                      <Text
-                        className="flex-1 text-[12.83px] text-gray-900 w-auto"
-                        size="txtManropeSemiBold1283"
-                      >
-                        2861 62nd Ave, Oakland, CA 94605
-                      </Text>
-                    </div>
-                    <List
-                      className="flex flex-col gap-[16.84px] items-start w-full"
-                      orientation="vertical"
-                    >
-                      <div className="flex flex-1 flex-row gap-[32.08px] items-center justify-between my-0 w-full">
-                        <div className="flex flex-1 flex-row gap-[9.63px] items-center justify-start w-full">
-                          <Img
-                            className="h-4 w-4"
-                            src="images/img_bookmark.svg"
-                            alt="bookmark"
-                          />
-                          <Text
-                            className="flex-1 text-[12.83px] text-gray-700 w-auto"
-                            size="txtManropeSemiBold1283Gray700"
-                          >
-                            3 Bed Room
-                          </Text>
-                        </div>
-                        <div className="flex flex-1 flex-row gap-[9.63px] items-center justify-start w-full">
-                          <Img
-                            className="h-4 w-4"
-                            src="images/img_ticket.svg"
-                            alt="ticket"
-                          />
-                          <Text
-                            className="text-[12.83px] text-gray-700 w-auto"
-                            size="txtManropeSemiBold1283Gray700"
-                          >
-                            1 Bath
-                          </Text>
-                        </div>
-                      </div>
-                      <div className="flex flex-1 flex-row gap-[32.08px] items-center justify-between my-0 w-full">
-                        <div className="flex flex-1 flex-row gap-[9.63px] items-center justify-start w-full">
-                          <Img
-                            className="h-4 w-4"
-                            src="images/img_icon.svg"
-                            alt="icon"
-                          />
-                          <Text
-                            className="flex-1 text-[12.83px] text-gray-700 w-auto"
-                            size="txtManropeSemiBold1283Gray700"
-                          >
-                            1,032 sqft
-                          </Text>
-                        </div>
-                        <div className="flex flex-1 flex-row gap-[9.63px] items-center justify-start w-full">
-                          <Img
-                            className="h-4 w-4"
-                            src="images/img_iocnmenu.svg"
-                            alt="iocnmenu"
-                          />
-                          <Text
-                            className="text-[12.83px] text-gray-700 w-auto"
-                            size="txtManropeSemiBold1283Gray700"
-                          >
-                            Family
-                          </Text>
-                        </div>
-                      </div>
-                    </List>
-                    <div className="flex flex-col items-center justify-start w-full">
-                      <Text
-                        className="text-[19.25px] text-gray-900 tracking-[-0.39px] w-auto"
-                        size="txtManropeBold1925"
-                      >
-                        $649,900
-                      </Text>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
               {userRole == "user" ? (
-                <div className="flex flex-row items-start justify-start w-full">
+               <>
+               
+               <div className="flex flex-col w-full">
                   <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-2 justify-center min-h-[auto] w-full">
                     {filteredListing?.length > 0 ?
-                    filteredListing?.map((property) => (
+                    filteredListing?.slice((currentPage - 1) * 4, currentPage * 4)?.map((property) => (
                       <div className="bg-white border border-red-101 border-solid flex items-start justify-start rounded-lg w-full">
                         <div className="flex flex-col gap-[27px] items-start justify-start w-full">
                           <div className="flex flex-col">
@@ -451,7 +396,87 @@ const BiddingListing = () => {
                       </div>
                     )): "No Properties Added For Bidding"}
                   </div>
+                {listing.length>0&&<div className="flex items-center justify-between mt-7 bg-white px-4 py-3 sm:px-6  rounded-lg shadow">
+            {/* <div className="flex flex-1 justify-between sm:hidden">
+              <button
+                onClick={() => {
+                  handlePaginationClick("Previous");
+                }}
+                className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => {
+                  handlePaginationClick("Next");
+                }}
+                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Next
+              </button>
+            </div> */}
+            <div className="flex flex-1 items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing{" "}
+                  <span className="font-medium">
+                    {(currentPage - 1) * 4 + 1}
+                  </span>{" "}
+                  to <span className="font-medium">
+                  {Math.min(
+                        (currentPage - 1) * 4 + 1 + 4,
+                        invitationCount
+                      )}
+                  </span> of{" "}
+                  <span className="font-medium">{invitationCount}</span> results
+                </p>
+              </div>
+              <div>
+                <nav
+                  className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                  aria-label="Pagination"
+                >
+                  <button
+                    onClick={() => {
+                      handlePaginationClick("Previous");
+                    }}
+                    className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+                  >
+                    <span className="sr-only">Previous</span>
+                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                  {/* Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" */}
+                  {pageNumbers?.map((number) => {
+                    return (
+                      <button
+                        key={number}
+                        className={
+                          currentPage == number
+                            ? "relative z-10 inline-flex items-center border border-purple-500 bg-purple-50 px-4 py-2 text-sm font-medium text-purple-600 focus:z-20"
+                            : "relative hidden items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20 md:inline-flex"
+                        }
+                        onClick={() => handleClick(number)}
+                      >
+                        {number}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    onClick={() => {
+                      handlePaginationClick("Next");
+                    }}
+                    className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+                  >
+                    <span className="sr-only">Next</span>
+                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                </nav>
+              </div>
+            </div>
+          </div>}
                 </div>
+               </> 
               ): 
               <div className="flex flex-col w-full items-center justify-center">
                 <span>Only Authorize Users Can See Bidding</span>
