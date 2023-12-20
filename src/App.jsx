@@ -291,12 +291,12 @@ function App() {
     setAnswers(answer[0]?.answers);
   };
   return (
-    <div>
+    <div className="font-manrope">
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <Routes />
         <button
           id="message-icon"
-          className="fixed bottom-8 right-8 bg-gray-100 text-white rounded-full p-4 cursor-pointer text-lg focus:outline-none"
+          className="fixed bottom-8 right-8 bg-orange-50 text-white rounded-full p-4 cursor-pointer text-lg focus:outline-none"
           onClick={handleIconClick}
         >
           {open ? (
@@ -307,7 +307,7 @@ function App() {
         </button>
       </GoogleOAuthProvider>
       {open && (
-        <ul class="space-y-5 fixed bottom-28 bg-gray-200 px-2 py-2 rounded-md overflow-auto h-[23rem] right-10 w-[30rem]">
+        <ul class="space-y-5 fixed bottom-28 bg-orange-50 px-2 py-4 rounded-xl overflow-auto right-10 w-[30rem]">
           {subQuestions.length == 0 ? (
             <li class="max-w-lg flex gap-x-2 sm:gap-x-4 me-11">
               <img

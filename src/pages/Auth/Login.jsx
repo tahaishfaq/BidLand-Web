@@ -33,6 +33,7 @@ const Login = () => {
           localStorage.setItem("userRole", res?.data?.user?.role);
           localStorage.setItem("userName", res?.data?.user?.username);
           localStorage.setItem("userEmail", res?.data?.user?.email);
+          localStorage.setItem("userVerification", res?.data?.user?.verification?.isVerified);
           setUser(res?.data?.user);
           toast.success("Login Successfully")
           setTimeout(() => {

@@ -29,6 +29,7 @@ import Timer from "./Timer";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { useFormik } from "formik";
 import { Link } from "react-router-dom";
+import { Toaster, toast } from "sonner";
 const sortOptions = [
   { name: "Most Popular", href: "#" },
   { name: "Best Rating", href: "#" },
@@ -80,6 +81,7 @@ function classNames(...classes) {
 const BiddingListing = () => {
   var userId = localStorage.getItem("userId");
   var userRole = localStorage.getItem("userRole");
+  var userVerification = localStorage.getItem("userVerification");
   var token = localStorage.getItem("JWT");
   const config = {
     headers: { Authorization: `Bearer ${token}` },
@@ -200,6 +202,7 @@ const BiddingListing = () => {
   };
   return (
     <>
+    <Toaster richColors/>
       <div className="bg-white flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col md:gap-10 gap-y-10 items-center justify-center w-full">
           <LandingPageHeader className="bg-orange-50  flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
@@ -257,9 +260,9 @@ const BiddingListing = () => {
                <>
                
                <div className="flex flex-col w-full">
-                  <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-2 justify-center min-h-[auto] w-full">
+                  <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-3 justify-center min-h-[auto] w-full">
                     {filteredListing?.length > 0 ?
-                    filteredListing?.slice((currentPage - 1) * 4, currentPage * 4)?.map((property) => (
+                    filteredListing?.slice((currentPage - 1) * 3, currentPage * 3)?.map((property) => (
                       <div className="bg-white border border-red-101 border-solid flex items-start justify-start rounded-lg w-full">
                         <div className="flex flex-col gap-[27px] items-start justify-start w-full">
                           <div className="flex flex-col">
@@ -349,11 +352,16 @@ const BiddingListing = () => {
                             <button
                               className="bg-gray-900 cursor-pointer flex-1 font-manrope font-semibold py-5 rounded-[10px] text-base text-center text-white w-full"
                               onClick={() => {
+                                if(userVerification == true){
                                 document
                                   .getElementById("my_modal_1")
                                   .showModal();
                                 setBiddingId(property?._id);
-                              }}
+                              }else{
+                                toast.error("Your are not Verified User")
+                              }
+                            }
+                            }
                             >
                               Apply Bid
                             </button>

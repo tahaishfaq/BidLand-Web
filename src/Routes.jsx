@@ -15,6 +15,8 @@ import Wishlist from "pages/WishList/Wishlist";
 import AdminDashboard from "pages/Admin Dashboard/AdminDashboard";
 import Chat from "pages/chat/Chat";
 import VerifyProfile from "pages/Auth/VerifyProfile";
+import { Success } from "pages/PropertyDetails/Success";
+import { Orders } from "pages/Orders/Orders";
 const License = React.lazy(() => import("pages/License"));
 const PrivacyPolicy = React.lazy(() => import("pages/PrivacyPolicy"));
 const FAQ = React.lazy(() => import("pages/FAQ"));
@@ -46,6 +48,8 @@ const ProjectRoutes = () => {
           <Route path="/listing" element={<Listing />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/biddinglisting" element={<BiddingListing />} />
+          <Route path="/success" element={<Success />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/sellerdashboard/*" element={<SellerDashboard />} />
