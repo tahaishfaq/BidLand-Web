@@ -40,6 +40,7 @@ import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import { Toaster, toast } from "sonner";
 import { loadStripe } from "@stripe/stripe-js";
+import moment from "moment";
 
 const product = {
   name: "Zip Tote Basket",
@@ -96,7 +97,7 @@ const PropertyDetailsPage = () => {
   var token = localStorage.getItem("JWT");
   var userName = localStorage.getItem("userName");
   var userEmail = localStorage.getItem("userEmail");
-  var userVerification = localStorage.getItem("userVerification");
+  var userVerification = localStorage.getItem("userVerify");
   const config = {
     headers: { Authorization: `Bearer ${token}` },
   };
@@ -104,6 +105,7 @@ const PropertyDetailsPage = () => {
   const { id } = useParams();
   const [open, setOpen] = useState(false);
   const [reviewFormvisible, setReviewFormvisible] = useState(false);
+  const [queryFormvisible, setQueryFormvisible] = useState(false);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [propertyDetails, setPropertyDetails] = useState([]);
   const [sellerInfo, setSellerInfo] = useState(null);
@@ -111,6 +113,7 @@ const PropertyDetailsPage = () => {
   const [propertyCoordinates, setPropertyCoordiantes] = useState(null);
   const [propertyBids, setPropertyBids] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [queries, setQueries] = useState([]);
   useEffect(() => {
     const handleLisitng = async () => {
       try {
@@ -124,6 +127,7 @@ const PropertyDetailsPage = () => {
             console.log(res?.data?.property?.location?.coordinates);
             console.log(res?.data?.property);
             setReviews(res?.data?.property?.reviews);
+            setQueries(res?.data?.property?.queries)
           });
       } catch (error) {
         console.log(error);
@@ -135,6 +139,10 @@ const PropertyDetailsPage = () => {
   const sortedBids = [...propertyBids]?.sort(
     (a, b) => b.biddingPrice - a.biddingPrice
   );
+
+  const filterBids = sortedBids?.filter((bid) => bid?.userId === userId);
+
+  console.log("filterBids", filterBids);
 
   useEffect(() => {
     const handleSellerInfo = async () => {
@@ -233,13 +241,58 @@ const PropertyDetailsPage = () => {
     );
     const session = await response.json();
     console.log(session);
-    const result = await stripe.redirectToCheckout({
+    const json = {
       sessionId: session?.sessionId,
-    });
-    if (result.error) {
-      console.error(result.error.message);
-    } 
+      userId: userId,
+      propertyId: propertyDetails?._id,
+      totalPrice: propertyDetails?.fixedPrice,
+      paymentMethod: "card",
+    };
+    console.log(json);
+    try {
+      axios
+        .post("http://localhost:3000/orders/create", json)
+        .then(async (res) => {
+          const result = await stripe.redirectToCheckout({
+            sessionId: session?.sessionId,
+          });
+          if (result.error) {
+            console.error(result.error.message);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const Query = useFormik({
+    initialValues: {},
+    onSubmit: (values) => {
+      var JSON = {
+        userDetails: {
+          name: userName,
+          email: userEmail,
+          profilePicture: userPic,
+        },
+        queryText: values.queryText,
+      };
+      console.log(JSON);
+      try {
+        axios
+          .post(`http://localhost:3000/property/add-query/${id}`, JSON, config)
+          .then((res) => {
+            console.log(res?.data);
+            toast.success("Successfully Sent Query");
+            location.reload();
+          })
+          .catch((err) => {
+            toast.error(err?.response?.data?.message);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
 
   return (
     <>
@@ -442,7 +495,10 @@ const PropertyDetailsPage = () => {
                       <span className="space-y-6 text-base text-gray-700">
                         {propertyDetails?.description}
                       </span>
-                      {token && (
+                      {token &&
+                      userVerification === "true" &&
+                      propertyDetails?.winner === userId &&
+                      propertyDetails?.isBiddingWinnerDeclared === true ? (
                         <div className="my-4">
                           <button
                             className="w-full h-11 bg-blue-700 hover:bg-blue-600 rounded-lg text-white"
@@ -451,6 +507,8 @@ const PropertyDetailsPage = () => {
                             Purchase Property
                           </button>
                         </div>
+                      ) : (
+                        ""
                       )}
                     </div>
                     <section aria-labelledby="details-heading" className="mt-8">
@@ -657,8 +715,173 @@ const PropertyDetailsPage = () => {
           </div>
         </div>
 
+        {token && (
+        <div className="mt-8 flow-root w-full px-40">
+        <h2 className="mb-6 ml-1 text-xl font-semibold">Queries</h2>
+              <div className="-mx-4 -my-2 h-[20rem] overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div className="inline-block min-w-full  align-middle px-4 rounded-md">
+                  <table className="min-w-full divide-y divide-gray-300 border">
+                    <thead>
+                      <tr>
+                        <th
+                          scope="col"
+                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
+                        >
+                          Name
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Query
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Seller Reply
+                        </th>
+                      
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 ">
+                      {queries?.map((bid) => (
+                        <tr key={bid._id}>
+                          <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
+                            <div className="flex items-center">
+                              <div className="h-11 w-11 flex-shrink-0">
+                                <img
+                                  className="h-11 w-11 rounded-full"
+                                  src={bid?.userDetails?.profilePicture}
+                                  alt=""
+                                />
+                              </div>
+                              <div className="ml-4">
+                                <div className="font-medium text-gray-900">
+                                  {bid?.userDetails?.name}
+                                </div>
+                                <div className="mt-1 text-gray-500">
+                                  {bid?.userDetails?.email}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                            <div className="text-gray-900">
+                              {bid?.queryText}
+                            </div>
+                            {/* <div className="mt-1 text-gray-500">{person.department}</div> */}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                            <div className="text-gray-900">
+                              {bid?.replyText ? bid?.replyText : "Waiting for Seller Reply..."}
+                            </div>
+                            {/* <div className="mt-1 text-gray-500">{person.department}</div> */}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>)}
+         
+        <div className="bg-white  px-40 w-full flex items-center justify-end ">
+          <div className="w-full">
+            {token && (
+              <div className="flex justify-end items-center ">
+                <button
+                  onClick={() => setQueryFormvisible(true)}
+                  type="button"
+                  className="inline-flex items-center gap-x-2 rounded-md tracking-widest bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                >
+                  Query to Seller
+                  <PencilIcon className="-mr-0.5 h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+            )}
+            {queryFormvisible && (
+              <form onSubmit={Query.handleSubmit}>
+                <div className="space-y-12">
+                  <div className="border-b border-gray-900/10 ">
+                    {/* <div class="grid gap-6 mb-6 grid-cols-2">
+                      <div>
+                        <label
+                          for="name"
+                          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Name
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          class="block w-full rounded-md border-0  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 bg-gray-100"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label
+                          for="email"
+                          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          class="block w-full rounded-md border-0  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 bg-gray-100"
+                          required
+                        />
+                      </div>
+                    </div> */}
+
+                    <div className="w-full">
+                      <label
+                        htmlFor="queryText"
+                        className="block text-lg font-medium leading-6 text-gray-900"
+                      >
+                        Query
+                      </label>
+                      <div className="mt-2">
+                        <textarea
+                          type="text"
+                          id="queryText"
+                          name="queryText"
+                          onChange={Query.handleChange}
+                          value={Query.values.queryText}
+                          className="block w-full rounded-md border-0 pb-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 bg-gray-100"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex items-center justify-end gap-x-6">
+                  <button
+                    type="button"
+                    onClick={() => setQueryFormvisible(false)}
+                    className="text-sm px-6 py-1.5 font-semibold leading-6 text-gray-900"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    // onClick={() => setReviewFormvisible(!reviewFormvisible)}
+                    type="submit"
+                    className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                  >
+                    Save
+                  </button>
+                </div>
+              </form>
+            )}
+            
+          </div>
+        </div>
+
+        
         <div className="w-full px-44">
-          <div className="px-4 sm:px-6 lg:px-8">
+        {token && ( 
+        <div className="px-4 sm:px-6 lg:px-8">
             <div className="sm:flex sm:items-center">
               <div className="sm:flex-auto">
                 <h1 className="text-xl font-semibold leading-6 text-gray-900">
@@ -705,11 +928,17 @@ const PropertyDetailsPage = () => {
                         >
                           Date
                         </th>
+                        <th
+                          scope="col"
+                          className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                        >
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 ">
-                      {sortedBids.length > 0 ? (
-                        sortedBids?.map((bid) => (
+                      {filterBids?.length > 0 ? (
+                        filterBids?.map((bid) => (
                           <tr key={bid?._id}>
                             <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
                               <div className="flex items-center">
@@ -751,6 +980,15 @@ const PropertyDetailsPage = () => {
                                 {bid?.timestamp?.split("T")[0]}
                               </span>
                             </td>
+                            <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                              {bid?.winInfo?.winnerUserId ? (
+                                <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                  Win
+                                </span>
+                              ) : (
+                                ""
+                              )}
+                            </td>
                           </tr>
                         ))
                       ) : (
@@ -761,7 +999,7 @@ const PropertyDetailsPage = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div>)}
 
           <div className="bg-white mt-20">
             <div>
@@ -979,6 +1217,7 @@ const PropertyDetailsPage = () => {
             </div>
           </div>
         </div>
+
         <LandingPageFooter className="bg-orange-50 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </>

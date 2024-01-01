@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowSmallLeftIcon } from "@heroicons/react/20/solid";
 import axios from "axios";
+import { Toaster, toast } from "sonner";
 
 const Bids = () => {
   var userId = localStorage.getItem("userId");
@@ -8,9 +9,10 @@ const Bids = () => {
   const config = {
     headers: { Authorization: `Bearer ${token}` },
   };
-  const [properties, setProperties] = useState(null);
-  const [propetiesBids, setPropertiesBids] = useState(null);
+  const [properties, setProperties] = useState([]);
+  const [propetiesBids, setPropertiesBids] = useState([]);
   const [show, setShow] = useState(false);
+
   useEffect(() => {
     try {
       axios
@@ -29,14 +31,39 @@ const Bids = () => {
     try {
       axios.get(`http://localhost:3000/property/view/${id}`).then((res) => {
         setPropertiesBids(res?.data?.property?.bids);
+        console.log(res?.data?.property?.bids);
       });
     } catch (error) {
       console.log(error);
     }
   };
-  
 
+  const sortedBids = [...propetiesBids]?.sort(
+    (a, b) => b.biddingPrice - a.biddingPrice
+  );
+
+  const handleWinBid = (bid) => {
+    console.log(bid);
+    const json = {
+      propertyId: bid?.propertyId,
+      winnerUserId: bid?.userId,
+      bidId: bid?._id,
+    };
+    try {
+      axios.post(`http://localhost:3000/property/win-bid`, json, config).then((res) =>{
+        console.log(res?.data);
+        toast.success(res?.data?.message)
+
+      }).catch((err)=>{
+        toast.error(err?.response?.data?.message);
+      });
+    } catch (error) {
+      console.log(error?.response?.data?.message);
+    }
+  };
   return (
+    <>
+    <Toaster richColors/>
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
@@ -198,10 +225,16 @@ const Bids = () => {
                       >
                         Date
                       </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 ">
-                    {propetiesBids?.map((bid) => (
+                    {sortedBids?.map((bid) => (
                       <tr key={bid._id}>
                         <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
                           <div className="flex items-center">
@@ -243,6 +276,16 @@ const Bids = () => {
                             {bid?.timestamp?.split("T")[0]}
                           </span>
                         </td>
+                        <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                         {bid?.winInfo?.winnerUserId ?  <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                            Win
+                          </span> :<button
+                            className="text-white px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500"
+                            onClick={() => handleWinBid(bid)}
+                          >
+                            Win Bid
+                          </button>}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -253,6 +296,7 @@ const Bids = () => {
         </>
       )}
     </div>
+    </>
   );
 };
 

@@ -120,6 +120,7 @@ const AdminDashboard = () => {
                       localStorage.removeItem("userRole")
                       localStorage.removeItem("userName")
                       localStorage.removeItem("userEmail")
+                      localStorage.removeItem("userVerify");
                       location.reload();
                     }}
                     className="group -mx-2 cursor-pointer flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
@@ -229,6 +230,7 @@ const AdminDashboard = () => {
                               localStorage.removeItem("userRole")
                               localStorage.removeItem("userName")
                               localStorage.removeItem("userEmail")
+                              localStorage.removeItem("userVerify");
                               location.reload();
                             }}
                             className={classNames(

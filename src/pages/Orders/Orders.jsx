@@ -1,6 +1,7 @@
+import axios from "axios";
 import LandingPageFooter from "components/LandingPageFooter";
 import LandingPageHeader from "components/LandingPageHeader";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 
 const people = [
@@ -12,8 +13,16 @@ const people = [
   },
   // More people...
 ];
-
 export const Orders = () => {
+  const [orders, setOrders] = useState([])
+  useEffect(() => {
+    try {
+      axios.get("http://localhost:3000/orders/getallorders").then((res) => {
+        console.log("orders", res?.data?.orders);
+        setOrders(res?.data?.orders)
+      });
+    } catch (error) {}
+  }, []);
   return (
     <>
       <Toaster richColors />
@@ -23,7 +32,7 @@ export const Orders = () => {
           <LandingPageHeader className="bg-orange-50 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div class="w-full h-screen  flex  flex-col items-center pt-40 font-manrope ">
             <h2 className="text-3xl font-semibold text-center">My Orders</h2>
-            <div className="px-40 sm:px-6 lg:px-8 w-full">
+            <div className="px-28 sm:px-6 lg:px-8 w-full">
               <div className="mt-8 flow-root">
                 <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                   <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -34,60 +43,74 @@ export const Orders = () => {
                             scope="col"
                             className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
                           >
-                            Name
+                            User Id
                           </th>
                           <th
                             scope="col"
                             className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                           >
-                            Title
+                            Property Id
                           </th>
                           <th
                             scope="col"
                             className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                           >
-                            Email
+                            Stripe Id
                           </th>
                           <th
                             scope="col"
                             className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                           >
-                            Role
+                           Price 
                           </th>
                           <th
                             scope="col"
-                            className="relative py-3.5 pl-3 pr-4 sm:pr-0"
+                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                           >
-                            <span className="sr-only">Edit</span>
+                            Payment
                           </th>
+                          <th
+                            scope="col"
+                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                          >
+                           Status 
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                          >
+                           Date 
+                          </th>
+                         
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
-                        {people.map((person) => (
-                          <tr key={person.email}>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                              {person.name}
+                        {orders?.length > 0 ?
+                        orders?.map((order) => (
+                          <tr key={order._id}>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                              {order.userId}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              {person.title}
+                              {order.propertyId}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              {person.email}
+                              {order.sessionId}
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              {person.role}
+                              {order.totalPrice}
                             </td>
-                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                              <a
-                                href="#"
-                                className="text-indigo-600 hover:text-indigo-900"
-                              >
-                                Edit
-                                <span className="sr-only">, {person.name}</span>
-                              </a>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                              {order.paymentMethod.toUpperCase()}
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                              {order.status}
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                              {order.createdAt.split('T')[0]}
                             </td>
                           </tr>
-                        ))}
+                        )): "No Orders"}
                       </tbody>
                     </table>
                   </div>

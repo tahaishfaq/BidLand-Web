@@ -50,6 +50,7 @@ import Bids from "./Bids";
 import Chat from "./Chat";
 import Profile from "./Profile";
 import VerifySellerProfile from "./VerifyProfile";
+import Queries from "./Queries";
 
 const navigation = [
   { name: "Dashboard", href: "home", icon: HomeIcon, current: true },
@@ -61,6 +62,7 @@ const navigation = [
     current: false,
   },
   { name: "Bids", href: "bids", icon: ArrowTrendingUpIcon, current: false },
+  { name: "Queries", href: "queries", icon: ArrowTrendingUpIcon, current: false },
 ];
 const teams = [
   { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
@@ -142,6 +144,7 @@ export default function Example() {
                     localStorage.removeItem("userRole")
                     localStorage.removeItem("userName")
                     localStorage.removeItem("userEmail")
+                    localStorage.removeItem("userVerify");
                     location.reload();
                   }}
                     className="group -mx-2 cursor-pointer flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
@@ -255,6 +258,7 @@ export default function Example() {
                               localStorage.removeItem("userRole");
                               localStorage.removeItem("userName");
                               localStorage.removeItem("userEmail");
+                              localStorage.removeItem("userVerify");
                               location.reload();
                             }}
                             className={classNames(
@@ -286,6 +290,7 @@ export default function Example() {
                 <Route path="/edit-profile/:id" element={<EditProfile />} />
                 <Route path="/verify-profile/:id" element={<VerifySellerProfile />} />
                 <Route path="/bids" element={<Bids />} />
+                <Route path="/queries" element={<Queries />} />
                 <Route path="/seller-chat/:propertyId" element={<Chat />} />
               </Routes>
             </div>

@@ -116,6 +116,7 @@ const AllProperties = () => {
       console.error("Error submitting form:", error);
     }
   };
+  
   const handleReport = (id) => {
     document.getElementById("my_modal_3").showModal();
     try {
@@ -288,7 +289,7 @@ const AllProperties = () => {
                   <h3 className="font-bold text-2xl mb-10">Report</h3>
                   <div className="flex items-center">
                     <div class="relative overflow-x-auto">
-                      <table class="w-full text-sm text-left rtl:text-right text-gray-500 ">
+                      <table class="w-full text-sm text-left  text-gray-500 ">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
                           <tr>
                             <th scope="col" class="px-6 py-3">
@@ -305,7 +306,7 @@ const AllProperties = () => {
                             </th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="">
                           <tr class="bg-white border-b ">
                             {propertyReport?.map((report) => (
                               <>

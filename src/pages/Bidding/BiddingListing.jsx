@@ -81,12 +81,13 @@ function classNames(...classes) {
 const BiddingListing = () => {
   var userId = localStorage.getItem("userId");
   var userRole = localStorage.getItem("userRole");
-  var userVerification = localStorage.getItem("userVerification");
+  var userVerification = localStorage.getItem("userVerify");
   var token = localStorage.getItem("JWT");
   const config = {
     headers: { Authorization: `Bearer ${token}` },
   };
   const [listing, setListing] = useState([]);
+  const [bidStartTime, setBidStartTime] = useState("");
   const [bidEndTime, setBidEndTime] = useState("");
   const [open, setOpen] = useState(false);
   const [biddingId, setBiddingId] = useState("");
@@ -98,6 +99,8 @@ const BiddingListing = () => {
   const [invitationCount, setInvitationCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageNumbers, setpageNumber] = useState([]);
+
+  const [remainingTime, setRemainingTime] = useState(null);
   useEffect(() => {
     const handleLisitng = () => {
       try {
@@ -105,6 +108,8 @@ const BiddingListing = () => {
           .get("http://localhost:3000/property/get-bidding-properties")
           .then((res) => {
             setInvitationCount(res?.data.length);
+            setBidStartTime(res?.data?.biddingStartTime)
+            setBidEndTime(res?.data?.biddingEndTime)
             setpageNumber([]);
             for (
               let i = 1;
@@ -116,15 +121,15 @@ const BiddingListing = () => {
             }
             setListing(res?.data);
             setFilteredListing(res?.data)
-            console.log(res?.data);
-            var dateOnly;
-            res?.data?.map((time) => {
-              const dateTimeString = time?.biddingEndTime;
-              dateOnly = dateTimeString.substring(0, 10); // Extract the date as a string
-              const dateAsString = String(dateOnly);
-              console.log("dateAsString", dateOnly);
-              setBidEndTime(dateOnly);
-            });
+            // console.log(res?.data);
+            // var dateOnly;
+            // res?.data?.map((time) => {
+            //   const dateTimeString = time?.biddingEndTime;
+            //   dateOnly = dateTimeString.substring(0, 10); // Extract the date as a string
+            //   const dateAsString = String(dateOnly);
+            //   console.log("dateAsString", dateOnly);
+            //   setBidEndTime(dateOnly);
+            // });
 
             console.log(res?.data);
           });
@@ -337,7 +342,7 @@ const BiddingListing = () => {
                                 </Text>
                               </div>
                             </div>
-                            <Timer time={bidEndTime} />
+                            <Timer biddingStartTime={property?.biddingStartTime} biddingEndTime={property?.biddingEndTime}  />
                           </div>
 
                           <div className="flex flex-row gap-x-2  items-center justify-start w-full">
@@ -349,19 +354,21 @@ const BiddingListing = () => {
                             >
                               Details
                             </button>
+                            
                             <button
                               className="bg-gray-900 cursor-pointer flex-1 font-manrope font-semibold py-5 rounded-[10px] text-base text-center text-white w-full"
                               onClick={() => {
-                                if(userVerification == true){
+                                if(userVerification == "true"){
                                 document
                                   .getElementById("my_modal_1")
                                   .showModal();
-                                setBiddingId(property?._id);
-                              }else{
+                                  setBiddingId(property?._id);
+                                }else {
                                 toast.error("Your are not Verified User")
                               }
+                            
                             }
-                            }
+                          }
                             >
                               Apply Bid
                             </button>

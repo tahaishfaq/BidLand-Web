@@ -68,20 +68,26 @@ const ListingPage = () => {
     setFilteredListing(filtered);
   };
 
-  const handleWishList = (property) => {
-    if (!wishlist?.find((item) => item?._id === property?._id)) {
-      if (wishlist?.length <= 0) {
-        setWishlist([property]);
-        localStorage.setItem("wishlist", JSON.stringify([property]));
-      } else {
-        setWishlist([...wishlist, property]);
-        localStorage.setItem(
-          "wishlist",
-          JSON.stringify([...wishlist, property])
-        );
-      }
-    }
-  };
+  // useEffect(() => {
+  //   const storedWishlist = JSON.parse(localStorage.getItem('wishlist'));
+  //   if (storedWishlist) {
+  //     setWishlist(storedWishlist);
+  //   }
+  // }, []);
+
+  // const handleWishList = (property) => {
+  //   const updatedWishlist = [...wishlist];
+
+  //   if (!updatedWishlist.find((item) => item?._id === property?._id)) {
+  //     updatedWishlist.push(property);
+
+  //     setWishlist(updatedWishlist);
+  //     localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+  //   }
+  // };
+
+  
+  
 
   const handlePropertyTypeFilter = (value) => {
     if (

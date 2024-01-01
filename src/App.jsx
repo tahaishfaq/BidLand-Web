@@ -5,6 +5,7 @@ import {
   ChatBubbleOvalLeftEllipsisIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useLocation } from "react-router-dom";
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -289,11 +290,15 @@ function App() {
   const handleSubQuestions = (id) => {
     const answer = subQuestions?.filter((item) => item.id === id);
     setAnswers(answer[0]?.answers);
+
+    const location = useLocation();
+
   };
   return (
     <div className="font-manrope">
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <Routes />
+        {location.pathname === '/' &&
         <button
           id="message-icon"
           className="fixed bottom-8 right-8 bg-orange-50 text-white rounded-full p-4 cursor-pointer text-lg focus:outline-none"
@@ -304,7 +309,7 @@ function App() {
           ) : (
             <ChatBubbleOvalLeftEllipsisIcon className="w-8 h-8 text-gray-900" />
           )}
-        </button>
+        </button>}
       </GoogleOAuthProvider>
       {open && (
         <ul class="space-y-5 fixed bottom-28 bg-orange-50 px-2 py-4 rounded-xl overflow-auto right-10 w-[30rem]">
