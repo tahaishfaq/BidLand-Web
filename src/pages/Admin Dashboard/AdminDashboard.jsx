@@ -39,8 +39,8 @@ import AdminEditProfile from './EditProfile';
 const AdminDashboard = () => {
  
   const navigation = [
-    { name: "Dashboard", href: "home-page", icon: HomeIcon, current: true },
-    { name: "Users", href: "get-all-users-page", icon: UsersIcon, current: false },
+    // { name: "Dashboard", href: "home-page", icon: HomeIcon, current: true },
+    { name: "Users", href: "get-all-users-page", icon: UsersIcon, current: true },
     { name: "Sellers", href: "get-all-sellers-page", icon: UsersIcon, current: false },
     { name: "Properties", href: "get-properties-page", icon: HomeModernIcon, current: false },
     { name: "Bids", href: "bids-page", icon: ArrowTrendingUpIcon, current: false },
@@ -162,7 +162,7 @@ const AdminDashboard = () => {
                   className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
                 >
                   <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
+                  {/* <BellIcon className="h-6 w-6" aria-hidden="true" /> */}
                 </button>
 
                 {/* Separator */}

@@ -32,6 +32,7 @@ const LandingPageHeader = (props) => {
           <div className="flex items-center">
             <Link to="/">
               <div className="flex flex-row gap-x-1 items-center justify-start">
+                {/* <img className="w-5 h-5" src={}/> */}
                 <HomeModernIcon className="h-8 w-8 text-orange-A700" />
                 <Text
                   className="text-orange-A700 text-xl mt-2.5"

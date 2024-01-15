@@ -39,11 +39,11 @@ const Login = () => {
           setTimeout(() => {
             if (res?.data?.user?.role == "seller") {
               setLoader(false);
-              navigate("/sellerdashboard/home");
+              navigate("/sellerdashboard/get-all-users");
             }
             else if (res?.data?.user?.role == "admin") {
               setLoader(false);
-              navigate("/admindashboard/home-page");
+              navigate("/admindashboard/get-all-users-page");
             }
              else {
               setLoader(false);

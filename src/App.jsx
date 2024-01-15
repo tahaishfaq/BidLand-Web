@@ -83,125 +83,157 @@ function App() {
         {
           id: 1,
           question: "Are you considering in Lahore?",
-          answers: [{
-            id: 1,
-            answer: "Sorry, We have no land yet in Lahore."
-          }],
+          answers: [
+            {
+              id: 1,
+              answer: "Sorry, We have no land yet in Lahore.",
+            },
+          ],
         },
         {
           id: 2,
           question: "Are you considering in Karachi?",
-           answers: [{
-            id: 2,
-            answer: "Yes, We have available options in that city. Visit the website. Thanks!",
-          }],
+          answers: [
+            {
+              id: 2,
+              answer:
+                "Yes, We have available options in that city. Visit the website. Thanks!",
+            },
+          ],
         },
         {
           id: 3,
           question: "Are you considering in Islamabad?",
-          answers: [{
-            id: 3,
-            answer: "Yes, We have available options in that city. Visit the website. Thanks!",
-          }],
+          answers: [
+            {
+              id: 3,
+              answer:
+                "Yes, We have available options in that city. Visit the website. Thanks!",
+            },
+          ],
         },
         {
           id: 4,
           question: "Are you considering in Peshawar?",
-          answers: [{
-            id: 4,
-            answer: "Sorry, We have not updated data for this city",
-          }],
+          answers: [
+            {
+              id: 4,
+              answer: "Sorry, We have not updated data for this city",
+            },
+          ],
         },
         {
           id: 5,
           question: "Are you considering in Gujrawala?",
-          answers: [{
-            id: 5,
-            answer: "Sorry, We have not updated data for this city",
-          }],
+          answers: [
+            {
+              id: 5,
+              answer: "Sorry, We have not updated data for this city",
+            },
+          ],
         },
       ],
     },
     {
       id: 3,
       question: "Are you looking for a specific number of bedrooms?",
-      subQuestions: [{
-        id: 1,
-        question: "3 Bedrooms",
-        answers: [{
+      subQuestions: [
+        {
           id: 1,
-          answer: "Yes, We have alot of appartments that have 3 Bedrooms."
-        }]
-      },
-      {
-        id: 2,
-        question: "5 Bedrooms",
-        answers: [{
+          question: "3 Bedrooms",
+          answers: [
+            {
+              id: 1,
+              answer: "Yes, We have alot of appartments that have 3 Bedrooms.",
+            },
+          ],
+        },
+        {
           id: 2,
-          answer: "Yes, We have alot of appartments that have 5 Bedrooms."
-        }]
-      },
-      {
-        id: 3,
-        question: "2 Bedrooms and 1 Tv Room",
-        answers: [{
+          question: "5 Bedrooms",
+          answers: [
+            {
+              id: 2,
+              answer: "Yes, We have alot of appartments that have 5 Bedrooms.",
+            },
+          ],
+        },
+        {
           id: 3,
-          answer: "Yes, We have alot of appartments that have 2 Bedrooms and 1 Tv Room."
-        }]
-      }
-      ]
+          question: "2 Bedrooms and 1 Tv Room",
+          answers: [
+            {
+              id: 3,
+              answer:
+                "Yes, We have alot of appartments that have 2 Bedrooms and 1 Tv Room.",
+            },
+          ],
+        },
+      ],
     },
     {
       id: 4,
       question: "Do you have a preferred budget range?",
-      subQuestions:[
+      subQuestions: [
         {
-        id: 1,
-        question: "Low Budget",
-        answers: [{
           id: 1,
-          answer: "Ohhh okay! Then, you should go with the 2 bedrooms and 1 bathroom appartment but it has no other specification."
-        }]
-      },
-      {
-        id: 2,
-        question: "Moderate Budget",
-        answers: [{
+          question: "Low Budget",
+          answers: [
+            {
+              id: 1,
+              answer:
+                "Ohhh okay! Then, you should go with the 2 bedrooms and 1 bathroom appartment but it has no other specification.",
+            },
+          ],
+        },
+        {
           id: 2,
-          answer: "Ahhhh Good! Then, you should go with the 3 bedrooms with 2 attach bathrooms appartment but it has basement and tv launch also."
-        }]
-      },
-      {
-        id: 3,
-        question: "High Budget",
-        answers: [{
+          question: "Moderate Budget",
+          answers: [
+            {
+              id: 2,
+              answer:
+                "Ahhhh Good! Then, you should go with the 3 bedrooms with 2 attach bathrooms appartment but it has basement and tv launch also.",
+            },
+          ],
+        },
+        {
           id: 3,
-          answer: "Okay Brilliant! Then, you should go with the full big appartment that has 3 bedrooms with 2 attach bathrooms appartment but it has basement and tv launch also and swimming pool."
-        }]
-      }
-    ]
+          question: "High Budget",
+          answers: [
+            {
+              id: 3,
+              answer:
+                "Okay Brilliant! Then, you should go with the full big appartment that has 3 bedrooms with 2 attach bathrooms appartment but it has basement and tv launch also and swimming pool.",
+            },
+          ],
+        },
+      ],
     },
     {
       id: 5,
       question: "Are you open to property auctions?",
       subQuestions: [
         {
-          
           id: 1,
           question: "Yes",
-          answers: [{
-            id: 1,
-            answer: "Okay Brilliant! Then, Go and visit the website and do auction."
-          }]
+          answers: [
+            {
+              id: 1,
+              answer:
+                "Okay Brilliant! Then, Go and visit the website and do auction.",
+            },
+          ],
         },
         {
-          
           id: 2,
           question: "No",
-          answers: [{
-            id: 2,
-            answer: "Okay No Problem! Better try Next Time."
-          }]
+          answers: [
+            {
+              id: 2,
+              answer: "Okay No Problem! Better try Next Time.",
+            },
+          ],
         },
       ],
     },
@@ -292,24 +324,24 @@ function App() {
     setAnswers(answer[0]?.answers);
 
     const location = useLocation();
-
   };
   return (
     <div className="font-manrope">
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <Routes />
-        {location.pathname === '/' &&
-        <button
-          id="message-icon"
-          className="fixed bottom-8 right-8 bg-orange-50 text-white rounded-full p-4 cursor-pointer text-lg focus:outline-none"
-          onClick={handleIconClick}
-        >
-          {open ? (
-            <XMarkIcon className="w-8 h-8 text-gray-900" />
-          ) : (
-            <ChatBubbleOvalLeftEllipsisIcon className="w-8 h-8 text-gray-900" />
-          )}
-        </button>}
+        {location.pathname === "/" && (
+          <button
+            id="message-icon"
+            className="fixed bottom-8 right-8 bg-orange-50 text-white rounded-full p-4 cursor-pointer text-lg focus:outline-none"
+            onClick={handleIconClick}
+          >
+            {open ? (
+              <XMarkIcon className="w-8 h-8 text-gray-900 font-semibold" />
+            ) : (
+              <ChatBubbleOvalLeftEllipsisIcon className="w-8 h-8 text-gray-900" />
+            )}
+          </button>
+        )}
       </GoogleOAuthProvider>
       {open && (
         <ul class="space-y-5 fixed bottom-28 bg-orange-50 px-2 py-4 rounded-xl overflow-auto right-10 w-[30rem]">

@@ -32,9 +32,9 @@ export const Orders = () => {
           <LandingPageHeader className="bg-orange-50 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div class="w-full h-screen  flex  flex-col items-center pt-40 font-manrope ">
             <h2 className="text-3xl font-semibold text-center">My Orders</h2>
-            <div className="px-28 sm:px-6 lg:px-8 w-full">
+            <div className="px-28 sm:px-6 lg:px-8 w-full ">
               <div className="mt-8 flow-root">
-                <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 mb-10">
                   <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     <table className="min-w-full divide-y divide-gray-300 border">
                       <thead>

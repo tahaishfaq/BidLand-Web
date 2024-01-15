@@ -53,8 +53,8 @@ import VerifySellerProfile from "./VerifyProfile";
 import Queries from "./Queries";
 
 const navigation = [
-  { name: "Dashboard", href: "home", icon: HomeIcon, current: true },
-  { name: "Users", href: "get-all-users", icon: UsersIcon, current: false },
+  // { name: "Dashboard", href: "home", icon: HomeIcon, current: true },
+  { name: "Users", href: "get-all-users", icon: UsersIcon, current: true },
   {
     name: "Properties",
     href: "get-properties",
@@ -186,7 +186,7 @@ export default function Example() {
                   className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
                 >
                   <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
+                  {/* <BellIcon className="h-6 w-6" aria-hidden="true" /> */}
                 </button>
 
                 {/* Separator */}
