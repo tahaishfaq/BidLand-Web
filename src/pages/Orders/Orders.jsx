@@ -14,10 +14,15 @@ const people = [
   // More people...
 ];
 export const Orders = () => {
+  var userId = localStorage.getItem("userId");
+  var token = localStorage.getItem("JWT");
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  };
   const [orders, setOrders] = useState([])
   useEffect(() => {
     try {
-      axios.get("http://localhost:3000/orders/getallorders").then((res) => {
+      axios.get(`http://localhost:3000/orders/getallorders/${userId}`).then((res) => {
         console.log("orders", res?.data?.orders);
         setOrders(res?.data?.orders)
       });

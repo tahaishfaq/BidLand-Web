@@ -38,8 +38,10 @@ const ListingPage = () => {
   const [filteredListing, setFilteredListing] = useState([]);
   const [priceValue, setPriceValue] = useState([100000, 20000000]);
   const [propertyTypeFilter, setPropertyTypeFilter] = useState("");
+  const [isFav, setIsFav] = useState(false);
   const [position, setPosition] = useState({
-    lat: 30.3753, lng: 69.3451 
+    lat: 30.3753,
+    lng: 69.3451,
   });
   useEffect(() => {
     const handleLisitng = () => {
@@ -68,26 +70,38 @@ const ListingPage = () => {
     setFilteredListing(filtered);
   };
 
-  // useEffect(() => {
-  //   const storedWishlist = JSON.parse(localStorage.getItem('wishlist'));
-  //   if (storedWishlist) {
-  //     setWishlist(storedWishlist);
-  //   }
-  // }, []);
+  useEffect(() => {
+    const storedWishlist = JSON.parse(localStorage.getItem("wishlist"));
+    if (storedWishlist) {
+      setWishlist(storedWishlist);
+    }
+  }, []);
 
-  // const handleWishList = (property) => {
-  //   const updatedWishlist = [...wishlist];
+  const handleWishList = (property) => {
+    const updatedWishlist = [...wishlist];
+    const existingProperty = updatedWishlist.find(
+      (item) => item?._id === property?._id
+    );
 
-  //   if (!updatedWishlist.find((item) => item?._id === property?._id)) {
-  //     updatedWishlist.push(property);
+    if (!existingProperty) {
+      // If the property is not in the wishlist, add it with isFav set to true
+      const newProperty = { ...property, isFav: true };
+      updatedWishlist.push(newProperty);
+      // setIsFav(true);
+    } else {
+      // If the property is already in the wishlist, toggle the isFav field
+      existingProperty.isFav = !existingProperty.isFav;
+    }
 
-  //     setWishlist(updatedWishlist);
-  //     localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
-  //   }
-  // };
+    setWishlist(updatedWishlist);
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+  };
 
-  
-  
+  const handleDoubleClick = (property) => {
+    const updatedWishlist = wishlist.filter((item) => item?._id !== property?._id);
+    setWishlist(updatedWishlist);
+    localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+  };
 
   const handlePropertyTypeFilter = (value) => {
     if (
@@ -279,51 +293,50 @@ const ListingPage = () => {
           <div className="flex flex-row font-manrope items-center justify-center px-12 w-full">
             <div className="flex  flex-row gap-6 items-start justify-center w-full ">
               <div className="h-[80rem] relative w-[60%] md:w-full">
-               
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "100vh",
-                    }}
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100vh",
+                  }}
+                >
+                  <Map
+                    Map
+                    google={google}
+                    zoom={4}
+                    //  onClick={handleMapClick}
+                    //  zoomControlOptions={{
+                    //    position: ControlPosition.BOTTOM_LEFT,
+                    //  }}
+                    //  mapTypeControlOptions={{
+                    //    position: ControlPosition.TOP_CENTER,
+                    //  }}
+                    initialCenter={position}
                   >
-                    <Map
-                      Map
-                      google={google}
-                      zoom={4}
-                      //  onClick={handleMapClick}
-                      //  zoomControlOptions={{
-                      //    position: ControlPosition.BOTTOM_LEFT,
-                      //  }}
-                      //  mapTypeControlOptions={{
-                      //    position: ControlPosition.TOP_CENTER,
-                      //  }}
-                       initialCenter={position}
-                    >
-                      {filteredListing?.map((c, index) => (
-                        <Marker
-                          key={c?._id}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            position: "relative",
-                          }}
-                          className={"map"}
-                          position={{
-                            lat: Number(c?.location?.coordinates?.coordinates[1]),
-                            lng: Number(c?.location?.coordinates?.coordinates[0]),
-                          }}
-                          name={c?.name}
-                          icon={{
-                            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQf7t6LmFJZ4um2VtzR53bIjkeVPtWRYpz42A&usqp=CAU",
-                            anchor: new google.maps.Point(26, 26),
-                            scaledSize: new google.maps.Size(40, 40),
-                          }}
-                          // draggable={false}
-                          // onDragend={handleMarkerDragEnd}
-                        />
-                      ))}
-                    </Map>
-                  </div>
+                    {filteredListing?.map((c, index) => (
+                      <Marker
+                        key={c?._id}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          position: "relative",
+                        }}
+                        className={"map"}
+                        position={{
+                          lat: Number(c?.location?.coordinates?.coordinates[1]),
+                          lng: Number(c?.location?.coordinates?.coordinates[0]),
+                        }}
+                        name={c?.name}
+                        icon={{
+                          url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQf7t6LmFJZ4um2VtzR53bIjkeVPtWRYpz42A&usqp=CAU",
+                          anchor: new google.maps.Point(26, 26),
+                          scaledSize: new google.maps.Size(40, 40),
+                        }}
+                        // draggable={false}
+                        // onDragend={handleMarkerDragEnd}
+                      />
+                    ))}
+                  </Map>
+                </div>
               </div>
               <div className="flex flex-row items-start justify-start w-full h-[80rem] overflow-y-scroll">
                 <div className="md:gap-5 gap-6 grid md:grid-cols-1 grid-cols-2 justify-center min-h-[auto] w-full">
@@ -347,8 +360,11 @@ const ListingPage = () => {
                                 </h2>
                               </div>
                               <div
-                                className="absolute bg-gray-100 items-center rounded-full p-2 top-4 right-4"
+                                className={`absolute items-center rounded-full p-2 top-4 right-4 ${
+                                  property.isFav ? "bg-red-500" : "bg-gray-100"
+                                }`}
                                 onClick={() => handleWishList(property)}
+                                onDoubleClick={() => handleDoubleClick(property)}
                               >
                                 <span>
                                   <HeartIcon className="w-8 h-8 text-gray-600 cursor-pointer hover:text-gray-800" />

@@ -11,6 +11,7 @@ import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 const Properties = () => {
   var userId = localStorage.getItem("userId");
   var token = localStorage.getItem("JWT");
+  var userVerification = localStorage.getItem("userVerify");
   const config = {
     headers: { Authorization: `Bearer ${token}` },
   };
@@ -121,6 +122,7 @@ const Properties = () => {
         },
       };
       console.log("json", json);
+      if(userVerification == "true") {
       try {
         await axios
           .post(`http://localhost:3000/property/add`, json, config)
@@ -134,6 +136,10 @@ const Properties = () => {
       } catch (error) {
         console.error("Error submitting form:", error);
       }
+    }
+    else{
+      toast.error("User Not Verified");
+    }
     },
   });
 
@@ -788,7 +794,7 @@ const Properties = () => {
                     </div>
                   </div>
                 </div>
-
+                
                 <div className="mt-8 flex px-4">
                   <button
                     type="submit"
@@ -797,6 +803,7 @@ const Properties = () => {
                     Add Property
                   </button>
                 </div>
+                
               </form>
             </div>
           </div>
